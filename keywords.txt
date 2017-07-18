@@ -1,0 +1,35 @@
+#######################################
+# Syntax Coloring Map For Test
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AnalogIn        KEYWORD1
+AnalogOut       KEYWORD1
+DigitalIn       KEYWORD1
+DigitalInOut    KEYWORD1
+DigitalOut      KEYWORD1
+InterruptIn     KEYWORD1
+PinDirection    KEYWORD1
+PinMode         KEYWORD1
+PinName         KEYWORD1
+Timer           KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+wait            KEYWORD2
+wait_ms         KEYWORD2
+wait_us         KEYWORD2
+callback        KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
