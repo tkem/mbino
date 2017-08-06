@@ -16,11 +16,37 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_H
-#define MBINO_MBED_H
+#ifndef MBINO_GPIO_IRQ_API_H
+#define MBINO_GPIO_IRQ_API_H
 
-#include "mbino.h"
+#include "platform/platform.h"
 
-using namespace mbino;
+#include <stdint.h>
+
+// TBD: extern "C"?
+namespace mbino {
+
+    enum gpio_irq_event { IRQ_NONE = 0, IRQ_RISE = 1, IRQ_FALL = 2 };
+
+    typedef void(*gpio_irq_handler)(intptr_t id);
+
+    struct gpio_irq_t {
+        uint8_t irq;
+        uint8_t events;
+        gpio_irq_handler handler;
+        intptr_t id;
+    };
+
+    int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr_t id);
+
+    void gpio_irq_free(gpio_irq_t* obj);
+
+    void gpio_irq_set(gpio_irq_t* obj, gpio_irq_event event, bool enable);
+
+    void gpio_irq_enable(gpio_irq_t* obj);
+
+    void gpio_irq_disable(gpio_irq_t* obj);
+
+}
 
 #endif
