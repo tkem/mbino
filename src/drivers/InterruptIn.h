@@ -42,8 +42,8 @@ namespace mbino {
 
         void fall(Callback<void()> func);
 
-        void mode(PinMode pull) {
-            gpio_mode(&gpio, pull);
+        void mode(PinMode mode) {
+            gpio_mode(&gpio, mode);
         }
 
         void enable_irq() {

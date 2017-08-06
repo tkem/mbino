@@ -22,8 +22,12 @@
 #include "drivers/AnalogIn.h"
 #include "drivers/AnalogOut.h"
 #include "drivers/DigitalIn.h"
+#include "drivers/DigitalInOut.h"
 #include "drivers/DigitalOut.h"
 #include "drivers/InterruptIn.h"
+#include "drivers/PortIn.h"
+#include "drivers/PortInOut.h"
+#include "drivers/PortOut.h"
 #include "drivers/Timer.h"
 
 #include "hal/wait_api.h"

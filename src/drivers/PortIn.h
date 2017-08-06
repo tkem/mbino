@@ -16,43 +16,34 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_DIGITAL_IN_H
-#define MBINO_DIGITAL_IN_H
+#ifndef MBINO_PORT_IN_H
+#define MBINO_PORT_IN_H
 
 #include "platform/platform.h"
-#include "hal/gpio_api.h"
+
+#include "hal/port_api.h"
 
 namespace mbino {
 
-    class DigitalIn {
-    public:
-        DigitalIn(PinName pin) {
-            gpio_init_in(&gpio, pin);
-        }
+    class PortIn {
+        port_t _port;
 
-        DigitalIn(PinName pin, PinMode mode) {
-            gpio_init_in(&gpio, pin, mode);
+    public:
+        PortIn(PortName port, uint8_t mask = 0xFF) {
+            port_init_in(&_port, port, mask);
         }
 
         int read() {
-            return gpio_read(&gpio);
+            return port_read(&_port);
         }
 
         void mode(PinMode mode) {
-            gpio_mode(&gpio, mode);
-        }
-
-        int is_connected() {
-            return gpio_is_connected(&gpio);
+            port_mode(&_port, mode);
         }
 
         operator int() {
             return read();
         }
-
-    protected:
-        gpio_t gpio;
-
     };
 
 }

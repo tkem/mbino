@@ -16,63 +16,37 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_DIGITAL_IN_OUT_H
-#define MBINO_DIGITAL_IN_OUT_H
+#ifndef MBINO_PORT_OUT_H
+#define MBINO_PORT_OUT_H
 
 #include "platform/platform.h"
-#include "hal/gpio_api.h"
+
+#include "hal/port_api.h"
 
 namespace mbino {
 
-    class DigitalInOut {
-        PinMode _mode;
-        bool _value;
+    class PortOut {
+        port_t _port;
 
     public:
-        DigitalInOut(PinName pin) : _mode(PullDefault), _value(false) {
-            gpio_init_in(&gpio, pin, _mode);
-        }
-
-        DigitalInOut(PinName pin, PinDirection direction, PinMode mode, int value) :
-            _mode(mode), _value(value != 0)
-        {
-            if (direction == PIN_INPUT) {
-                gpio_init_in(&gpio, pin, _mode);
-            } else {
-                gpio_init_out(&gpio, pin, _value);
-            }
+        PortOut(PortName port, uint8_t mask = 0xFF) {
+            port_init_out(&_port, port, mask);
         }
 
         void write(int value) {
-            gpio_write(&gpio, (_value = (value != 0)));
+            port_write(&_port, value);
         }
 
         int read() {
-            return gpio_read(&gpio);
+            return port_read(&_port);
         }
 
-        void output() {
-            gpio_dir_out(&gpio, _value);
-        }
-
-        void input() {
-            gpio_dir_in(&gpio, _mode);
-        }
-
-        void mode(PinMode mode) {
-            gpio_mode(&gpio, (_mode = mode));
-        }
-
-        int is_connected() {
-            return gpio_is_connected(&gpio);
-        }
-
-        DigitalInOut& operator=(uint8_t value) {
+        PortOut& operator=(int value) {
             write(value);
             return *this;
         }
 
-        DigitalInOut& operator=(DigitalInOut& rhs) {
+        PortOut& operator=(PortOut& rhs) {
             write(rhs.read());
             return *this;
         }
@@ -83,6 +57,7 @@ namespace mbino {
 
     protected:
         gpio_t gpio;
+
     };
 
 }

@@ -16,63 +16,51 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_DIGITAL_IN_OUT_H
-#define MBINO_DIGITAL_IN_OUT_H
+#ifndef MBINO_PORT_IN_OUT_H
+#define MBINO_PORT_IN_OUT_H
 
 #include "platform/platform.h"
-#include "hal/gpio_api.h"
+
+#include "hal/port_api.h"
 
 namespace mbino {
 
-    class DigitalInOut {
+    class PortInOut {
+        port_t _port;
         PinMode _mode;
-        bool _value;
+        uint8_t _value;
 
     public:
-        DigitalInOut(PinName pin) : _mode(PullDefault), _value(false) {
-            gpio_init_in(&gpio, pin, _mode);
-        }
-
-        DigitalInOut(PinName pin, PinDirection direction, PinMode mode, int value) :
-            _mode(mode), _value(value != 0)
-        {
-            if (direction == PIN_INPUT) {
-                gpio_init_in(&gpio, pin, _mode);
-            } else {
-                gpio_init_out(&gpio, pin, _value);
-            }
+        PortInOut(PortName port, uint8_t mask = 0xFF) : _mode(PullDefault), _value(0) {
+            port_init_in(&_port, port, mask, _mode);
         }
 
         void write(int value) {
-            gpio_write(&gpio, (_value = (value != 0)));
+            port_write(&_port, (_value = value));
         }
 
         int read() {
-            return gpio_read(&gpio);
+            return port_read(&_port);
         }
 
         void output() {
-            gpio_dir_out(&gpio, _value);
+            port_dir_out(&_port, _value);
         }
 
         void input() {
-            gpio_dir_in(&gpio, _mode);
+            port_dir_in(&_port, _mode);
         }
 
         void mode(PinMode mode) {
-            gpio_mode(&gpio, (_mode = mode));
+            port_mode(&_port, (_mode = mode));
         }
 
-        int is_connected() {
-            return gpio_is_connected(&gpio);
-        }
-
-        DigitalInOut& operator=(uint8_t value) {
+        PortInOut& operator=(int value) {
             write(value);
             return *this;
         }
 
-        DigitalInOut& operator=(DigitalInOut& rhs) {
+        PortInOut& operator=(PortInOut& rhs) {
             write(rhs.read());
             return *this;
         }
@@ -80,9 +68,6 @@ namespace mbino {
         operator int() {
             return read();
         }
-
-    protected:
-        gpio_t gpio;
     };
 
 }
