@@ -18,6 +18,8 @@
  */
 #include "InterruptIn.h"
 
+#include <Arduino.h>
+
 namespace mbino {
 
     static void donothing() {}

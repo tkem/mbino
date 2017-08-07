@@ -1,6 +1,6 @@
 #include "mbed.h"
 
-DigitalOut led1(LED1);
+DigitalOut led1(LED_BUILTIN);
 
 void setup() {
 }

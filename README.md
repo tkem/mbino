@@ -13,7 +13,7 @@ Currently, the following APIs are supported:
 - [PortOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortOut/)
 - [PortInOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortInOut/)
 - [InterruptIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/InterruptIn/)
-- [RawSerial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/RawSerial/)
+- [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
 - [Timer](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/)
 - [Wait](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/wait/)
 

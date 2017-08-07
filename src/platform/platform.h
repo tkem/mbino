@@ -19,7 +19,7 @@
 #ifndef MBINO_PLATFORM_H
 #define MBINO_PLATFORM_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 namespace mbino {
 
@@ -27,21 +27,17 @@ namespace mbino {
     typedef uint8_t PortName;
 
     enum PinDirection {
-        PIN_INPUT = INPUT,
-        PIN_OUTPUT = OUTPUT
+        PIN_INPUT,
+        PIN_OUTPUT
     };
 
     enum PinMode {
-        PullNone = INPUT,
-        PullUp = INPUT_PULLUP,
+        PullNone,
+        PullUp,
         PullDefault = PullNone
     };
 
-    static const PinName NC = NOT_A_PIN;
-
-#ifdef LED_BUILTIN
-    static const PinName LED1 = LED_BUILTIN;
-#endif
+    static const PinName NC = -1;
 
 }
 
