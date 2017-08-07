@@ -29,7 +29,7 @@ namespace mbino {
         port_t _port;
 
     public:
-        PortOut(PortName port, uint8_t mask = 0xFF) {
+        PortOut(PortName port, int mask = ~0) {
             port_init_out(&_port, port, mask);
         }
 

@@ -16,34 +16,43 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_PORT_IN_H
-#define MBINO_PORT_IN_H
+#ifndef MBINO_RAW_SERIAL_H
+#define MBINO_RAW_SERIAL_H
 
 #include "platform/platform.h"
+#include "platform/NonCopyable.h"
 
-#include "hal/port_api.h"
+#include "SerialBase.h"
+
+#ifdef putc
+#undef putc
+#endif
+
+#ifdef puts
+#undef puts
+#endif
 
 namespace mbino {
 
-    class PortIn {
-        port_t _port;
-
+    class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
     public:
-        PortIn(PortName port, int mask = ~0) {
-            port_init_in(&_port, port, mask);
+        RawSerial(PinName tx, PinName rx, int baud = 9600) : SerialBase(tx, rx, baud) {}
+
+        RawSerial(USBTX_type tx, USBRX_type rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+
+        int getc() {
+            return _base_getc();
         }
 
-        int read() {
-            return port_read(&_port);
+        int putc(int c) {
+            return _base_putc(c);
         }
 
-        void mode(PinMode mode) {
-            port_mode(&_port, mode);
+        int puts(const char* str) {
+            return _base_puts(str);
         }
 
-        operator int() {
-            return read();
-        }
+        int printf(const char *format, ...);
     };
 
 }

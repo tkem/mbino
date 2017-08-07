@@ -22,7 +22,7 @@
 
 namespace mbino {
 
-    // TODO: handle NOT_A_PORT/NC
+    // FIXME: handle NOT_A_PORT/NC
 
     static void port_dir(port_t* obj, PinDirection dir, uint8_t data)
     {
@@ -64,12 +64,12 @@ namespace mbino {
 
     void port_dir_in(port_t* obj, PinMode pull)
     {
-        port_dir(obj, 0, pull == PullUp ? obj->mask : 0);
+        port_dir(obj, PIN_INPUT, pull == PullUp ? obj->mask : 0);
     }
 
     void port_dir_out(port_t* obj, uint8_t value)
     {
-        port_dir(obj, obj->mask, value);
+        port_dir(obj, PIN_OUTPUT, value);
     }
 
     void port_write(port_t* obj, uint8_t value)

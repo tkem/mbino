@@ -27,7 +27,7 @@ namespace mbino {
 
     class Timer : private NonCopyable<Timer> {
         unsigned long _micros;
-        // TODO: running, extended us interval?
+        // FIXME: running, extended us interval?
 
     public:
         void start() {
@@ -35,7 +35,7 @@ namespace mbino {
         }
 
         void stop() {
-            // TODO: running
+            // FIXME: running
         }
 
         void reset() {

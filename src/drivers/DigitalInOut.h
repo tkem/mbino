@@ -67,7 +67,7 @@ namespace mbino {
             return gpio_is_connected(&gpio);
         }
 
-        DigitalInOut& operator=(uint8_t value) {
+        DigitalInOut& operator=(int value) {
             write(value);
             return *this;
         }

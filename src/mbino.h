@@ -28,6 +28,7 @@
 #include "drivers/PortIn.h"
 #include "drivers/PortInOut.h"
 #include "drivers/PortOut.h"
+#include "drivers/RawSerial.h"
 #include "drivers/Timer.h"
 
 #include "hal/wait_api.h"

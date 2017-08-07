@@ -63,14 +63,30 @@ namespace mbino {
 #endif
     };
 
+    static void gpio_irq_attach(gpio_irq_t* obj)
+    {
+        static const uint8_t mode[] = {0, RISING, FALLING, CHANGE};
+        if (obj->enabled && obj->events) {
+            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], mode[obj->events]);
+        } else {
+            detachInterrupt(obj->irq);
+        }
+    }
+
     int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr_t id)
     {
-        uint8_t irq = obj->irq = digitalPinToInterrupt(pin);
-        obj->handler = handler;
-        obj->id = id;
-        // TODO: error handling
-        gpio_irq_objects[irq] = obj;
-        return 0;
+        int irq = digitalPinToInterrupt(pin);
+        if (irq != NOT_AN_INTERRUPT) {
+            obj->handler = handler;
+            obj->id = id;
+            obj->irq = irq;
+            obj->events = IRQ_NONE;
+            obj->enabled = true;
+            gpio_irq_objects[irq] = obj;
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     void gpio_irq_free(gpio_irq_t* obj)
@@ -88,38 +104,18 @@ namespace mbino {
         } else {
             obj->events &= ~event;
         }
-        switch (obj->events) {
-        case IRQ_RISE | IRQ_FALL:
-            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], CHANGE);
-            break;
-        case IRQ_FALL:
-            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], FALLING);
-            break;
-        case IRQ_RISE:
-            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], RISING);
-            break;
-        default:
-            detachInterrupt(obj->irq);
-        }
+        gpio_irq_attach(obj);
     }
 
     void gpio_irq_enable(gpio_irq_t* obj)
     {
-        switch (obj->events) {
-        case IRQ_RISE | IRQ_FALL:
-            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], CHANGE);
-            break;
-        case IRQ_FALL:
-            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], FALLING);
-            break;
-        case IRQ_RISE:
-            attachInterrupt(obj->irq, gpio_irq_handlers[obj->irq], RISING);
-            break;
-        }
+        obj->enabled = true;
+        gpio_irq_attach(obj);
     }
 
     void gpio_irq_disable(gpio_irq_t* obj)
     {
+        obj->enabled = false;
         detachInterrupt(obj->irq);
     }
 

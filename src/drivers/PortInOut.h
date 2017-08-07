@@ -28,10 +28,10 @@ namespace mbino {
     class PortInOut {
         port_t _port;
         PinMode _mode;
-        uint8_t _value;
+        int _value;
 
     public:
-        PortInOut(PortName port, uint8_t mask = 0xFF) : _mode(PullDefault), _value(0) {
+        PortInOut(PortName port, int mask = ~0) : _mode(PullDefault), _value(0) {
             port_init_in(&_port, port, mask, _mode);
         }
 

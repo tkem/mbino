@@ -31,10 +31,11 @@ namespace mbino {
     typedef void(*gpio_irq_handler)(intptr_t id);
 
     struct gpio_irq_t {
-        uint8_t irq;
-        uint8_t events;
         gpio_irq_handler handler;
         intptr_t id;
+        uint8_t irq;
+        uint8_t events;
+        bool enabled;
     };
 
     int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr_t id);
