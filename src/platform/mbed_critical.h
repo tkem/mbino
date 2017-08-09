@@ -16,33 +16,15 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "Ticker.h"
-
-#include "platform/mbed_critical.h"
+#ifndef MBINO_MBED_CRITICAL_H
+#define MBINO_MBED_CRITICAL_H
 
 namespace mbino {
 
-    void Ticker::attach_us(const Callback<void()>& func, us_timestamp_t t)
-    {
-        core_util_critical_section_enter();
-        remove();
-        _function = func;
-        _delay = t;
-        insert_absolute(_delay + ticker_read_us(_ticker_data));
-        core_util_critical_section_exit();
-    }
+    void core_util_critical_section_enter();
 
-    void Ticker::detach() {
-        core_util_critical_section_enter();
-        remove();
-        _function = 0;
-        core_util_critical_section_exit();
-    }
-
-    void Ticker::handler()
-    {
-        insert_absolute(event.timestamp + _delay);
-        _function();
-    }
+    void core_util_critical_section_exit();
 
 }
+
+#endif

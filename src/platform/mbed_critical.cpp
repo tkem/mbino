@@ -16,33 +16,29 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "Ticker.h"
+#include "mbed_critical.h"
 
-#include "platform/mbed_critical.h"
+#include <Arduino.h>
 
 namespace mbino {
 
-    void Ticker::attach_us(const Callback<void()>& func, us_timestamp_t t)
+    static volatile uint8_t core_util_critical_section_counter = 0;
+    static volatile uint8_t core_util_critical_section_sreg;
+
+    void core_util_critical_section_enter()
     {
-        core_util_critical_section_enter();
-        remove();
-        _function = func;
-        _delay = t;
-        insert_absolute(_delay + ticker_read_us(_ticker_data));
-        core_util_critical_section_exit();
+        uint8_t sreg = SREG;
+        cli();
+        if (core_util_critical_section_counter++ == 0) {
+            core_util_critical_section_sreg = sreg;
+        }
     }
 
-    void Ticker::detach() {
-        core_util_critical_section_enter();
-        remove();
-        _function = 0;
-        core_util_critical_section_exit();
-    }
-
-    void Ticker::handler()
+    void core_util_critical_section_exit()
     {
-        insert_absolute(event.timestamp + _delay);
-        _function();
+        if (--core_util_critical_section_counter == 0) {
+            SREG = core_util_critical_section_sreg;
+        }
     }
 
 }

@@ -18,7 +18,7 @@
  */
 #include "InterruptIn.h"
 
-#include <Arduino.h>
+#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -37,8 +37,7 @@ namespace mbino {
 
     void InterruptIn::rise(const Callback<void()>& func)
     {
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         if (func) {
             _rise = func;
             gpio_irq_set(&gpio_irq, IRQ_RISE, true);
@@ -46,12 +45,11 @@ namespace mbino {
             _rise = donothing;
             gpio_irq_set(&gpio_irq, IRQ_RISE, false);
         }
-        SREG = sreg;
+        core_util_critical_section_exit();
     }
 
     void InterruptIn::fall(const Callback<void()>& func) {
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         if (func) {
             _fall = func;
             gpio_irq_set(&gpio_irq, IRQ_FALL, true);
@@ -59,7 +57,7 @@ namespace mbino {
             _fall = donothing;
             gpio_irq_set(&gpio_irq, IRQ_FALL, false);
         }
-        SREG = sreg;
+        core_util_critical_section_exit();
     }
 
     void InterruptIn::_irq_handler(intptr_t id)

@@ -19,8 +19,7 @@
 #include "Timer.h"
 
 #include "hal/us_ticker_api.h"
-
-#include <Arduino.h>
+#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -38,54 +37,49 @@ namespace mbino {
 
     void Timer::start()
     {
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         if (!_running) {
             _start = ticker_read_us(_ticker_data);
             _running = true;
         }
-        SREG = sreg;
+        core_util_critical_section_exit();
     }
 
     void Timer::stop() {
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         _time = ticker_read_us(_ticker_data) - _start;
         _running = false;
-        SREG = sreg;
+        core_util_critical_section_exit();
     }
 
     void Timer::reset() {
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         _start = ticker_read_us(_ticker_data);
-        SREG = sreg;
+        core_util_critical_section_exit();
     }
 
     long Timer::read_us() {
         // only 32 bits needed
         timestamp_t time;
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         if (_running) {
             time = ticker_read(_ticker_data) - static_cast<timestamp_t>(_start);
         } else {
             time = _time;
         }
-        SREG = sreg;
+        core_util_critical_section_exit();
         return time;
     }
 
     us_timestamp_t Timer::read_high_resolution_us() {
         us_timestamp_t time;
-        uint8_t sreg = SREG;
-        cli();
+        core_util_critical_section_enter();
         if (_running) {
             time = ticker_read_us(_ticker_data) - _start;
         } else {
             time = _time;
         }
-        SREG = sreg;
+        core_util_critical_section_exit();
         return time;
     }
 
