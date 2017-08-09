@@ -16,35 +16,34 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_ANALOG_IN_H
-#define MBINO_ANALOG_IN_H
+#ifndef MBINO_ANALOGIN_API_H
+#define MBINO_ANALOGIN_API_H
 
 #include "platform/platform.h"
 
-#include "hal/analogin_api.h"
-
+// TBD: extern "C"?
 namespace mbino {
 
-    class AnalogIn {
-        analogin_t _adc;
-    public:
-
-        AnalogIn(PinName pin) {
-            analogin_init(&_adc, pin);
-        }
-
-        float read() {
-            return analogin_read(&_adc);
-        }
-
-        unsigned short read_u16() {
-            return analogin_read_u16(&_adc);
-        }
-
-        operator float() {
-            return read();
-        }
+    struct analogin_t {
+        uint8_t pin;
     };
+
+    void analogin_init(analogin_t* obj, PinName pin) {
+        obj->pin = pin;
+    }
+
+    uint16_t analogin_read_u10(analogin_t* obj);
+
+    inline float analogin_read(analogin_t* obj) {
+        return analogin_read_u10(obj) * 1024.0f;
+    }
+
+    inline uint16_t analogin_read_u16(analogin_t* obj) {
+        uint16_t value = analogin_read_u10(obj->pin);
+        // 10-bit to 16-bit conversion
+        return (value << 6) | (value >> 4);
+
+    }
 
 }
 

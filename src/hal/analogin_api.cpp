@@ -16,36 +16,15 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_ANALOG_IN_H
-#define MBINO_ANALOG_IN_H
+#include "analogin_api.h"
 
-#include "platform/platform.h"
-
-#include "hal/analogin_api.h"
+#include <Arduino.h>
 
 namespace mbino {
 
-    class AnalogIn {
-        analogin_t _adc;
-    public:
-
-        AnalogIn(PinName pin) {
-            analogin_init(&_adc, pin);
-        }
-
-        float read() {
-            return analogin_read(&_adc);
-        }
-
-        unsigned short read_u16() {
-            return analogin_read_u16(&_adc);
-        }
-
-        operator float() {
-            return read();
-        }
-    };
+    uint16_t analogin_read_u10(analogin_t* obj)
+    {
+        return analogRead(obj->pin);
+    }
 
 }
-
-#endif
