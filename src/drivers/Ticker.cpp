@@ -16,25 +16,35 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#include "Ticker.h"
 
-#include "drivers/AnalogIn.h"
-#include "drivers/AnalogOut.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+#include <Arduino.h>
 
-#include "platform/mbed_wait_api.h"
+namespace mbino {
 
-#endif
+    void Ticker::attach_us(const Callback<void()>& func, us_timestamp_t t)
+    {
+        uint8_t sreg = SREG;
+        cli();
+        remove();
+        _function = func;
+        _delay = t;
+        insert_absolute(_delay + ticker_read_us(_ticker_data));
+        SREG = sreg;
+    }
+
+    void Ticker::detach() {
+        uint8_t sreg = SREG;
+        cli();
+        remove();
+        _function = 0;
+        SREG = sreg;
+    }
+
+    void Ticker::handler()
+    {
+        insert_absolute(event.timestamp + _delay);
+        _function();
+    }
+
+}

@@ -16,25 +16,13 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#include "Timeout.h"
 
-#include "drivers/AnalogIn.h"
-#include "drivers/AnalogOut.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+namespace mbino {
 
-#include "platform/mbed_wait_api.h"
+    void Timeout::handler()
+    {
+        _function.call();
+    }
 
-#endif
+}

@@ -16,25 +16,26 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#include "TimerEvent.h"
 
-#include "drivers/AnalogIn.h"
-#include "drivers/AnalogOut.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+#include "hal/us_ticker_api.h"
 
-#include "platform/mbed_wait_api.h"
+namespace mbino {
 
-#endif
+    TimerEvent::TimerEvent() : _ticker_data(get_us_ticker_data())
+    {
+        ticker_init_event(&event, &TimerEvent::irq, (intptr_t)this);
+    }
+
+    TimerEvent::TimerEvent(const ticker_data_t *data) : _ticker_data(data)
+    {
+        ticker_init_event(&event, &TimerEvent::irq, (intptr_t)this);
+    }
+
+    void TimerEvent::irq(intptr_t id)
+    {
+        TimerEvent* timer_event = reinterpret_cast<TimerEvent*>(id);
+        timer_event->handler();
+    }
+
+}

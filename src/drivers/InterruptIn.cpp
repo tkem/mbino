@@ -35,7 +35,7 @@ namespace mbino {
         gpio_irq_free(&gpio_irq);
     }
 
-    void InterruptIn::rise(Callback<void()> func)
+    void InterruptIn::rise(const Callback<void()>& func)
     {
         uint8_t sreg = SREG;
         cli();
@@ -49,7 +49,7 @@ namespace mbino {
         SREG = sreg;
     }
 
-    void InterruptIn::fall(Callback<void()> func) {
+    void InterruptIn::fall(const Callback<void()>& func) {
         uint8_t sreg = SREG;
         cli();
         if (func) {

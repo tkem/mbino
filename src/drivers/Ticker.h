@@ -16,54 +16,40 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_INTERRUPT_IN_H
-#define MBINO_INTERRUPT_IN_H
+#ifndef MBINO_TICKER_H
+#define MBINO_TICKER_H
 
-#include "hal/gpio_api.h"
-#include "hal/gpio_irq_api.h"
+#include "TimerEvent.h"
+
 #include "platform/Callback.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {
 
-    class InterruptIn : private NonCopyable<InterruptIn> {
-        Callback<void()> _rise;
-        Callback<void()> _fall;
-
+    class Ticker : public TimerEvent, private NonCopyable<Ticker> {
     public:
-        InterruptIn(PinName pin);
-        virtual ~InterruptIn();
+        Ticker() {}
 
-        int read() {
-            return gpio_read(&gpio);
+        Ticker(const ticker_data_t *data) : TimerEvent(data) {}
+
+        virtual ~Ticker() {
+            detach();
         }
 
-        void rise(const Callback<void()>& func);
-
-        void fall(const Callback<void()>& func);
-
-        void mode(PinMode mode) {
-            gpio_mode(&gpio, mode);
+        void attach(const Callback<void()>& func, float t) {
+            attach_us(func, t * 1000000.0f);
         }
 
-        void enable_irq() {
-            gpio_irq_enable(&gpio_irq);
-        }
+        void attach_us(const Callback<void()>& func, us_timestamp_t t);
 
-        void disable_irq() {
-            gpio_irq_disable(&gpio_irq);
-        }
-
-        operator int() {
-            return read();
-        }
+        void detach();
 
     protected:
-        gpio_t gpio;
-        gpio_irq_t gpio_irq;
+        virtual void handler();
 
-    private:
-        static void _irq_handler(intptr_t id);
+    protected:
+        us_timestamp_t _delay;
+        Callback<void()> _function;
     };
 
 }

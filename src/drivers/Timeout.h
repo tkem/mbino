@@ -16,36 +16,19 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_WAIT_H
-#define MBINO_WAIT_H
+#ifndef MBINO_TIMEOUT_H
+#define MBINO_TIMEOUT_H
 
-#include <Arduino.h>
+#include "Ticker.h"
+
+#include "platform/NonCopyable.h"
 
 namespace mbino {
 
-    inline void wait_ms(long ms) {
-        delay(ms);
-    }
-
-    inline void wait_us(int us) {
-        delayMicroseconds(us);
-    }
-
-    inline void wait_us(unsigned int us) {
-        delayMicroseconds(us);
-    }
-
-    inline void wait_us(long us) {
-        if (us <= 0xFFFF) {
-            delayMicroseconds(us);
-        } else {
-            delay((us + 999) / 1000);
-        }
-    }
-
-    inline void wait(float s) {
-        wait_us(long(s * 1000000.0f));
-    }
+    class Timeout : public Ticker, private NonCopyable<Timeout> {
+    protected:
+        virtual void handler();
+    };
 
 }
 

@@ -16,48 +16,45 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_TIMER_H
-#define MBINO_TIMER_H
+#ifndef MBINO_TIMER_EVENT_H
+#define MBINO_TIMER_EVENT_H
 
-#include "platform/platform.h"
-
-#include "hal/ticker_api.h"
 #include "hal/ticker_api.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {
-    class Timer : private NonCopyable<Timer> {
-        const ticker_data_t *_ticker_data;
-        us_timestamp_t _start;
-        us_timestamp_t _time;
-        bool _running;
 
+    class TimerEvent : private NonCopyable<TimerEvent> {
     public:
-        Timer();
+        TimerEvent();
 
-        Timer(const ticker_data_t* data);
+        TimerEvent(const ticker_data_t *data);
 
-        void start();
-
-        void stop();
-
-        void reset();
-
-        float read() {
-            return read_high_resolution_us() / 1000000.0f;
+        virtual ~TimerEvent() {
+            remove();
         }
 
-        long read_ms() {
-            return read_high_resolution_us() / 1000;
+    protected:
+        virtual void handler() = 0;
+
+        void insert(timestamp_t timestamp) {
+            ticker_insert_event(_ticker_data, &event, timestamp);
         }
 
-        long read_us();
-
-        us_timestamp_t read_high_resolution_us();
-
-        operator float() {
-            return read();
+        void insert_absolute(us_timestamp_t timestamp) {
+            ticker_insert_event_us(_ticker_data, &event, timestamp);
         }
+
+        void remove() {
+            ticker_remove_event(_ticker_data, &event);
+        }
+
+        ticker_event_t event;
+
+        const ticker_data_t *_ticker_data;
+
+    protected:
+        static void irq(intptr_t id);
     };
 
 }

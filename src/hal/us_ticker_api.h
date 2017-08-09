@@ -16,25 +16,22 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#ifndef MBINO_US_TICKER_API_H
+#define MBINO_US_TICKER_API_H
 
-#include "drivers/AnalogIn.h"
-#include "drivers/AnalogOut.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+#include "ticker_api.h"
 
-#include "platform/mbed_wait_api.h"
+// TBD: extern "C"?
+namespace mbino {
+
+    const ticker_data_t* get_us_ticker_data();
+
+    void us_ticker_init();
+
+    uint32_t us_ticker_read();
+
+    void us_ticker_set_interrupt(timestamp_t timestamp);
+
+}
 
 #endif
