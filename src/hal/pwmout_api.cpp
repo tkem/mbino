@@ -16,25 +16,30 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#include "pwmout_api.h"
 
-#include "drivers/AnalogIn.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/PwmOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+#include <Arduino.h>
 
-#include "platform/mbed_wait_api.h"
+namespace mbino {
 
-#endif
+    void pwmout_free(pwmout_t* obj)
+    {
+        digitalWrite(obj->pin, obj->value >= 128);
+    }
+
+    void pwmout_write_u8(pwmout_t* obj, uint8_t value)
+    {
+        uint8_t sreg = SREG;
+        analogWrite(obj->pin, obj->value);
+        obj->value = value;
+        SREG = sreg;
+    }
+
+/* Not implemented (yet)!
+
+    void pwmout_period_us(pwmout_t *obj, long us);
+
+    void pwmout_pulsewidth_us(pwmout_t *obj, long us);
+*/
+
+}
