@@ -1,7 +1,7 @@
 #include "mbed.h"
 
 AnalogIn ain(A0);
-DigitalOut pwm(p3);
+PwmOut pwm(p9);
 
 void setup() {
 }
