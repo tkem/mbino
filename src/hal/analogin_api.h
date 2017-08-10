@@ -28,21 +28,20 @@ namespace mbino {
         uint8_t pin;
     };
 
-    void analogin_init(analogin_t* obj, PinName pin) {
+    inline void analogin_init(analogin_t* obj, PinName pin) {
         obj->pin = pin;
     }
 
-    uint16_t analogin_read_u10(analogin_t* obj);
+    int analogin_read_u10(analogin_t* obj);
 
     inline float analogin_read(analogin_t* obj) {
-        return analogin_read_u10(obj) * 1024.0f;
+        return analogin_read_u10(obj) / 1023.0f;
     }
 
     inline uint16_t analogin_read_u16(analogin_t* obj) {
         uint16_t value = analogin_read_u10(obj->pin);
         // 10-bit to 16-bit conversion
         return (value << 6) | (value >> 4);
-
     }
 
 }

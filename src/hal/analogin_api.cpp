@@ -22,7 +22,7 @@
 
 namespace mbino {
 
-    uint16_t analogin_read_u10(analogin_t* obj)
+    int analogin_read_u10(analogin_t* obj)
     {
         return analogRead(obj->pin);
     }

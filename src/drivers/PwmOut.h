@@ -22,6 +22,7 @@
 #include "platform/platform.h"
 
 #include "hal/pwmout_api.h"
+#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -73,7 +74,9 @@ namespace mbino {
         }
 
         PwmOut& operator=(PwmOut& rhs) {
+            core_util_critical_section_enter();
             write(rhs.read());
+            core_util_critical_section_exit();
             return *this;
         }
 

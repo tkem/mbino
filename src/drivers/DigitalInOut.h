@@ -20,7 +20,9 @@
 #define MBINO_DIGITAL_IN_OUT_H
 
 #include "platform/platform.h"
+
 #include "hal/gpio_api.h"
+#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -44,7 +46,10 @@ namespace mbino {
         }
 
         void write(int value) {
-            gpio_write(&gpio, (_value = (value != 0)));
+            core_util_critical_section_enter();
+            _value = value != 0;
+            gpio_write(&gpio, _value);
+            core_util_critical_section_exit();
         }
 
         int read() {
@@ -60,7 +65,10 @@ namespace mbino {
         }
 
         void mode(PinMode mode) {
-            gpio_mode(&gpio, (_mode = mode));
+            core_util_critical_section_enter();
+            _mode = mode;
+            gpio_mode(&gpio, _mode = mode);
+            core_util_critical_section_exit();
         }
 
         int is_connected() {
@@ -73,7 +81,9 @@ namespace mbino {
         }
 
         DigitalInOut& operator=(DigitalInOut& rhs) {
+            core_util_critical_section_enter();
             write(rhs.read());
+            core_util_critical_section_exit();
             return *this;
         }
 

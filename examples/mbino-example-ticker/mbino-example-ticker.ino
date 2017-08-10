@@ -1,20 +1,21 @@
 #include "mbed.h"
 
 Ticker flipper;
-
-DigitalOut led(LED_BUILTIN);
+DigitalOut led1(LED1);
+DigitalOut led2(LED2);
 
 void flip() {
-    led = !led;
+    led2 = !led2;
 }
 
 void setup() {
-    led = 1;
-    flipper.attach(&flip, 2.0);
+    led2 = 1;
+    flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
 }
 
 void loop() {
-    wait(1);
+    led1 = !led1;
+    wait(0.2);
 }
 
 #ifndef ARDUINO

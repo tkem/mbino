@@ -24,6 +24,8 @@
 
 #include "SerialBase.h"
 
+// FIXME: defined as macros in AVR libc
+
 #ifdef putc
 #undef putc
 #endif
@@ -36,7 +38,7 @@ namespace mbino {
 
     class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
     public:
-        RawSerial(PinName tx, PinName rx, int baud = 9600) : SerialBase(tx, rx, baud) {}
+        RawSerial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
         RawSerial(USBTX_type tx, USBRX_type rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
@@ -52,7 +54,7 @@ namespace mbino {
             return _base_puts(str);
         }
 
-        int printf(const char *format, ...);
+        int printf(const char* format, ...);
     };
 
 }

@@ -36,4 +36,15 @@ namespace mbino {
         port_init_out(obj, port, mask, value ? mask : 0);
     }
 
+    void gpio_write(gpio_t* obj, bool value)
+    {
+        uint8_t sreg = SREG;
+        cli();
+        if (value) {
+            *obj->reg |= obj->mask;
+        } else {
+            *obj->reg &= ~obj->mask;
+        }
+        SREG = sreg;
+    }
 }

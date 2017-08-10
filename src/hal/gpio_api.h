@@ -42,10 +42,7 @@ namespace mbino {
         return port_read(obj) != 0;
     }
 
-    inline void gpio_write(gpio_t* obj, bool value) {
-        // TODO: specialized/optimized function?
-        port_write(obj, value ? obj->mask : 0);
-    }
+    void gpio_write(gpio_t* obj, bool value);
 
     inline void gpio_mode(gpio_t* obj, PinMode pull) {
         port_mode(obj, pull);

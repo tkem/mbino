@@ -20,17 +20,11 @@
 #define MBINO_SERIAL_BASE_H
 
 #include "platform/platform.h"
-#include "platform/NonCopyable.h"
 
 #include "hal/serial_api.h"
+#include "platform/NonCopyable.h"
 
 namespace mbino {
-
-    struct USBTX_type {};
-    struct USBRX_type {};
-
-    static const USBTX_type USBTX;
-    static const USBRX_type USBRX;
 
     class SerialBase : private NonCopyable<SerialBase> {
     public:

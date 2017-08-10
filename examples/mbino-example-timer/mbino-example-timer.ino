@@ -1,14 +1,14 @@
 #include "mbed.h"
 
-RawSerial pc(USBTX, USBRX);
-
 Timer t;
+
+RawSerial pc(USBTX, USBRX);
 
 void setup() {
     t.start();
     pc.printf("Hello World!\r\n");
     t.stop();
-    pc.printf("The time taken was %d microseconds\r\n", int(t.read_us()));
+    pc.printf("The time taken was %ld microseconds\r\n", long(t.read_us()));
 }
 
 void loop() {

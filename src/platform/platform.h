@@ -19,38 +19,12 @@
 #ifndef MBINO_PLATFORM_H
 #define MBINO_PLATFORM_H
 
-#include <stdint.h>
+// FIXME: C++ variants (<cstddef>, etc.) not supported by AVR GCC?
+//#include <stddef.h>
+//#include <stdlib.h>
+//#include <stdio.h>
+//#include <string.h>
 
-namespace mbino {
-
-    typedef uint8_t PinName;
-    typedef uint8_t PortName;
-
-    enum PinDirection {
-        PIN_INPUT,
-        PIN_OUTPUT
-    };
-
-    enum PinMode {
-        PullNone,
-        PullUp,
-        PullDefault = PullNone
-    };
-
-    static const PortName PortA = 1;
-    static const PortName PortB = 2;
-    static const PortName PortC = 3;
-    static const PortName PortD = 4;
-    static const PortName PortE = 5;
-    static const PortName PortF = 6;
-    static const PortName PortG = 7;
-    static const PortName PortH = 8;
-    static const PortName PortJ = 10;
-    static const PortName PortK = 11;
-    static const PortName PortL = 12;
-
-    static const PinName NC = -1;
-
-}
+#include "PinNames.h"
 
 #endif

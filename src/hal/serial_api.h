@@ -21,38 +21,30 @@
 
 #include "platform/platform.h"
 
-class Stream; // FIXME: forward declaration of Arduino Stream type
+class Stream; // forward declaration of Arduino Stream type
 
 // TBD: extern "C"?
 namespace mbino {
 
     typedef enum {
         ParityNone = 0,
-        ParityEven = 2,
-        ParityOdd = 3
+        ParityOdd = 1,
+        ParityEven = 2
     } SerialParity;
-/*
-    typedef enum {
-        RxIrq,
-        TxIrq
-    } SerialIrq;
 
-    typedef enum {
-        FlowControlNone,
-        FlowControlRTS,
-        FlowControlCTS,
-        FlowControlRTSCTS
-    } FlowControl;
+    typedef Stream serial_stream_t;
 
-    typedef void (*uart_irq_handler)(uint32_t id, SerialIrq event);
-*/
+    struct serial_stream_interface_t {
+        void (*begin)(serial_stream_t* obj, long baud, uint8_t config);
+        void (*end)(serial_stream_t* obj);
+    };
 
     struct serial_t {
-        Stream* stream;
-        PinName tx;
-        PinName rx;
+        const serial_stream_interface_t* interface;
+        serial_stream_t* stream;
         long baudrate;
         uint8_t config;
+        bool initialized;
     };
 
     void serial_init(serial_t* obj, PinName tx, PinName rx);
@@ -64,11 +56,7 @@ namespace mbino {
     void serial_baud(serial_t* obj, long baudrate);
 
     void serial_format(serial_t* obj, uint8_t data_bits, SerialParity parity, uint8_t stop_bits);
-/*
-    void serial_irq_handler(serial_t *obj, uart_irq_handler handler, uint32_t id);
 
-    void serial_irq_set(serial_t *obj, SerialIrq irq, uint32_t enable);
-*/
     int serial_getc(serial_t* obj);
 
     void serial_putc(serial_t* obj, int c);
@@ -78,18 +66,6 @@ namespace mbino {
     bool serial_readable(serial_t* obj);
 
     bool serial_writable(serial_t* obj);
-
-/*
-    void serial_clear(serial_t* obj);
-
-    void serial_break_set(serial_t *obj);
-
-    void serial_break_clear(serial_t *obj);
-
-    void serial_pinout_tx(PinName tx);
-
-    void serial_set_flow_control(serial_t *obj, FlowControl type, PinName rxflow, PinName txflow);
-*/
 
 }
 

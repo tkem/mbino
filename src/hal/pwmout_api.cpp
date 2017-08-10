@@ -22,6 +22,14 @@
 
 namespace mbino {
 
+    void pwmout_init(pwmout_t* obj, PinName pin) {
+        // You do not need to call pinMode() to set the pin as an
+        // output before calling analogWrite().
+        obj->pin = pin;
+        obj->value = 0;
+        digitalWrite(obj->pin, obj->value);
+    }
+
     void pwmout_free(pwmout_t* obj)
     {
         digitalWrite(obj->pin, obj->value >= 128);
@@ -30,8 +38,9 @@ namespace mbino {
     void pwmout_write_u8(pwmout_t* obj, uint8_t value)
     {
         uint8_t sreg = SREG;
-        analogWrite(obj->pin, obj->value);
+        cli();
         obj->value = value;
+        analogWrite(obj->pin, obj->value);
         SREG = sreg;
     }
 

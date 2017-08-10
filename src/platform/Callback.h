@@ -51,8 +51,7 @@ namespace mbino {
         };
 
         union Func {
-            Func() : fn() {}
-
+            Func() {}
             R (*fn)();
             function_context<R (*)(void*), void> fc;
             method_context<Func, R (Func::*)()> mc;
@@ -110,6 +109,7 @@ namespace mbino {
         }
 
         R call() const {
+            // TODO: evaluate simple switch/case on type flag
             return _thunk(&_func);
         }
 
@@ -118,13 +118,14 @@ namespace mbino {
         }
 
         operator bool() const {
-            return !_thunk;
+            return _thunk != 0;
         }
 
     private:
         template<typename Func>
         void generate(const Func& f) {
-            // TODO: placement new?
+            // FIXME: placement new not available?
+            //new (&_func) Func(f);
             *reinterpret_cast<Func*>(&_func) = f;
             _thunk = &Callback::thunk<Func>;
         }

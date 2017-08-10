@@ -29,10 +29,7 @@ namespace mbino {
         uint8_t value;
     };
 
-    inline void pwmout_init(pwmout_t* obj, PinName pin) {
-        obj->pin = pin;
-        obj->value = 0;
-    }
+    void pwmout_init(pwmout_t* obj, PinName pin);
 
     void pwmout_free(pwmout_t *obj);
 

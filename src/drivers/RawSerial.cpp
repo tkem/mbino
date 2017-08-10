@@ -27,6 +27,7 @@ namespace mbino {
     int RawSerial::printf(const char *format, ...) {
         va_list arg;
         va_start(arg, format);
+        // TODO: always try with STRING_STACK_LIMIT first?
         char dummy_buf[1];
         int len = vsnprintf(dummy_buf, sizeof(dummy_buf), format, arg);
         if (len < STRING_STACK_LIMIT) {

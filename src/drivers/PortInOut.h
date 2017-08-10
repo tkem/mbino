@@ -22,6 +22,7 @@
 #include "platform/platform.h"
 
 #include "hal/port_api.h"
+#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -36,7 +37,10 @@ namespace mbino {
         }
 
         void write(int value) {
-            port_write(&_port, (_value = value));
+            core_util_critical_section_enter();
+            _value = value;
+            port_write(&_port, _value);
+            core_util_critical_section_exit();
         }
 
         int read() {
@@ -52,7 +56,10 @@ namespace mbino {
         }
 
         void mode(PinMode mode) {
-            port_mode(&_port, (_mode = mode));
+            core_util_critical_section_enter();
+            _mode = mode;
+            port_mode(&_port, _mode);
+            core_util_critical_section_exit();
         }
 
         PortInOut& operator=(int value) {
@@ -61,7 +68,9 @@ namespace mbino {
         }
 
         PortInOut& operator=(PortInOut& rhs) {
+            core_util_critical_section_enter();
             write(rhs.read());
+            core_util_critical_section_exit();
             return *this;
         }
 

@@ -23,152 +23,160 @@
 
 namespace mbino {
 
+    template<class T>
+    void serial_stream_begin(serial_stream_t* obj, long baud, uint8_t config)
+    {
+        T* stream = static_cast<T*>(obj);
+        stream->begin(baud, config);
+        // wait for serial port to become ready
+        while (!*stream)
+            ;
+    }
+
+    template<class T>
+    void serial_stream_end(serial_stream_t* obj)
+    {
+        static_cast<T*>(obj)->end();
+    }
+
+    template<>
+    void serial_stream_begin<SoftwareSerial>(serial_stream_t* obj, long baud, uint8_t)
+    {
+        // config not supported
+        static_cast<SoftwareSerial*>(obj)->begin(baud);
+    }
+
+    template<>
+    void serial_stream_end<SoftwareSerial>(serial_stream_t* obj)
+    {
+        // no virtual destructor
+        delete static_cast<SoftwareSerial*>(obj);
+    }
+
+    template<class T>
+    static void serial_init(serial_t* obj, T* stream)
+    {
+        static const serial_stream_interface_t interface = {
+            &serial_stream_begin<T>,
+            &serial_stream_end<T>
+        };
+        obj->interface = &interface;
+        obj->stream = stream;
+        obj->baudrate = 9600;
+        obj->config = SERIAL_8N1;
+        obj->initialized = false;
+    }
+
     static void serial_begin(serial_t* obj)
     {
-#ifdef SERIAL_PORT_MONITOR
-        if (obj->tx == 0 && obj->rx == 0) {
-            SERIAL_PORT_MONITOR.begin(obj->baudrate, obj->config);
-            while (!SERIAL_PORT_MONITOR)
-                ;
-            obj->stream = &SERIAL_PORT_MONITOR;
-            return;
+        // serial API is not synchronized
+        if (!obj->initialized) {
+            obj->interface->begin(obj->stream, obj->baudrate, obj->config);
+            obj->initialized = true;
         }
-#endif
-#ifdef SERIAL_PORT_HARDWARE
-        if (obj->tx == 1 && obj->rx == 0) {
-            SERIAL_PORT_HARDWARE.begin(obj->baudrate, obj->config);
-            obj->stream = &SERIAL_PORT_HARDWARE;
-            return;
+    }
+
+    static void serial_restart(serial_t* obj)
+    {
+        // serial API is not synchronized
+        if (obj->initialized) {
+            obj->stream->flush();
+            obj->interface->begin(obj->stream, obj->baudrate, obj->config);
         }
-#endif
-#ifdef SERIAL_PORT_HARDWARE1
-        if (obj->tx == 18 && obj->rx == 19) {
-            SERIAL_PORT_HARDWARE1.begin(obj->baudrate, obj->config);
-            obj->stream = &SERIAL_PORT_HARDWARE1;
-            return;
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE2
-        if (obj->tx == 16 && obj->rx == 17) {
-            SERIAL_PORT_HARDWARE2.begin(obj->baudrate, obj->config);
-            obj->stream = &SERIAL_PORT_HARDWARE2;
-            return;
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE3
-        if (obj->tx == 14 && obj->rx == 15) {
-            SERIAL_PORT_HARDWARE3.begin(obj->baudrate, obj->config);
-            obj->stream = &SERIAL_PORT_HARDWARE3;
-            return;
-        }
-#endif
-        SoftwareSerial* serial = new SoftwareSerial(obj->rx, obj->tx);
-        serial->begin(obj->baudrate);  // config not supported!
-        obj->stream = serial;
     }
 
     void serial_init(serial_t* obj, PinName tx, PinName rx)
     {
-        obj->stream = 0;
-        obj->tx = tx;
-        obj->rx = rx;
-        obj->baudrate = 9600;
-        obj->config = SERIAL_8N1;
+        if (tx == NC && rx == NC) {
+            // FIXME: not supported?
+        }
+#ifdef SERIAL_PORT_HARDWARE
+        else if (tx == 1 && rx == 0) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE);
+        }
+#endif
+#ifdef SERIAL_PORT_HARDWARE1
+        else if (tx == 19 && rx == 18) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE1);
+        }
+#endif
+#ifdef SERIAL_PORT_HARDWARE2
+        else if (tx == 16 && rx == 17) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE2);
+        }
+#endif
+#ifdef SERIAL_PORT_HARDWARE3
+        else if (tx == 14 && rx == 15) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE3);
+        }
+#endif
+        else {
+            serial_init(obj, new SoftwareSerial(rx, tx));
+        }
     }
 
+    // TODO: compile-time error?
 #ifdef SERIAL_PORT_MONITOR
     void serial_usb_init(serial_t* obj)
     {
-        serial_init(obj, 0, 0);
+        serial_init(obj, &SERIAL_PORT_MONITOR);
     }
 #endif
 
     void serial_free(serial_t* obj)
     {
-#ifdef SERIAL_PORT_MONITOR
-        if (obj->stream == &SERIAL_PORT_MONITOR) {
-            SERIAL_PORT_MONITOR.end();
-            return;
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE
-        if (obj->stream == &SERIAL_PORT_HARDWARE) {
-            SERIAL_PORT_HARDWARE.end();
-            return;
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE1
-        if (obj->stream == &SERIAL_PORT_HARDWARE1) {
-            SERIAL_PORT_HARDWARE1.end();
-            return;
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE2
-        if (obj->stream == &SERIAL_PORT_HARDWARE2) {
-            SERIAL_PORT_HARDWARE2.end();
-            return;
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE3
-        if (obj->stream == &SERIAL_PORT_HARDWARE3) {
-            SERIAL_PORT_HARDWARE3.end();
-            return;
-        }
-#endif
-        // TODO: test w/deleter function set in serial_init()
-        // no virtual Stream destructor...
-        delete static_cast<SoftwareSerial*>(obj->stream);
+        obj->interface->end(obj->stream);
     }
 
     void serial_baud(serial_t* obj, long baudrate)
     {
-        // FIXME: change baudrate on active stream
         obj->baudrate = baudrate;
+        serial_restart(obj);
     }
 
     void serial_format(serial_t* obj, uint8_t data_bits, SerialParity parity, uint8_t stop_bits)
     {
-        // FIXME: change config on active stream
-        obj->config = parity << 4 | (((stop_bits - 1) & 0x01) << 3) | (((data_bits - 5) & 0x03) << 1);
+        uint8_t config = (((data_bits - 5) & 0x3) << 1) | (((stop_bits - 1) & 0x1) << 3);
+        switch (parity) {
+        case ParityNone:
+            config |= SERIAL_8N1 & 0xF0;
+            break;
+        case ParityOdd:
+            config |= SERIAL_8O1 & 0xF0;
+            break;
+        case ParityEven:
+            config |= SERIAL_8E1 & 0xF0;
+            break;
+        }
+        obj->config = config;
+        serial_restart(obj);
     }
 
     int serial_getc(serial_t* obj)
     {
-        if (!obj->stream) {
-            serial_begin(obj);
-        }
+        serial_begin(obj);
         return obj->stream->read();
     }
 
     void serial_putc(serial_t* obj, int c)
     {
-        if (!obj->stream) {
-            serial_begin(obj);
-        }
+        serial_begin(obj);
         obj->stream->write(c);
     }
 
     void serial_puts(serial_t* obj, const char* s)
     {
-        if (!obj->stream) {
-            serial_begin(obj);
-        }
+        serial_begin(obj);
         obj->stream->write(s);
     }
 
     bool serial_readable(serial_t* obj)
     {
-        if (!obj->stream) {
-            serial_begin(obj);
-        }
         return obj->stream->available() != 0;
     }
 
     bool serial_writable(serial_t* obj)
     {
-        if (!obj->stream) {
-            serial_begin(obj);
-        }
         return obj->stream->availableForWrite() != 0;
     }
 

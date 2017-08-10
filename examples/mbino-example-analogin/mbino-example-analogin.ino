@@ -1,7 +1,8 @@
 #include "mbed.h"
 
 AnalogIn ain(A0);
-DigitalOut dout(LED_BUILTIN);
+DigitalOut dout(LED1);
+
 RawSerial pc(USBTX, USBRX);
 
 void setup() {
