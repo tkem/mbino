@@ -19,7 +19,10 @@
 #include "serial_api.h"
 
 #include <Arduino.h>
+
+#ifdef USE_SOFTWARE_SERIAL
 #include <SoftwareSerial.h>
+#endif
 
 namespace mbino {
 
@@ -39,6 +42,7 @@ namespace mbino {
         static_cast<T*>(obj)->end();
     }
 
+#ifdef USE_SOFTWARE_SERIAL
     template<>
     void serial_stream_begin<SoftwareSerial>(serial_stream_t* obj, long baud, uint8_t)
     {
@@ -52,6 +56,7 @@ namespace mbino {
         // no virtual destructor
         delete static_cast<SoftwareSerial*>(obj);
     }
+#endif
 
     template<class T>
     static void serial_init(serial_t* obj, T* stream)
@@ -110,9 +115,11 @@ namespace mbino {
             serial_init(obj, &SERIAL_PORT_HARDWARE3);
         }
 #endif
+#ifdef USE_SOFTWARE_SERIAL
         else {
             serial_init(obj, new SoftwareSerial(rx, tx));
         }
+#endif
     }
 
     // TODO: compile-time error?

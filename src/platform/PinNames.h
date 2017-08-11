@@ -150,21 +150,16 @@ namespace mbino {
     static const PinName SPI_CS = PIN_SPI_SS;
 #endif
 
-#ifdef digitalPinToInterrupt
-#if digitalPinToInterrupt(2) != NOT_AN_INTERRUPT
-    static const PinName BUTTON1 = D2;
-#else
-#warning No default interrupt pin found for this platform
-#endif
-#endif
+    // TODO: use digitalPinToInterrupt()?
+    static const PinName BUTTON1 = 2;
 
 #ifdef digitalPinHasPWM
 #if digitalPinHasPWM(2)
-    static const PinName PWM_OUT = D2;
+    static const PinName PWM_OUT = 2;
 #elif digitalPinHasPWM(3)
-    static const PinName PWM_OUT = D3;
+    static const PinName PWM_OUT = 3;
 #else
-#warning No PWM default output pin found for this platform
+#warning No default PWM output pin known for this platform
 #endif
 #endif
 
