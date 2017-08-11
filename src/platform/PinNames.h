@@ -40,81 +40,81 @@ namespace mbino {
     static const PinName NC = -1;
 
 #ifdef NUM_DIGITAL_PINS
-    static const PinName p0 = 0;
-    static const PinName p1 = 1;
-    static const PinName p2 = 2;
+    static const PinName D0 = 0;
+    static const PinName D1 = 1;
+    static const PinName D2 = 2;
 #if NUM_DIGITAL_PINS > 3  /* !gemma */
-    static const PinName p3 = 3;
-    static const PinName p4 = 4;
-    static const PinName p5 = 5;
-    static const PinName p6 = 6;
-    static const PinName p7 = 7;
-    static const PinName p8 = 8;
-    static const PinName p9 = 9;
-    static const PinName p10 = 10;
-    static const PinName p11 = 11;
-    static const PinName p12 = 12;
-    static const PinName p13 = 13;
-    static const PinName p14 = 14;
-    static const PinName p15 = 15;
-    static const PinName p16 = 16;
-    static const PinName p17 = 17;
-    static const PinName p18 = 18;
-    static const PinName p19 = 19;
+    static const PinName D3 = 3;
+    static const PinName D4 = 4;
+    static const PinName D5 = 5;
+    static const PinName D6 = 6;
+    static const PinName D7 = 7;
+    static const PinName D8 = 8;
+    static const PinName D9 = 9;
+    static const PinName D10 = 10;
+    static const PinName D11 = 11;
+    static const PinName D12 = 12;
+    static const PinName D13 = 13;
+    static const PinName D14 = 14;
+    static const PinName D15 = 15;
+    static const PinName D16 = 16;
+    static const PinName D17 = 17;
+    static const PinName D18 = 18;
+    static const PinName D19 = 19;
 #endif
 #if NUM_DIGITAL_PINS > 20  /* !standard */
-    static const PinName p20 = 20;
-    static const PinName p21 = 21;
-    static const PinName p22 = 22;
-    static const PinName p23 = 23;
-    static const PinName p24 = 24;
-    static const PinName p25 = 25;
-    static const PinName p26 = 26;
-    static const PinName p27 = 27;
-    static const PinName p28 = 28;
-    static const PinName p29 = 29;
-    static const PinName p30 = 30;
+    static const PinName D20 = 20;
+    static const PinName D21 = 21;
+    static const PinName D22 = 22;
+    static const PinName D23 = 23;
+    static const PinName D24 = 24;
+    static const PinName D25 = 25;
+    static const PinName D26 = 26;
+    static const PinName D27 = 27;
+    static const PinName D28 = 28;
+    static const PinName D29 = 29;
+    static const PinName D30 = 30;
 #endif
 #if NUM_DIGITAL_PINS > 31  /* !leonardo */
-    static const PinName p31 = 31;
-    static const PinName p32 = 32;
-    static const PinName p33 = 33;
-    static const PinName p34 = 34;
-    static const PinName p35 = 35;
-    static const PinName p36 = 36;
-    static const PinName p37 = 37;
-    static const PinName p38 = 38;
-    static const PinName p39 = 39;
-    static const PinName p40 = 40;
-    static const PinName p41 = 41;
-    static const PinName p42 = 42;
-    static const PinName p43 = 43;
-    static const PinName p44 = 44;
-    static const PinName p45 = 45;
-    static const PinName p46 = 46;
-    static const PinName p47 = 47;
-    static const PinName p48 = 48;
-    static const PinName p49 = 49;
-    static const PinName p50 = 50;
-    static const PinName p51 = 51;
-    static const PinName p52 = 52;
-    static const PinName p53 = 53;
-    static const PinName p54 = 54;
-    static const PinName p55 = 55;
-    static const PinName p56 = 56;
-    static const PinName p57 = 57;
-    static const PinName p58 = 58;
-    static const PinName p59 = 59;
-    static const PinName p60 = 60;
-    static const PinName p61 = 61;
-    static const PinName p62 = 62;
-    static const PinName p63 = 63;
-    static const PinName p64 = 64;
-    static const PinName p65 = 65;
-    static const PinName p66 = 66;
-    static const PinName p67 = 67;
-    static const PinName p68 = 68;
-    static const PinName p69 = 69;
+    static const PinName D31 = 31;
+    static const PinName D32 = 32;
+    static const PinName D33 = 33;
+    static const PinName D34 = 34;
+    static const PinName D35 = 35;
+    static const PinName D36 = 36;
+    static const PinName D37 = 37;
+    static const PinName D38 = 38;
+    static const PinName D39 = 39;
+    static const PinName D40 = 40;
+    static const PinName D41 = 41;
+    static const PinName D42 = 42;
+    static const PinName D43 = 43;
+    static const PinName D44 = 44;
+    static const PinName D45 = 45;
+    static const PinName D46 = 46;
+    static const PinName D47 = 47;
+    static const PinName D48 = 48;
+    static const PinName D49 = 49;
+    static const PinName D50 = 50;
+    static const PinName D51 = 51;
+    static const PinName D52 = 52;
+    static const PinName D53 = 53;
+    static const PinName D54 = 54;
+    static const PinName D55 = 55;
+    static const PinName D56 = 56;
+    static const PinName D57 = 57;
+    static const PinName D58 = 58;
+    static const PinName D59 = 59;
+    static const PinName D60 = 60;
+    static const PinName D61 = 61;
+    static const PinName D62 = 62;
+    static const PinName D63 = 63;
+    static const PinName D64 = 64;
+    static const PinName D65 = 65;
+    static const PinName D66 = 66;
+    static const PinName D67 = 67;
+    static const PinName D68 = 68;
+    static const PinName D69 = 69;
 #endif
 #if NUM_DIGITAL_PINS > 70  /* !mega */
 #warning There are more than 70 digital pins. Some pin names may not be defined.
@@ -125,13 +125,56 @@ namespace mbino {
 
 #ifdef LED_BUILTIN
     static const PinName LED1 = LED_BUILTIN;
-#else
-    static const PinName LED1 = 0;  // FIXME: this is pretty arbitraty
-#endif
-    // Arduino boards typically have only a single LED
     static const PinName LED2 = LED1;
     static const PinName LED3 = LED2;
     static const PinName LED4 = LED3;
+#endif
+
+#ifdef  PIN_WIRE_SCL
+    static const PinName I2C_SCL = PIN_WIRE_SCL;
+#endif
+#ifdef  PIN_WIRE_SDA
+    static const PinName I2C_SDA = PIN_WIRE_SDA;
+#endif
+
+#ifdef PIN_SPI_MOSI
+    static const PinName SPI_MOSI = PIN_SPI_MOSI;
+#endif
+#ifdef PIN_SPI_MISO
+    static const PinName SPI_MISO = PIN_SPI_MISO;
+#endif
+#ifdef PIN_SPI_SCK
+    static const PinName SPI_SCK = PIN_SPI_SCK;
+#endif
+#ifdef PIN_SPI_SS
+    static const PinName SPI_CS = PIN_SPI_SS;
+#endif
+
+#ifdef digitalPinToInterrupt
+#if digitalPinToInterrupt(2) != NOT_AN_INTERRUPT
+    static const PinName BUTTON1 = D2;
+#else
+#warning No default interrupt pin found for this platform
+#endif
+#endif
+
+#ifdef digitalPinHasPWM
+#if digitalPinHasPWM(2)
+    static const PinName PWM_OUT = D2;
+#elif digitalPinHasPWM(3)
+    static const PinName PWM_OUT = D3;
+#else
+#warning No PWM default output pin found for this platform
+#endif
+#endif
+
+    // TODO: explicit conversion to PinName, not defined on gemma/ATTiny?
+    // TODO: SERIAL_RX/SERIAL_TX vs. UART0TX/RX
+    struct USBRX_type {};
+    struct USBTX_type {};
+
+    static const USBRX_type USBRX;
+    static const USBTX_type USBTX;
 
     // TODO: enum type?
     typedef uint8_t PortName;
@@ -147,13 +190,6 @@ namespace mbino {
     static const PortName PortJ = 10;
     static const PortName PortK = 11;
     static const PortName PortL = 12;
-
-    // TODO: explicit conversion to PinName, not defined on gemma/ATTiny?
-    struct USBRX_type {};
-    struct USBTX_type {};
-
-    static const USBRX_type USBRX;
-    static const USBTX_type USBTX;
 }
 
 #endif

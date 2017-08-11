@@ -1,6 +1,6 @@
 #include "mbed.h"
 
-Ticker flipper;
+InterruptIn button(BUTTON1);
 DigitalOut led(LED1);
 DigitalOut flash(LED2);
 
@@ -9,13 +9,13 @@ void flip() {
 }
 
 void setup() {
-    flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
+    button.rise(&flip);  // attach the address of the flip function to the rising edge
 }
 
 void loop() {
-    // wait around, tickers will interrupt this!
+    // wait around, interrupts will interrupt this!
     flash = !flash;
-    wait(0.5);
+    wait(2.0f);
 }
 
 #ifndef ARDUINO
