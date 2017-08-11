@@ -198,13 +198,13 @@ namespace mbino {
 #endif
 
 #ifdef SERIAL_PORT_HARDWARE2
-    static const uart_port<2>::rx_type UART1_RX;
-    static const uart_port<2>::tx_type UART1_TX;
+    static const uart_port<2>::rx_type UART2_RX;
+    static const uart_port<2>::tx_type UART2_TX;
 #endif
 
 #ifdef SERIAL_PORT_HARDWARE3
-    static const uart_port<2>::rx_type UART1_RX;
-    static const uart_port<2>::tx_type UART1_TX;
+    static const uart_port<3>::rx_type UART3_RX;
+    static const uart_port<3>::tx_type UART3_TX;
 #endif
 }
 
