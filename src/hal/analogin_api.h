@@ -39,7 +39,7 @@ namespace mbino {
     }
 
     inline uint16_t analogin_read_u16(analogin_t* obj) {
-        uint16_t value = analogin_read_u10(obj->pin);
+        uint16_t value = analogin_read_u10(obj);
         // 10-bit to 16-bit conversion
         return (value << 6) | (value >> 4);
     }
