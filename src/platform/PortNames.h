@@ -16,30 +16,27 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#ifndef MBINO_PORT_NAMES_H
+#define MBINO_PORT_NAMES_H
 
-// include here so Arduino IDE and PlatformIO set correct include and
-// library paths
-#include <Arduino.h>
-#include <SoftwareSerial.h>
+namespace mbino {
 
-#include "drivers/AnalogIn.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/PwmOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+    // TODO: enum type?
+    typedef uint8_t PortName;
 
-#include "platform/mbed_wait_api.h"
+
+    static const PortName PortA = 1;
+    static const PortName PortB = 2;
+    static const PortName PortC = 3;
+    static const PortName PortD = 4;
+    static const PortName PortE = 5;
+    static const PortName PortF = 6;
+    static const PortName PortG = 7;
+    static const PortName PortH = 8;
+    static const PortName PortJ = 10;
+    static const PortName PortK = 11;
+    static const PortName PortL = 12;
+
+}
 
 #endif

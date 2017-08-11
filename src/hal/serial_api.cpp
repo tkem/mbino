@@ -19,10 +19,7 @@
 #include "serial_api.h"
 
 #include <Arduino.h>
-
-#ifdef USE_SOFTWARE_SERIAL
 #include <SoftwareSerial.h>
-#endif
 
 namespace mbino {
 
@@ -42,7 +39,6 @@ namespace mbino {
         static_cast<T*>(obj)->end();
     }
 
-#ifdef USE_SOFTWARE_SERIAL
     template<>
     void serial_stream_begin<SoftwareSerial>(serial_stream_t* obj, long baud, uint8_t)
     {
@@ -53,10 +49,10 @@ namespace mbino {
     template<>
     void serial_stream_end<SoftwareSerial>(serial_stream_t* obj)
     {
-        // no virtual destructor
-        delete static_cast<SoftwareSerial*>(obj);
+        // no virtual destructor!!!
+        SoftwareSerial* serial = static_cast<SoftwareSerial*>(obj);
+        delete serial;
     }
-#endif
 
     template<class T>
     static void serial_init(serial_t* obj, T* stream)
@@ -92,43 +88,46 @@ namespace mbino {
 
     void serial_init(serial_t* obj, PinName tx, PinName rx)
     {
-        if (tx == NC && rx == NC) {
-            // FIXME: not supported?
-        }
-#ifdef SERIAL_PORT_HARDWARE
-        else if (tx == 1 && rx == 0) {
-            serial_init(obj, &SERIAL_PORT_HARDWARE);
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE1
-        else if (tx == 19 && rx == 18) {
-            serial_init(obj, &SERIAL_PORT_HARDWARE1);
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE2
-        else if (tx == 16 && rx == 17) {
-            serial_init(obj, &SERIAL_PORT_HARDWARE2);
-        }
-#endif
-#ifdef SERIAL_PORT_HARDWARE3
-        else if (tx == 14 && rx == 15) {
-            serial_init(obj, &SERIAL_PORT_HARDWARE3);
-        }
-#endif
-#ifdef USE_SOFTWARE_SERIAL
-        else {
-            serial_init(obj, new SoftwareSerial(rx, tx));
-        }
+        serial_init(obj, new SoftwareSerial(rx, tx));
+    }
+
+    int serial_usb_init(serial_t* obj)
+    {
+#ifdef SERIAL_PORT_MONITOR
+        serial_init(obj, &SERIAL_PORT_MONITOR);
+        return 0;
+#else
+        return -1;
 #endif
     }
 
-    // TODO: compile-time error?
-#ifdef SERIAL_PORT_MONITOR
-    void serial_usb_init(serial_t* obj)
+    int serial_uart_init(serial_t* obj, uint8_t uart)
     {
-        serial_init(obj, &SERIAL_PORT_MONITOR);
-    }
+        switch (uart) {
+#ifdef SERIAL_PORT_HARDWARE
+        case 0:
+            serial_init(obj, &SERIAL_PORT_HARDWARE);
+            return 0;
 #endif
+#ifdef SERIAL_PORT_HARDWARE1
+        case 1:
+            serial_init(obj, &SERIAL_PORT_HARDWARE1);
+            return 0;
+#endif
+#ifdef SERIAL_PORT_HARDWARE2
+        case 2:
+            serial_init(obj, &SERIAL_PORT_HARDWARE2);
+            return 0;
+#endif
+#ifdef SERIAL_PORT_HARDWARE3
+        case 3:
+            serial_init(obj, &SERIAL_PORT_HARDWARE3);
+            return 0;
+#endif
+        default:
+            return -1;
+        }
+    }
 
     void serial_free(serial_t* obj)
     {

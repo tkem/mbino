@@ -56,8 +56,14 @@ namespace mbino {
             serial_baud(&_serial, baud);
         }
 
-        SerialBase(USBTX_type tx, USBRX_type rx, long baud) {
+        SerialBase(usb_port::tx_type tx, usb_port::rx_type rx, long baud) {
             serial_usb_init(&_serial);
+            serial_baud(&_serial, baud);
+        }
+
+        template<int N>
+        SerialBase(typename uart_port<N>::tx_type tx, typename uart_port<N>::rx_type rx, long baud) {
+            serial_uart_init(&_serial, N);
             serial_baud(&_serial, baud);
         }
 

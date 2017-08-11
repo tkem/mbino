@@ -38,9 +38,15 @@ namespace mbino {
 
     class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
     public:
-        RawSerial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+        RawSerial(PinName tx, PinName rx, long baud = 9600)
+            : SerialBase(tx, rx, baud) {}
 
-        RawSerial(USBTX_type tx, USBRX_type rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+        RawSerial(usb_port::tx_type tx, usb_port::rx_type rx, long baud = 9600)
+            : SerialBase(tx, rx, baud) {}
+
+        template<int N>
+        RawSerial(typename uart_port<N>::tx_type tx, typename uart_port<N>::rx_type rx, long baud)
+            : SerialBase(tx, rx, baud) {}
 
         int getc() {
             return _base_getc();

@@ -49,7 +49,9 @@ namespace mbino {
 
     void serial_init(serial_t* obj, PinName tx, PinName rx);
 
-    void serial_usb_init(serial_t* obj);
+    int serial_usb_init(serial_t* obj);
+
+    int serial_uart_init(serial_t* obj, uint8_t uart);
 
     void serial_free(serial_t* obj);
 

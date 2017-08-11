@@ -163,28 +163,49 @@ namespace mbino {
 #endif
 #endif
 
-    // TODO: explicit conversion to PinName, not defined on gemma/ATTiny?
-    // TODO: SERIAL_RX/SERIAL_TX vs. UART0TX/RX
-    struct USBRX_type {};
-    struct USBTX_type {};
+    // serial port helpers
 
-    static const USBRX_type USBRX;
-    static const USBTX_type USBTX;
+    struct usb_port {
+        // TODO: explicit conversion to PinName?
+        struct rx_type {};
+        struct tx_type {};
+    };
 
-    // TODO: enum type?
-    typedef uint8_t PortName;
+    template<int N>
+    struct uart_port {
+        // TODO: explicit conversion to PinName?
+        struct rx_type {};
+        struct tx_type {};
+    };
 
-    static const PortName PortA = 1;
-    static const PortName PortB = 2;
-    static const PortName PortC = 3;
-    static const PortName PortD = 4;
-    static const PortName PortE = 5;
-    static const PortName PortF = 6;
-    static const PortName PortG = 7;
-    static const PortName PortH = 8;
-    static const PortName PortJ = 10;
-    static const PortName PortK = 11;
-    static const PortName PortL = 12;
+#ifdef SERIAL_PORT_MONITOR
+    static const usb_port::rx_type USBRX;
+    static const usb_port::tx_type USBTX;
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE
+    static const uart_port<0>::rx_type UART_RX;
+    static const uart_port<0>::tx_type UART_TX;
+    static const uart_port<0>::rx_type UART0_RX;
+    static const uart_port<0>::tx_type UART0_TX;
+    static const uart_port<0>::rx_type SERIAL_RX;
+    static const uart_port<0>::tx_type SERIAL_TX;
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE1
+    static const uart_port<1>::rx_type UART1_RX;
+    static const uart_port<1>::tx_type UART1_TX;
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE2
+    static const uart_port<2>::rx_type UART1_RX;
+    static const uart_port<2>::tx_type UART1_TX;
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE3
+    static const uart_port<2>::rx_type UART1_RX;
+    static const uart_port<2>::tx_type UART1_TX;
+#endif
 }
 
 #endif
