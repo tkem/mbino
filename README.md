@@ -1,4 +1,4 @@
-# mbino
+# mbino [![Build Status](https://travis-ci.org/tkem/mbino.svg?branch=master)](https://travis-ci.org/tkem/mbino/)
 
 mbino is a port of basic mbed OS APIs to the Arduino platform.
 
