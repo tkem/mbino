@@ -28,7 +28,7 @@ namespace mbino {
 
     static const ticker_interface_t us_ticker_interface = {
         us_ticker_init,
-        us_ticker_read,
+        us_ticker_read,  // TODO: use micros() directly?
         us_ticker_set_interrupt,
         us_ticker_timestamp_max_delta
     };

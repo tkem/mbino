@@ -16,23 +16,19 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_WAIT_API_H
-#define MBINO_MBED_WAIT_API_H
+#include "mbed_wait_api.h"
 
-#include "hal/us_ticker_api.h"
+#include <Arduino.h>
 
 namespace mbino {
 
-    void wait_us(long us);
-
-    inline void wait_ms(long ms) {
-        wait_us(ms * 1000);
-    }
-
-    inline void wait(float s) {
-        wait_us(s * 1000000.0f);
+    void wait_us(long us) {
+        // do not use us_ticker_read() since that will pull in all
+        // kinds of stuff...
+        // TODO: use Arduino delay() (16bit) for short waits?
+        uint32_t start = micros();
+        while ((micros() - start) < (uint32_t)us)
+            ;
     }
 
 }
-
-#endif
