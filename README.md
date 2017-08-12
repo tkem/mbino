@@ -56,7 +56,7 @@ tracker](https://github.com/tkem/mbino/issues/).
 
 - The mbed
   [Serial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/Serial/)
-  API is not provided, due to it's use of streams and to prevent name
+  API is not provided, due to its use of streams and to prevent name
   clashes with Arduino's own `Serial` object.
   [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
   is supported, though not quite complete.
