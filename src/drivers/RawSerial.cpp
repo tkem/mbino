@@ -18,29 +18,31 @@
  */
 #include "RawSerial.h"
 
+#include <alloca.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-#define STRING_STACK_LIMIT 80
+#define OPTIMISTIC_STRING_STACK_LIMIT 80
 
 namespace mbino {
+    static int vnprintf(RawSerial* obj, size_t n, const char* format, va_list arg)
+    {
+        char* buf = alloca(n);
+        int len = vsnprintf(buf, n, format, arg);
+        if (len >= 0 && size_t(len) < n) {
+            obj->puts(buf);
+        }
+        return len;
+    }
+
     int RawSerial::printf(const char *format, ...) {
         va_list arg;
         va_start(arg, format);
-        // TODO: always try with STRING_STACK_LIMIT first?
-        char dummy_buf[1];
-        int len = vsnprintf(dummy_buf, sizeof(dummy_buf), format, arg);
-        if (len < STRING_STACK_LIMIT) {
-            char temp[STRING_STACK_LIMIT];
-            vsprintf(temp, format, arg);
-            puts(temp);
+        int n = vnprintf(this, OPTIMISTIC_STRING_STACK_LIMIT, format, arg);
+        if (n < OPTIMISTIC_STRING_STACK_LIMIT) {
+            return n;
         } else {
-            char *temp = new char[len + 1];
-            vsprintf(temp, format, arg);
-            puts(temp);
-            delete[] temp;
+            return vnprintf(this, n + 1, format, arg);
         }
-        va_end(arg);
-        return len;
     }
 }
