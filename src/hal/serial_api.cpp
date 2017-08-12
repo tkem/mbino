@@ -161,7 +161,12 @@ namespace mbino {
     int serial_getc(serial_t* obj)
     {
         serial_begin(obj);
-        return obj->stream->read();
+        // mbed getc() is blocking, while Arduino Stream::read() is not
+        int c;
+        do {
+            c = obj->stream->read();
+        } while (c < 0);
+        return c;
     }
 
     void serial_putc(serial_t* obj, int c)
