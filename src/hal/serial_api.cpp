@@ -88,7 +88,32 @@ namespace mbino {
 
     void serial_init(serial_t* obj, PinName tx, PinName rx)
     {
-        serial_init(obj, new SoftwareSerial(rx, tx));
+        if (false) {
+            // make the compiler happy
+        }
+#ifdef SERIAL_PORT_HARDWARE
+        else if (tx == 1 && rx == 0) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE);
+        }
+#endif
+#ifdef SERIAL_PORT_HARDWARE1
+        else if (tx == 18 && rx == 19) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE1);
+        }
+#endif
+#ifdef SERIAL_PORT_HARDWARE2
+        else if (tx == 16 && rx == 17) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE2);
+        }
+#endif
+#ifdef SERIAL_PORT_HARDWARE3
+        else if (tx == 14 && rx == 15) {
+            serial_init(obj, &SERIAL_PORT_HARDWARE3);
+        }
+#endif
+        else {
+            serial_init(obj, new SoftwareSerial(rx, tx));
+        }
     }
 
     int serial_usb_init(serial_t* obj)
