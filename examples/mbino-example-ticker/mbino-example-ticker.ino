@@ -9,7 +9,8 @@ void flip() {
 }
 
 void setup() {
-    flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
+    // the address of the function to be attached (flip) and the interval (2 seconds)
+    flipper.attach(&flip, 2.0);
 }
 
 void loop() {

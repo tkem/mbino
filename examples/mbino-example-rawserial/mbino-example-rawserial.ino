@@ -11,7 +11,8 @@ void loop() {
     // FIXME: mbed getc() blocking?
     // pc.putc(pc.getc() + 1); // echo input back to terminal
     if (c >= 0) {
-        pc.putc(c + 1); // echo input back to terminal
+        // echo input back to terminal
+        pc.putc(c + 1);
     }
 }
 

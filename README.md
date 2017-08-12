@@ -54,7 +54,7 @@ tracker](https://github.com/tkem/mbino/issues/).
   API is not provided, due to it's use of streams and to prevent name
   clashes with Arduino's own `Serial` object.
   [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
-  is supported, though.
+  is supported, though not quite complete.
 
 - Since the default AVR Libc `printf()` family of functions do not
   support floating point conversions, floating point values cannot be

@@ -9,13 +9,14 @@ void flip() {
 }
 
 void setup() {
-    button.rise(&flip);  // attach the address of the flip function to the rising edge
+    // attach the address of the flip function to the rising edge
+    button.rise(&flip);
 }
 
 void loop() {
     // wait around, interrupts will interrupt this!
     flash = !flash;
-    wait(2.0f);
+    wait(5.0f);
 }
 
 #ifndef ARDUINO

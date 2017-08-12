@@ -17,7 +17,9 @@ void loop() {
         dout = 0;
     }
 
-    // print the percentage and 16 bit normalized values
+    // print the percentage and 16 bit normalized values; note that
+    // floating point values cannot be use with printf(), so the value
+    // needs to be converted to an integer percentage
     pc.printf("percentage: %d\r\n", int(ain.read() * 100));
     pc.printf("normalized: 0x%04X\r\n", ain.read_u16());
     wait(0.2f);
