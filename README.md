@@ -49,6 +49,11 @@ tracker](https://github.com/tkem/mbino/issues/).
 - Only AVR 8-bit microcontroller boards are supported.  This means no
   support for Arduino Due or Zero, for example.
 
+- For portability (and so `millis()` and PWM outputs still work), the
+  `Ticker` API uses the Timer0 comparison register for generating
+  ticker interrupts.  Therefore, `Ticker` only provides a resolution
+  of ca. one millisecond.
+
 - The mbed
   [Serial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/Serial/)
   API is not provided, due to it's use of streams and to prevent name
