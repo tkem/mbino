@@ -63,7 +63,7 @@ namespace mbino {
         gpio_irq_t gpio_irq;
 
     private:
-        static void _irq_handler(intptr_t id);
+        static void _irq_handler(intptr_t id, gpio_irq_event event);
     };
 
 }

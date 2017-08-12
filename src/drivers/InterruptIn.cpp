@@ -60,13 +60,18 @@ namespace mbino {
         core_util_critical_section_exit();
     }
 
-    void InterruptIn::_irq_handler(intptr_t id)
+    void InterruptIn::_irq_handler(intptr_t id, gpio_irq_event event)
     {
         InterruptIn* obj = (InterruptIn*)id;
-        if (*obj) {
+        switch (event) {
+        case IRQ_RISE:
             obj->_rise();
-        } else {
+            break;
+        case IRQ_FALL:
             obj->_fall();
+            break;
+        case IRQ_NONE:
+            break;
         }
     }
 }

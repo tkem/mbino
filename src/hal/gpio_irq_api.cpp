@@ -30,7 +30,9 @@ namespace mbino {
     void gpio_irq_isr()
     {
         gpio_irq_t* obj = gpio_irq_objects[N];
-        obj->handler(obj->id);
+        // try to detect event as early as possible in irq handler
+        gpio_irq_event event = (*obj->reg & obj->mask) ? IRQ_RISE : IRQ_FALL;
+        obj->handler(obj->id, event);
     }
 
     static const irq_handler gpio_irq_handlers[EXTERNAL_NUM_INTERRUPTS] = {
@@ -79,6 +81,8 @@ namespace mbino {
         if (irq != NOT_AN_INTERRUPT) {
             obj->handler = handler;
             obj->id = id;
+            obj->reg = portInputRegister(digitalPinToPort(pin));
+            obj->mask = digitalPinToBitMask(pin);
             obj->irq = irq;
             obj->events = IRQ_NONE;
             obj->enabled = true;

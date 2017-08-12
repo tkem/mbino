@@ -28,11 +28,13 @@ namespace mbino {
 
     enum gpio_irq_event { IRQ_NONE = 0, IRQ_RISE = 1, IRQ_FALL = 2 };
 
-    typedef void(*gpio_irq_handler)(intptr_t id);
+    typedef void(*gpio_irq_handler)(intptr_t id, gpio_irq_event event);
 
     struct gpio_irq_t {
         gpio_irq_handler handler;
         intptr_t id;
+        const volatile uint8_t* reg;
+        uint8_t mask;
         uint8_t irq;
         uint8_t events;
         bool enabled;
