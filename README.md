@@ -71,7 +71,9 @@ tracker](https://github.com/tkem/mbino/issues/).
 
 - Keep in mind that you are still developing for an 8-bit platform, so
   only 8-bit variables can be read atomically, e.g. when passing data
-  between an ISR and the main program.
+  between an ISR and the main program.  Also note that `int` is only
+  16 bits wide - that's why some APIs, such as the `wait_ms()` and
+  `wait_us()` functions, have been changed to use `long` parameters.
 
 
 ## License
