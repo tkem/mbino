@@ -21,6 +21,17 @@
 #include <Arduino.h>
 #include <wiring_private.h>
 
+// see e.g. https://github.com/damellis/attiny/issues/81
+#ifndef digitalPinToInterrupt
+#if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__)
+#define digitalPinToInterrupt(p) ((p) == 8 ? 0 : NOT_AN_INTERRUPT)
+#elif defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
+#define digitalPinToInterrupt(p) ((p) == 2 ? 0 : NOT_AN_INTERRUPT)
+#else
+#error digitalPinToInterrupt() not available for this platform
+#endif
+#endif
+
 namespace mbino {
     typedef void(*irq_handler)();
 
