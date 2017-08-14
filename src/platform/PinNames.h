@@ -39,14 +39,15 @@ namespace mbino {
 
     static const PinName NC = -1;
 
-#ifdef NUM_DIGITAL_PINS
+    // assume min. 6 digital pins
     static const PinName D0 = 0;
     static const PinName D1 = 1;
     static const PinName D2 = 2;
-#if NUM_DIGITAL_PINS > 3  /* !gemma */
     static const PinName D3 = 3;
     static const PinName D4 = 4;
     static const PinName D5 = 5;
+#ifdef NUM_DIGITAL_PINS
+#if NUM_DIGITAL_PINS > 6  /* standard */
     static const PinName D6 = 6;
     static const PinName D7 = 7;
     static const PinName D8 = 8;
@@ -62,7 +63,7 @@ namespace mbino {
     static const PinName D18 = 18;
     static const PinName D19 = 19;
 #endif
-#if NUM_DIGITAL_PINS > 20  /* !standard */
+#if NUM_DIGITAL_PINS > 20  /* leonardo */
     static const PinName D20 = 20;
     static const PinName D21 = 21;
     static const PinName D22 = 22;
@@ -75,7 +76,7 @@ namespace mbino {
     static const PinName D29 = 29;
     static const PinName D30 = 30;
 #endif
-#if NUM_DIGITAL_PINS > 31  /* !leonardo */
+#if NUM_DIGITAL_PINS > 31  /* mega */
     static const PinName D31 = 31;
     static const PinName D32 = 32;
     static const PinName D33 = 33;
@@ -119,8 +120,6 @@ namespace mbino {
 #if NUM_DIGITAL_PINS > 70  /* !mega */
 #warning There are more than 70 digital pins. Some pin names may not be defined.
 #endif
-#else
-#warning The number of digital pins is not defined. No pin names will be available.
 #endif
 
 #ifdef LED_BUILTIN
