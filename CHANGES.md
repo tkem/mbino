@@ -1,3 +1,8 @@
+## 0.2.1 (2017-08-15)
+
+- Clean up timer/ticker implementation.
+
+
 ## 0.2.0 (2017-08-14)
 
 - Assume a minimum of six digital pins for all platforms.
