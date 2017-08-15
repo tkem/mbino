@@ -68,7 +68,7 @@ namespace mbino {
 
     void ticker_remove_event(const ticker_data_t* ticker, ticker_event_t* obj);
 
-    inline timestamp_t ticker_read(const ticker_data_t* const ticker) {
+    inline timestamp_t ticker_read(const ticker_data_t* ticker) {
         return ticker->interface->read();
     }
 

@@ -28,7 +28,7 @@ namespace mbino {
 
     static const ticker_interface_t us_ticker_interface = {
         us_ticker_init,
-        us_ticker_read,  // TODO: use micros() directly?
+        us_ticker_read,
         us_ticker_set_interrupt,
         us_ticker_timestamp_max_delta
     };
@@ -49,9 +49,9 @@ namespace mbino {
     {
         uint8_t sreg = SREG;
         cli();
-        // Timer0 is already used for millis() - we'll just interrupt somewhere
-        // in the middle and call the "Compare A" function below
-        //OCR0A = 0xAF;
+        // Timer0 is already used for millis() - we'll just interrupt
+        // somewhere in the middle (as compare register may be set by
+        // PWM output) and call the COMPA function below
 #if defined(TIMSK) && defined(TOIE0)
         TIMSK |= _BV(OCIE0A);
 #elif defined(TIMSK0) && defined(TOIE0)
@@ -60,11 +60,6 @@ namespace mbino {
 #       error Cannot set Timer 0 compare interrupt
 #endif
         SREG = sreg;
-    }
-
-    uint32_t us_ticker_read()
-    {
-        return micros();
     }
 
     void us_ticker_set_interrupt(timestamp_t timestamp)

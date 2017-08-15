@@ -22,7 +22,6 @@
 #include "platform/platform.h"
 
 #include "hal/ticker_api.h"
-#include "hal/ticker_api.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {

@@ -65,7 +65,7 @@ namespace mbino {
         if (_running) {
             time = ticker_read(_ticker_data) - static_cast<timestamp_t>(_start);
         } else {
-            time = _time;
+            time = static_cast<timestamp_t>(_time);
         }
         core_util_critical_section_exit();
         return time;

@@ -1,18 +1,25 @@
 #include "mbed.h"
 
-Timer t;
-
 RawSerial pc(USBTX, USBRX);
 
-void setup() {
-}
+Timer clock;
 
-void loop() {
+void setup() {
+    Timer t;
     t.start();
     pc.printf("Hello World!\r\n");
     t.stop();
     pc.printf("Time taken was %ld microseconds\r\n", long(t.read_us()));
-    wait(0.5);
+    clock.start();
+}
+
+void loop() {
+    long t = clock.read();
+    long h = t / 3600;
+    unsigned m = t / 60 % 60;
+    unsigned s = t % 60;
+    pc.printf("Time since start: %ld:%02u:%02u\r\n", h, m, s);
+    wait(1);
 }
 
 #ifndef ARDUINO

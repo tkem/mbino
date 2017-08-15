@@ -21,6 +21,11 @@
 
 #include "ticker_api.h"
 
+// we don't want to pollute the global namespace (yet)
+extern "C" {
+    unsigned long micros();
+}
+
 // TBD: extern "C"?
 namespace mbino {
 
@@ -28,7 +33,9 @@ namespace mbino {
 
     void us_ticker_init();
 
-    uint32_t us_ticker_read();
+    inline uint32_t us_ticker_read() {
+        return micros();
+    }
 
     void us_ticker_set_interrupt(timestamp_t timestamp);
 

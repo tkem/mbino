@@ -18,16 +18,14 @@
  */
 #include "mbed_wait_api.h"
 
-#include <Arduino.h>
+#include "hal/us_ticker_api.h"
 
 namespace mbino {
 
     void wait_us(long us) {
-        // do not use us_ticker_read() since that will pull in all
-        // kinds of stuff...
-        // TODO: use Arduino delay() (16bit) for short waits?
-        uint32_t start = micros();
-        while ((micros() - start) < (uint32_t)us)
+        // TODO: use delayMicroseconds() (16bit) for short waits?
+        uint32_t start = us_ticker_read();
+        while ((us_ticker_read() - start) < (uint32_t)us)
             ;
     }
 

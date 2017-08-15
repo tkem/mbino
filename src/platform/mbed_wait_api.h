@@ -19,14 +19,12 @@
 #ifndef MBINO_MBED_WAIT_API_H
 #define MBINO_MBED_WAIT_API_H
 
-#include "hal/us_ticker_api.h"
-
 namespace mbino {
 
     void wait_us(long us);
 
     inline void wait_ms(long ms) {
-        wait_us(ms * 1000);
+        wait_us(ms * 1000L);
     }
 
     inline void wait(float s) {
