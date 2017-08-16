@@ -57,10 +57,6 @@ namespace mbino {
         operator int() {
             return read();
         }
-
-    protected:
-        gpio_t gpio;
-
     };
 
 }
