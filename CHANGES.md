@@ -1,3 +1,14 @@
+## 0.2.2 (2017-08-16)
+
+- Remove unnecessary member from `PortOut`.
+
+- Add default baud rate to all `RawSerial` constructors.
+
+- Eliminate unnecessary virtual destructors.
+
+- Refactor inline methods.
+
+
 ## 0.2.1 (2017-08-15)
 
 - Clean up timer/ticker implementation.
