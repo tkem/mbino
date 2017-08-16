@@ -67,7 +67,7 @@ namespace mbino {
             serial_baud(&_serial, baud);
         }
 
-        virtual ~SerialBase() {}
+        ~SerialBase() {}
 
         int _base_getc() {
             return serial_getc(&_serial);

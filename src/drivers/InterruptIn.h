@@ -32,7 +32,7 @@ namespace mbino {
 
     public:
         InterruptIn(PinName pin);
-        virtual ~InterruptIn();
+        ~InterruptIn();
 
         int read() {
             return gpio_read(&gpio);

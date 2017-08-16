@@ -32,7 +32,7 @@ namespace mbino {
             pwmout_init(&_pwm, pin);
         }
 
-        virtual ~PwmOut() {
+        ~PwmOut() {
             pwmout_free(&_pwm);
         }
 
