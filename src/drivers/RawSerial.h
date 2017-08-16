@@ -45,7 +45,7 @@ namespace mbino {
             : SerialBase(tx, rx, baud) {}
 
         template<int N>
-        RawSerial(typename uart_port<N>::tx_type tx, typename uart_port<N>::rx_type rx, long baud)
+        RawSerial(typename uart_port<N>::tx_type tx, typename uart_port<N>::rx_type rx, long baud = 9600)
             : SerialBase(tx, rx, baud) {}
 
         int getc() {
