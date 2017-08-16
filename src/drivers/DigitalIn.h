@@ -26,6 +26,7 @@ namespace mbino {
 
     class DigitalIn {
     public:
+
         DigitalIn(PinName pin) {
             gpio_init_in(&gpio, pin);
         }

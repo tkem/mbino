@@ -29,6 +29,7 @@ namespace mbino {
         port_t _port;
 
     public:
+
         PortIn(PortName port, int mask = ~0) {
             port_init_in(&_port, port, mask);
         }

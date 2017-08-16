@@ -30,11 +30,6 @@ namespace mbino {
         gpio_init_in(&gpio, pin);
     }
 
-    InterruptIn::~InterruptIn()
-    {
-        gpio_irq_free(&gpio_irq);
-    }
-
     void InterruptIn::rise(const Callback<void()>& func)
     {
         core_util_critical_section_enter();

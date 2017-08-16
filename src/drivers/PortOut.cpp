@@ -16,35 +16,17 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "RawSerial.h"
+#include "PortOut.h"
 
-#include <alloca.h>
-#include <stdio.h>
-#include <stdarg.h>
-
-#define OPTIMISTIC_STRING_STACK_LIMIT 80
+#include "platform/mbed_critical.h"
 
 namespace mbino {
 
-    static int rsnprintf(RawSerial* obj, size_t n, const char* format, va_list arg)
-    {
-        char* buf = alloca(n);
-        int len = vsnprintf(buf, n, format, arg);
-        if (len >= 0 && size_t(len) < n) {
-            obj->puts(buf);
-        }
-        return len;
-    }
-
-    int RawSerial::printf(const char* format, ...) {
-        va_list arg;
-        va_start(arg, format);
-        int n = rsnprintf(this, OPTIMISTIC_STRING_STACK_LIMIT, format, arg);
-        if (n < OPTIMISTIC_STRING_STACK_LIMIT) {
-            return n;
-        } else {
-            return rsnprintf(this, n + 1, format, arg);
-        }
+    PortOut& PortOut::operator=(PortOut& rhs) {
+        core_util_critical_section_enter();
+        write(rhs.read());
+        core_util_critical_section_exit();
+        return *this;
     }
 
 }

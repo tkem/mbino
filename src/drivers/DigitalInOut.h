@@ -22,7 +22,6 @@
 #include "platform/platform.h"
 
 #include "hal/gpio_api.h"
-#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -31,26 +30,12 @@ namespace mbino {
         bool _value;
 
     public:
-        DigitalInOut(PinName pin) : _mode(PullDefault), _value(false) {
-            gpio_init_in(&gpio, pin, _mode);
-        }
 
-        DigitalInOut(PinName pin, PinDirection direction, PinMode mode, int value) :
-            _mode(mode), _value(value != 0)
-        {
-            if (direction == PIN_INPUT) {
-                gpio_init_in(&gpio, pin, _mode);
-            } else {
-                gpio_init_out(&gpio, pin, _value);
-            }
-        }
+        DigitalInOut(PinName pin);
 
-        void write(int value) {
-            core_util_critical_section_enter();
-            _value = value != 0;
-            gpio_write(&gpio, _value);
-            core_util_critical_section_exit();
-        }
+        DigitalInOut(PinName pin, PinDirection direction, PinMode mode, int value);
+
+        void write(int value);
 
         int read() {
             return gpio_read(&gpio);
@@ -64,12 +49,7 @@ namespace mbino {
             gpio_dir_in(&gpio, _mode);
         }
 
-        void mode(PinMode mode) {
-            core_util_critical_section_enter();
-            _mode = mode;
-            gpio_mode(&gpio, _mode = mode);
-            core_util_critical_section_exit();
-        }
+        void mode(PinMode mode);
 
         int is_connected() {
             return gpio_is_connected(&gpio);
@@ -80,12 +60,7 @@ namespace mbino {
             return *this;
         }
 
-        DigitalInOut& operator=(DigitalInOut& rhs) {
-            core_util_critical_section_enter();
-            write(rhs.read());
-            core_util_critical_section_exit();
-            return *this;
-        }
+        DigitalInOut& operator=(DigitalInOut& rhs);
 
         operator int() {
             return read();

@@ -22,7 +22,6 @@
 #include "platform/platform.h"
 
 #include "hal/port_api.h"
-#include "platform/mbed_critical.h"
 
 namespace mbino {
 
@@ -30,6 +29,7 @@ namespace mbino {
         port_t _port;
 
     public:
+
         PortOut(PortName port, int mask = ~0) {
             port_init_out(&_port, port, mask);
         }
@@ -47,12 +47,7 @@ namespace mbino {
             return *this;
         }
 
-        PortOut& operator=(PortOut& rhs) {
-            core_util_critical_section_enter();
-            write(rhs.read());
-            core_util_critical_section_exit();
-            return *this;
-        }
+        PortOut& operator=(PortOut& rhs);
 
         operator int() {
             return read();

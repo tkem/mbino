@@ -32,6 +32,7 @@ namespace mbino {
         bool _running;
 
     public:
+
         Timer();
 
         Timer(const ticker_data_t* data);

@@ -28,6 +28,7 @@ namespace mbino {
 
     class SerialBase : private NonCopyable<SerialBase> {
     public:
+
         enum Parity {
             None = ParityNone,
             Odd = ParityOdd,
@@ -51,6 +52,7 @@ namespace mbino {
         }
 
     protected:
+
         SerialBase(PinName tx, PinName rx, long baud) {
             serial_init(&_serial, tx, rx);
             serial_baud(&_serial, baud);
@@ -67,7 +69,9 @@ namespace mbino {
             serial_baud(&_serial, baud);
         }
 
-        ~SerialBase() {}
+        ~SerialBase() {
+            // FIXME: serial_free(&_serial) not called in mbed?
+        }
 
         int _base_getc() {
             return serial_getc(&_serial);

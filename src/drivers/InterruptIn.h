@@ -31,8 +31,12 @@ namespace mbino {
         Callback<void()> _fall;
 
     public:
+
         InterruptIn(PinName pin);
-        ~InterruptIn();
+
+        ~InterruptIn() {
+            gpio_irq_free(&gpio_irq);
+        }
 
         int read() {
             return gpio_read(&gpio);

@@ -27,6 +27,7 @@ namespace mbino {
 
     class AnalogIn {
         analogin_t _adc;
+
     public:
 
         AnalogIn(PinName pin) {

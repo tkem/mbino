@@ -26,6 +26,7 @@ namespace mbino {
 
     class TimerEvent : private NonCopyable<TimerEvent> {
     public:
+
         TimerEvent();
 
         TimerEvent(const ticker_data_t *data);
@@ -35,6 +36,7 @@ namespace mbino {
         }
 
     protected:
+
         virtual void handler() = 0;
 
         void insert(timestamp_t timestamp) {

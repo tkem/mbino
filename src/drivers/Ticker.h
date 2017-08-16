@@ -28,6 +28,7 @@ namespace mbino {
 
     class Ticker : public TimerEvent, private NonCopyable<Ticker> {
     public:
+
         Ticker() {}
 
         Ticker(const ticker_data_t *data) : TimerEvent(data) {}
