@@ -1,3 +1,8 @@
+## 0.3.0 (2017-08-17)
+
+- Add initial `I2C` API implementation.
+
+
 ## 0.2.2 (2017-08-16)
 
 - Remove unnecessary member from `PortOut`.
