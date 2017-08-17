@@ -15,7 +15,7 @@ int bcddec8(uint8_t value)
 
 void setup() {
     // set clock to 17-08-17 23:59:59
-    const uint8_t data[] = {
+    const char data[] = {
         0x00,  // word address
         0x55,  // seconds (BCD)
         0x59,  // minutes (BCD)
@@ -30,10 +30,10 @@ void setup() {
 }
 
 void loop() {
-    uint8_t send[] = { 0 };  // word address
+    char send[] = { 0 };  // word address
     i2c.write(addr, send, sizeof send, false);
 
-    uint8_t recv[8];
+    char recv[8];
     i2c.read(addr, recv, sizeof recv);
     pc.printf("%02d-%02d-%02d %02d:%02d:%02d [CTRL=0x%x]\r\n",
               bcddec8(recv[6]),

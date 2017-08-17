@@ -49,9 +49,11 @@ namespace mbino {
     template<>
     void serial_stream_end<SoftwareSerial>(serial_stream_t* obj)
     {
-        // no virtual destructor!!!
+        // Arduino's Stream has virtual methods, but no virtual destructor...
         SoftwareSerial* serial = static_cast<SoftwareSerial*>(obj);
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
         delete serial;
+#pragma GCC diagnostic pop
     }
 
     template<class T>
