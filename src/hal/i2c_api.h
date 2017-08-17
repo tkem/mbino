@@ -16,32 +16,29 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#ifndef MBINO_I2C_API_H
+#define MBINO_I2C_API_H
 
-// include here so Arduino IDE and PlatformIO set correct include and
-// library paths
-#include <Arduino.h>
-#include <SoftwareSerial.h>
-#include <Wire.h>
+#include "platform/platform.h"
 
-#include "drivers/AnalogIn.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/I2C.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/PwmOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SerialBase.h"
-#include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
-#include "drivers/Timeout.h"
+// TBD: extern "C"?
+namespace mbino {
 
-#include "platform/mbed_wait_api.h"
+    enum {
+        I2C_ERROR_NO_SLAVE = -1,
+        I2C_ERROR_BUS_BUSY = -2
+    };
+
+    struct i2c_t {};
+
+    void i2c_init(i2c_t* obj);
+
+    void i2c_frequency(i2c_t* obj, long hz);
+
+    int i2c_read(i2c_t* obj, uint8_t address, char* data, uint8_t length, bool stop);
+
+    int i2c_write(i2c_t* obj, uint8_t address, const char* data, uint8_t length, bool stop);
+
+}
 
 #endif

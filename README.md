@@ -13,6 +13,7 @@ Currently, the following APIs are supported:
 - [PortIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortIn/)
 - [PortOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortOut/)
 - [PortInOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortInOut/)
+- [I2C](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/I2C/)
 - [InterruptIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/InterruptIn/)
 - [PwmOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PwmOut/)
 - [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
@@ -54,12 +55,14 @@ tracker](https://github.com/tkem/mbino/issues/).
   ticker interrupts.  Therefore, `Ticker` only provides a resolution
   of ca. one millisecond.
 
-- The mbed
-  [Serial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/Serial/)
-  API is not provided, due to its use of streams and to prevent name
-  clashes with Arduino's own `Serial` object.
-  [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
-  is supported, though not quite complete.
+- The mbed `Serial` API is not provided, due to its use of streams and
+  to prevent name clashes with Arduino's own `Serial`
+  object. `RawSerial` is supported, though not quite complete.
+
+- The `I2C` API is based on Arduino's
+  [Wire](https://www.arduino.cc/en/Reference/Wire) library.
+  Therefore, some of the lower-level methods are not supported, and
+  you are limited to reading and writing 32 bytes at a time.
 
 - Since the default AVR Libc `printf()` family of functions do not
   support floating point conversions, floating point values cannot be
