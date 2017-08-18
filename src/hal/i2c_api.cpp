@@ -18,6 +18,8 @@
  */
 #include "i2c_api.h"
 
+#ifdef DEVICE_I2C
+
 #include <Wire.h>
 
 namespace mbino {
@@ -65,3 +67,5 @@ namespace mbino {
     }
 
 }
+
+#endif

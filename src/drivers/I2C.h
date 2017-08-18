@@ -21,6 +21,8 @@
 
 #include "platform/platform.h"
 
+#if defined (DEVICE_I2C) || defined(DOXYGEN_ONLY)
+
 #include "hal/i2c_api.h"
 #include "platform/NonCopyable.h"
 
@@ -82,5 +84,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif

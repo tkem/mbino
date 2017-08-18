@@ -11,9 +11,9 @@ env:
 - BOARD=uno
 - BOARD=leonardo
 - BOARD=megaatmega2560
+- BOARD=gemma OPTION="lib_ignore=Wire" EXAMPLES="examples/mbino-example-blinky/*.ino"
 
 script:
-- set -eo pipefail;
-  for e in examples/*/*.ino; do
-    platformio ci --board=$BOARD --lib=. $e;
+- for e in ${EXAMPLES:=examples/*/*.ino}; do
+      platformio ci --board=$BOARD --lib=. ${OPTION:+--project-option="$OPTION"} $e;
   done

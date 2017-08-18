@@ -19,7 +19,7 @@
 #ifndef MBINO_PIN_NAMES_H
 #define MBINO_PIN_NAMES_H
 
-#include <pins_arduino.h>
+#include "hal/device.h"
 
 namespace mbino {
 
@@ -46,7 +46,6 @@ namespace mbino {
     static const PinName D3 = 3;
     static const PinName D4 = 4;
     static const PinName D5 = 5;
-#ifdef NUM_DIGITAL_PINS
 #if NUM_DIGITAL_PINS > 6  /* standard */
     static const PinName D6 = 6;
     static const PinName D7 = 7;
@@ -120,7 +119,6 @@ namespace mbino {
 #if NUM_DIGITAL_PINS > 70  /* !mega */
 #warning There are more than 70 digital pins. Some pin names may not be defined.
 #endif
-#endif
 
 #ifdef LED_BUILTIN
     static const PinName LED1 = LED_BUILTIN;
@@ -129,24 +127,15 @@ namespace mbino {
     static const PinName LED4 = LED3;
 #endif
 
-#ifdef  PIN_WIRE_SCL
+#ifdef DEVICE_I2C
     static const PinName I2C_SCL = PIN_WIRE_SCL;
-#endif
-#ifdef  PIN_WIRE_SDA
     static const PinName I2C_SDA = PIN_WIRE_SDA;
 #endif
 
-#ifdef PIN_SPI_MOSI
+#ifdef DEVICE_SPI
     static const PinName SPI_MOSI = PIN_SPI_MOSI;
-#endif
-#ifdef PIN_SPI_MISO
     static const PinName SPI_MISO = PIN_SPI_MISO;
-#endif
-#ifdef PIN_SPI_SCK
     static const PinName SPI_SCK = PIN_SPI_SCK;
-#endif
-#ifdef PIN_SPI_SS
-    static const PinName SPI_CS = PIN_SPI_SS;
 #endif
 
     // TODO: use digitalPinToInterrupt()?

@@ -21,6 +21,8 @@
 
 #include "platform/platform.h"
 
+#ifdef DEVICE_I2C
+
 // TBD: extern "C"?
 namespace mbino {
 
@@ -40,5 +42,7 @@ namespace mbino {
     int i2c_write(i2c_t* obj, uint8_t address, const char* data, uint8_t length, bool stop);
 
 }
+
+#endif
 
 #endif

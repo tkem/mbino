@@ -19,11 +19,16 @@
 #ifndef MBINO_H
 #define MBINO_H
 
+#include "platform/platform.h"
+
 // include here so Arduino IDE and PlatformIO set correct include and
 // library paths
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <Wire.h>
+
+#ifdef DEVICE_I2C
+#  include <Wire.h>
+#endif
 
 #include "drivers/AnalogIn.h"
 #include "drivers/DigitalIn.h"

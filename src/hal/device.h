@@ -16,19 +16,21 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_PLATFORM_H
-#define MBINO_PLATFORM_H
+#ifndef MBINO_DEVICE_H
+#define MBINO_DEVICE_H
 
-// FIXME: C++ variants (<cstddef>, etc.) not supported by AVR GCC?
-//#include <stddef.h>
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <string.h>
+#include <pins_arduino.h>
 
-#include "hal/device.h"
+#ifndef NUM_DIGITAL_PINS
+#define NUM_DIGITAL_PINS 6
+#endif
 
-// TODO: move to hal?
-#include "PinNames.h"
-#include "PortNames.h"
+#if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)
+#define DEVICE_I2C 1
+#endif
+
+#if defined(PIN_SPI_MISO) && defined(PIN_SPI_MOSI) && defined(PIN_SPI_SCK)
+#define DEVICE_SPI 1
+#endif
 
 #endif
