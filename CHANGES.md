@@ -1,3 +1,8 @@
+## 0.3.1 (2017-08-18)
+
+- Add device capability macros.
+
+
 ## 0.3.0 (2017-08-17)
 
 - Add initial `I2C` API implementation.
