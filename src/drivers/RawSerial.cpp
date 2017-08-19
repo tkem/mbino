@@ -40,11 +40,11 @@ namespace mbino {
         va_list arg;
         va_start(arg, format);
         int n = rsnprintf(this, OPTIMISTIC_STRING_STACK_LIMIT, format, arg);
-        if (n < OPTIMISTIC_STRING_STACK_LIMIT) {
-            return n;
-        } else {
-            return rsnprintf(this, n + 1, format, arg);
+        if (n >= OPTIMISTIC_STRING_STACK_LIMIT) {
+            n = rsnprintf(this, n + 1, format, arg);
         }
+        va_end(arg);
+        return n;
     }
 
 }
