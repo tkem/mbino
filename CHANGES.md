@@ -1,3 +1,10 @@
+## 0.3.2 (2017-08-20)
+
+- Add missing `va_end()` in `RawSerial::printf()`.
+
+- Remove leftover header file.
+
+
 ## 0.3.1 (2017-08-18)
 
 - Add device capability macros.
