@@ -27,7 +27,7 @@
 #include <SoftwareSerial.h>
 
 #ifdef DEVICE_I2C
-#  include <Wire.h>
+#include <Wire.h>
 #endif
 
 #include "drivers/AnalogIn.h"

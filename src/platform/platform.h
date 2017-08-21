@@ -25,9 +25,7 @@
 //#include <stdio.h>
 //#include <string.h>
 
-#include "hal/device.h"
-
-// TODO: move to hal?
+#include "device.h"
 #include "PinNames.h"
 #include "PortNames.h"
 

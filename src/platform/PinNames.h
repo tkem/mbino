@@ -19,7 +19,7 @@
 #ifndef MBINO_PIN_NAMES_H
 #define MBINO_PIN_NAMES_H
 
-#include "hal/device.h"
+#include "device.h"
 
 namespace mbino {
 
