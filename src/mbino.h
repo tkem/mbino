@@ -41,11 +41,12 @@
 #include "drivers/PortOut.h"
 #include "drivers/PwmOut.h"
 #include "drivers/RawSerial.h"
+#include "drivers/Serial.h"
 #include "drivers/SerialBase.h"
 #include "drivers/Ticker.h"
-#include "drivers/TimerEvent.h"
-#include "drivers/Timer.h"
 #include "drivers/Timeout.h"
+#include "drivers/Timer.h"
+#include "drivers/TimerEvent.h"
 
 #include "platform/mbed_wait_api.h"
 

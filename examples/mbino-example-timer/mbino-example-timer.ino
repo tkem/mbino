@@ -1,6 +1,6 @@
 #include "mbed.h"
 
-RawSerial pc(USBTX, USBRX);
+mbed::Serial pc(USBTX, USBRX);
 
 Timer clock;
 

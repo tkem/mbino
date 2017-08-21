@@ -16,34 +16,31 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_RAW_SERIAL_H
-#define MBINO_RAW_SERIAL_H
+#ifndef MBINO_SERIAL_H
+#define MBINO_SERIAL_H
 
 #include "SerialBase.h"
 
 #include "platform/platform.h"
 #include "platform/NonCopyable.h"
+#include "platform/Stream.h"
 
 namespace mbino {
 
-    class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
+    class Serial : public SerialBase, public Stream, private NonCopyable<Serial> {
     public:
         template<typename TX, typename RX>
-        RawSerial(TX tx, RX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+        Serial(TX tx, RX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
-        int getc() {
+    protected:
+        virtual int _getc() {
             return _base_getc();
         }
 
-        int putc(int c) {
+        virtual int _putc(int c) {
             return _base_putc(c);
         }
 
-        int puts(const char* str) {
-            return _base_puts(str);
-        }
-
-        int printf(const char* format, ...);
     };
 
 }

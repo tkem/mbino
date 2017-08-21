@@ -1,9 +1,9 @@
 #include "mbed.h"
 
-RawSerial pc(USBTX, USBRX);
+mbed::Serial pc(USBTX, USBRX);
 
 void setup() {
-    pc.puts("Hello World!\r\n");
+    pc.printf("Hello World!\r\n");
 }
 
 void loop() {

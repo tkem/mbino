@@ -19,10 +19,9 @@
 #include "RawSerial.h"
 
 #include <alloca.h>
-#include <stdio.h>
 #include <stdarg.h>
 
-#define OPTIMISTIC_STRING_STACK_LIMIT 80
+#define STRING_STACK_LIMIT 80
 
 namespace mbino {
 
@@ -39,8 +38,8 @@ namespace mbino {
     int RawSerial::printf(const char* format, ...) {
         va_list arg;
         va_start(arg, format);
-        int n = rsnprintf(this, OPTIMISTIC_STRING_STACK_LIMIT, format, arg);
-        if (n >= OPTIMISTIC_STRING_STACK_LIMIT) {
+        int n = rsnprintf(this, STRING_STACK_LIMIT, format, arg);
+        if (n >= STRING_STACK_LIMIT) {
             n = rsnprintf(this, n + 1, format, arg);
         }
         va_end(arg);

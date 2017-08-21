@@ -2,7 +2,7 @@
 
 AnalogIn ain(A0);
 DigitalOut dout(LED1);
-RawSerial pc(USBTX, USBRX);
+mbed::Serial pc(USBTX, USBRX);
 
 void setup() {
 }

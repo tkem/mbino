@@ -19,14 +19,21 @@
 #ifndef MBINO_PLATFORM_H
 #define MBINO_PLATFORM_H
 
-// FIXME: C++ variants (<cstddef>, etc.) not supported by AVR GCC?
-//#include <stddef.h>
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <string.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "device.h"
 #include "PinNames.h"
 #include "PortNames.h"
+
+#ifdef getc
+#undef getc
+#endif
+
+#ifdef putc
+#undef putc
+#endif
 
 #endif
