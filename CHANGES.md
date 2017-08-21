@@ -1,3 +1,12 @@
+## 0.4.0 (2017-08-21)
+
+- Add `Serial` API.
+
+- Add `PortIn` and `PortOut` examples.
+
+- Temporarily remove `I2C` support (breaking change).
+
+
 ## 0.3.2 (2017-08-20)
 
 - Add missing `va_end()` in `RawSerial::printf()`.

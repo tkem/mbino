@@ -4,19 +4,19 @@ mbino is a library that provides some basic [mbed
 OS](https://docs.mbed.com/docs/mbed-os-handbook/en/latest/) APIs for
 the Arduino platform.
 
-Currently, the following APIs are supported:
+Currently, the following APIs are - at least partially - supported:
 
 - [AnalogIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/AnalogIn/)
 - [DigitalIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/DigitalIn/)
 - [DigitalOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/DigitalOut/)
 - [DigitalInOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/DigitalInOut/)
+- [InterruptIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/InterruptIn/)
 - [PortIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortIn/)
 - [PortOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortOut/)
 - [PortInOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortInOut/)
-- [I2C](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/I2C/)
-- [InterruptIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/InterruptIn/)
 - [PwmOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PwmOut/)
 - [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
+- [Serial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/Serial/)
 - [Ticker](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Ticker/)
 - [Timeout](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/TimeOut/)
 - [Timer](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/)
@@ -37,7 +37,7 @@ So, why would you want to use this?
 - You want to write cross-platform libraries that target both mbed and
   Arduino, using a single code base.
 
-- You happen to like mbed's C++ APIs and just don't want to go back.
+- You just happen to like mbed's C++ APIs, and don't want to go back.
 
 Please note that this project is still at an early stage, and probably
 not ready for production use yet.  Feel free to report any problems
@@ -50,23 +50,22 @@ tracker](https://github.com/tkem/mbino/issues/).
 - Only AVR 8-bit microcontroller boards are supported.  This means no
   support for Arduino Due or Zero, for example.
 
+- To avoid ambiguities with Arduino's global `Serial` object, you have
+  to use the fully qualified class name `mbed::Serial` when using the
+  `Serial` API.  This should also work with cross-platform code.
+
+- Since the default AVR Libc `printf()` family of functions do not
+  support floating point conversions, floating point values cannot be
+  used with `Serial::printf()` or `RawSerial::printf()`.
+
 - For portability (and so `millis()` and PWM outputs still work), the
   `Ticker` API uses the Timer0 comparison register for generating
   ticker interrupts.  Therefore, `Ticker` only provides a resolution
   of ca. one millisecond.
 
-- The mbed `Serial` API is not provided, due to its use of streams and
-  to prevent name clashes with Arduino's own `Serial`
-  object. `RawSerial` is supported, though not quite complete.
-
-- The `I2C` API is based on Arduino's
-  [Wire](https://www.arduino.cc/en/Reference/Wire) library.
-  Therefore, some of the lower-level methods are not supported, and
-  you are limited to reading and writing 32 bytes at a time.
-
-- Since the default AVR Libc `printf()` family of functions do not
-  support floating point conversions, floating point values cannot be
-  used with `RawSerial::printf()`.
+- The `PwmOut` API does not yet provide the `period` and `pulsewidth`
+  family of methods (yet).  For now, it's basically just a wrapper for
+  Arduino's `analogWrite()` function.
 
 - Although mbino has been designed so that you usually don't pay for
   what you don't use, there may be some overhead involved when
