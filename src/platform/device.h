@@ -25,8 +25,11 @@
 #define NUM_DIGITAL_PINS 6
 #endif
 
+// I2C implementation is not ready for use yet
+#if 0
 #if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)
 #define DEVICE_I2C 1
+#endif
 #endif
 
 #if defined(PIN_SPI_MISO) && defined(PIN_SPI_MOSI) && defined(PIN_SPI_SCK)
