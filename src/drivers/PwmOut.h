@@ -21,6 +21,8 @@
 
 #include "platform/platform.h"
 
+#if defined(DEVICE_PWMOUT) || defined(DOXYGEN_ONLY)
+
 #include "hal/pwmout_api.h"
 
 namespace mbino {
@@ -33,7 +35,7 @@ namespace mbino {
         }
 
         ~PwmOut() {
-            pwmout_free(&_pwm);
+            pwmout_free(&_pwm); // mbed doesn't do this...
         }
 
         void write(float value) {
@@ -84,5 +86,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif

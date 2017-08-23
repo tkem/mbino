@@ -21,33 +21,41 @@
 
 #include "platform/platform.h"
 
+#if DEVICE_PWMOUT
+
 // TBD: extern "C"?
 namespace mbino {
 
+    struct pwmtimer_t;
+
     struct pwmout_t {
-        uint8_t pin;
+        const pwmtimer_t* timer;
+        volatile uint16_t* ocr;
+        uint8_t com;
+        uint16_t period;
+        uint8_t prescale;
+        uint8_t mode;
+        PinName pin;
         uint8_t value;
     };
 
-    void pwmout_init(pwmout_t* obj, PinName pin);
+    bool pwmout_init(pwmout_t* obj, PinName pin);
 
     void pwmout_free(pwmout_t *obj);
 
-    void pwmout_write_u8(pwmout_t* obj, uint8_t value);
+    void pwmout_write_u16(pwmout_t *obj, uint16_t value);
 
     inline void pwmout_write(pwmout_t *obj, float value) {
         if (value <= 0.0f) {
-            pwmout_write_u8(obj, 0);
+            pwmout_write_u16(obj, 0);
         } else if (value >= 1.0f) {
-            pwmout_write_u8(obj, 255);
+            pwmout_write_u16(obj, 0xffff);
         } else {
-            pwmout_write_u8(obj, value * 255.0f);
+            pwmout_write_u16(obj, value * 65535.0f);
         }
     }
 
-    inline float pwmout_read(pwmout_t* obj) {
-        return obj->value / 255.0f;
-    }
+    float pwmout_read(pwmout_t* obj);
 
     void pwmout_period_us(pwmout_t* obj, long us);
 
@@ -56,7 +64,7 @@ namespace mbino {
     }
 
     inline void pwmout_period(pwmout_t* obj, float seconds) {
-        pwmout_period_us(obj, seconds / 1000000.0f);
+        pwmout_period_us(obj, seconds * 1000000.0f);
     }
 
     void pwmout_pulsewidth_us(pwmout_t* obj, long us);
@@ -66,9 +74,11 @@ namespace mbino {
     }
 
     inline void pwmout_pulsewidth(pwmout_t* obj, float seconds) {
-        pwmout_pulsewidth_us(obj, seconds / 1000000.0f);
+        pwmout_pulsewidth_us(obj, seconds * 1000000.0f);
     }
 
 }
+
+#endif
 
 #endif

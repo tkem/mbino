@@ -18,6 +18,8 @@
  */
 #include "PwmOut.h"
 
+#if DEVICE_PWMOUT
+
 #include "platform/mbed_critical.h"
 
 namespace mbino {
@@ -31,3 +33,5 @@ namespace mbino {
     }
 
 }
+
+#endif

@@ -63,9 +63,10 @@ tracker](https://github.com/tkem/mbino/issues/).
   ticker interrupts.  Therefore, `Ticker` only provides a resolution
   of ca. one millisecond.
 
-- The `PwmOut` API does not yet provide the `period` and `pulsewidth`
-  family of methods (yet).  For now, it's basically just a wrapper for
-  Arduino's `analogWrite()` function.
+- The `PwmOut::period()` family of methods is only supported for PWM
+  pins controlled by 16-bit timers, and is ignored for all other pins.
+  Note that setting a period for one pin will affect other pins
+  controlled by the same timer.
 
 - Although mbino has been designed so that you usually don't pay for
   what you don't use, there may be some overhead involved when

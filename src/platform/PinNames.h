@@ -127,6 +127,10 @@ namespace mbino {
     static const PinName LED4 = LED3;
 #endif
 
+#ifdef DEVICE_PWMOUT
+    static const PinName PWM_OUT = PIN_PWMOUT;
+#endif
+
 #ifdef DEVICE_I2C
     static const PinName I2C_SCL = PIN_WIRE_SCL;
     static const PinName I2C_SDA = PIN_WIRE_SDA;
@@ -140,16 +144,6 @@ namespace mbino {
 
     // TODO: use digitalPinToInterrupt()?
     static const PinName BUTTON1 = 2;
-
-#ifdef digitalPinHasPWM
-#if digitalPinHasPWM(2)
-    static const PinName PWM_OUT = 2;
-#elif digitalPinHasPWM(3)
-    static const PinName PWM_OUT = 3;
-#else
-#warning No default PWM output pin known for this platform
-#endif
-#endif
 
     // serial port helpers
 
