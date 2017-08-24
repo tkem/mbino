@@ -17,6 +17,7 @@ Currently, the following APIs are - at least partially - supported:
 - [PwmOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PwmOut/)
 - [RawSerial](https://docs.mbed.com/docs/mbed-os-api/en/mbed-os-5.5/api/classmbed_1_1RawSerial.html)
 - [Serial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/Serial/)
+- [SPI](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/SPI/)
 - [Ticker](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Ticker/)
 - [Timeout](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/TimeOut/)
 - [Timer](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/)
@@ -50,26 +51,32 @@ tracker](https://github.com/tkem/mbino/issues/).
 - Only AVR 8-bit microcontroller boards are supported.  This means no
   support for Arduino Due or Zero, for example.
 
-- To avoid ambiguities with Arduino's global `Serial` object, you have
-  to use the fully qualified class name `mbed::Serial` when using the
-  `Serial` API.  This should also work with cross-platform code.
+- To avoid ambiguities with Arduino's own global `Serial` and `SPI`
+  objects, you should use the fully qualified class names
+  `mbed::Serial` and `mbed::SPI` when using these APIs.
 
-- Since the default AVR Libc `printf()` family of functions do not
+- Since the default AVR Libc `printf()` family of functions does not
   support floating point conversions, floating point values cannot be
   used with `Serial::printf()` or `RawSerial::printf()`.
 
 - For portability (and so `millis()` and PWM outputs still work), the
   `Ticker` API uses the Timer0 comparison register for generating
   ticker interrupts.  Therefore, `Ticker` only provides a resolution
-  of ca. one millisecond.
+  of about one millisecond.
 
 - The `PwmOut::period()` family of methods is only supported for PWM
   pins controlled by 16-bit timers, and is ignored for all other pins.
-  Note that setting a period for one pin will affect other pins
+  Note that setting a period for one pin will also affect other pins
   controlled by the same timer.
 
+- The `SPI` API is based on the [Arduino SPI
+  library](https://www.arduino.cc/en/Reference/SPI).  Only 8-bit words
+  are supported, and pin names passed to the constructor will be
+  ignored (but should be set to `SPI_MOSI`, `SPI_MISO` and `SPI_SCK`
+  for portability).
+
 - Although mbino has been designed so that you usually don't pay for
-  what you don't use, there may be some overhead involved when
+  what you don't use, there still may be some overhead involved when
   compared to "native" Arduino code.
 
 - Keep in mind that you are still developing for an 8-bit platform, so

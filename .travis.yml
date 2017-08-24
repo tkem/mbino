@@ -11,7 +11,7 @@ env:
 - BOARD=uno
 - BOARD=leonardo
 - BOARD=megaatmega2560
-- BOARD=gemma OPTION="lib_ignore=Wire" EXAMPLES="examples/mbino-example-blinky/*.ino"
+- BOARD=gemma OPTION="lib_ignore=Wire, SPI" EXAMPLES="examples/mbino-example-blinky/*.ino"
 
 script:
 - for e in ${EXAMPLES:=examples/*/*.ino}; do

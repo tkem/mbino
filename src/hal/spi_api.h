@@ -16,41 +16,47 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_H
-#define MBINO_H
+#ifndef MBINO_SPI_API_H
+#define MBINO_SPI_API_H
 
 #include "platform/platform.h"
 
-// include here so Arduino IDE sets correct include and library paths
-#include <Arduino.h>
-#include <SoftwareSerial.h>
-
-#ifdef DEVICE_I2C
-#include <Wire.h>
-#endif
-
 #ifdef DEVICE_SPI
+
+// TODO: do we really have to include SPI.h here?
 #include <SPI.h>
+
+// TBD: extern "C"?
+namespace mbino {
+
+    static const char SPI_FILL_CHAR = 0xFF;
+
+    struct spi_t {
+        uint32_t clock;
+        uint8_t bits;
+        uint8_t mode;
+        SPISettings settings;  // TODO: anonymous struct?
+        bool initialized;
+    };
+
+    void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk);
+
+    void spi_free(spi_t* obj);
+
+    void spi_format(spi_t* obj, uint8_t bits, uint8_t mode);
+
+    void spi_frequency(spi_t* obj, long hz);
+
+    int spi_master_write(spi_t* obj, int value);
+
+    void spi_master_block_write(
+        spi_t* obj,
+        const char* tx_buffer, int tx_length,
+        char* rx_buffer, int rx_length,
+        char write_fill);
+
+}
+
 #endif
-
-#include "drivers/AnalogIn.h"
-#include "drivers/DigitalIn.h"
-#include "drivers/DigitalInOut.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/I2C.h"
-#include "drivers/InterruptIn.h"
-#include "drivers/PortIn.h"
-#include "drivers/PortInOut.h"
-#include "drivers/PortOut.h"
-#include "drivers/PwmOut.h"
-#include "drivers/RawSerial.h"
-#include "drivers/SPI.h"
-#include "drivers/Serial.h"
-#include "drivers/Ticker.h"
-#include "drivers/Timeout.h"
-#include "drivers/Timer.h"
-#include "drivers/TimerEvent.h"
-
-#include "platform/mbed_wait_api.h"
 
 #endif
