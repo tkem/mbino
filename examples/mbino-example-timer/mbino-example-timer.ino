@@ -2,7 +2,7 @@
 
 mbed::Serial pc(USBTX, USBRX);
 
-Timer clock;
+Timer timer;
 
 void setup() {
     Timer t;
@@ -10,11 +10,11 @@ void setup() {
     pc.printf("Hello World!\r\n");
     t.stop();
     pc.printf("Time taken was %ld microseconds\r\n", long(t.read_us()));
-    clock.start();
+    timer.start();
 }
 
 void loop() {
-    long t = clock.read();
+    long t = timer.read();
     long h = t / 3600;
     unsigned m = t / 60 % 60;
     unsigned s = t % 60;

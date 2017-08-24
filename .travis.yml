@@ -11,9 +11,18 @@ env:
 - BOARD=uno
 - BOARD=leonardo
 - BOARD=megaatmega2560
-- BOARD=gemma OPTION="lib_ignore=Wire, SPI" EXAMPLES="examples/mbino-example-blinky/*.ino"
+- BOARD=gemma OPTION="lib_ignore=Wire, SPI" EXAMPLES="examples/mbino-example-blinky"
+- BOARD=nucleo_f446re
 
 script:
-- for e in ${EXAMPLES:=examples/*/*.ino}; do
-      platformio ci --board=$BOARD --lib=. ${OPTION:+--project-option="$OPTION"} $e;
+- for e in ${EXAMPLES:=examples/*}; do
+    case "$BOARD" in
+        nucleo*)
+            mv "$e/"*.ino "$e"/$(basename "$e"/*.ino .ino).cpp;
+            platformio ci --board=$BOARD "$e";
+            ;;
+        *)
+            platformio ci --board=$BOARD --lib=. ${OPTION:+--project-option="$OPTION"} "$e";
+            ;;
+    esac
   done
