@@ -31,17 +31,17 @@
 #define DEVICE_PWMOUT 1
 
 #if digitalPinHasPWM(9)
-#define PIN_PWMOUT 9
+#define PIN_PWM_OUT 9
 #elif digitalPinHasPWM(0)
-#define PIN_PWMOUT 0
+#define PIN_PWM_OUT 0
 #else
-#error No default PWM output pin known for this platform
+#warning No default PWM output pin found for this platform
 #endif
 
 #elif defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
 
 #define DEVICE_PWMOUT 1
-#define PIN_PWMOUT 0
+#define PIN_PWM_OUT 0
 
 #endif
 
@@ -49,6 +49,8 @@
 #if 0
 #if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)
 #define DEVICE_I2C 1
+#define PIN_I2C_SCL PIN_WIRE_SCL
+#define PIN_I2C_SDA PIN_WIRE_SDA
 #endif
 #endif
 

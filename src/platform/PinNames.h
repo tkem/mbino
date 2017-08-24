@@ -23,6 +23,20 @@
 
 namespace mbino {
 
+    // serial port helpers
+    // TODO: move to "impl" namespace?
+    struct usb_port {
+        struct rx_type {};
+        struct tx_type {};
+    };
+
+    template<int N>
+    struct uart_port {
+        // TODO: explicit conversion to PinName?
+        struct rx_type {};
+        struct tx_type {};
+    };
+
     enum PinDirection {
         PIN_INPUT,
         PIN_OUTPUT
@@ -34,7 +48,7 @@ namespace mbino {
         PullDefault = PullNone
     };
 
-    // TODO: enum type?
+    // TODO: enum type?  how to use A0..An then?
     typedef uint8_t PinName;
 
     static const PinName NC = -1;
@@ -128,12 +142,14 @@ namespace mbino {
 #endif
 
 #ifdef DEVICE_PWMOUT
-    static const PinName PWM_OUT = PIN_PWMOUT;
+#ifdef PIN_PWM_OUT
+    static const PinName PWM_OUT = PIN_PWM_OUT;
+#endif
 #endif
 
 #ifdef DEVICE_I2C
-    static const PinName I2C_SCL = PIN_WIRE_SCL;
-    static const PinName I2C_SDA = PIN_WIRE_SDA;
+    static const PinName I2C_SCL = PIN_I2C_SCL;
+    static const PinName I2C_SDA = PIN_I2C_SDA;
 #endif
 
 #ifdef DEVICE_SPI
@@ -144,21 +160,6 @@ namespace mbino {
 
     // TODO: use digitalPinToInterrupt()?
     static const PinName BUTTON1 = 2;
-
-    // serial port helpers
-
-    struct usb_port {
-        // TODO: explicit conversion to PinName?
-        struct rx_type {};
-        struct tx_type {};
-    };
-
-    template<int N>
-    struct uart_port {
-        // TODO: explicit conversion to PinName?
-        struct rx_type {};
-        struct tx_type {};
-    };
 
 #ifdef SERIAL_PORT_MONITOR
     static const usb_port::rx_type USBRX;
