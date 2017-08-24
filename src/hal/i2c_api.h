@@ -41,6 +41,53 @@ namespace mbino {
 
     int i2c_write(i2c_t* obj, uint8_t address, const char* data, uint8_t length, bool stop);
 
+#ifdef WIRE_HAS_END
+    // assume Wire.h was already included and the global Wire object is available
+
+    inline void i2c_init(i2c_t* obj)
+    {
+        // FIXME: on first call? Prevent multiple initialization?
+        Wire.begin();
+    }
+
+    inline void i2c_frequency(i2c_t* obj, long hz)
+    {
+        Wire.setClock(hz);
+    }
+
+    inline int i2c_read(i2c_t* obj, uint8_t address, char* data, uint8_t length, bool stop)
+    {
+        // FIXME: nread > length?
+        uint8_t nread = Wire.requestFrom(uint8_t(address >> 1), length, uint8_t(stop));
+        int n = 0;
+        // FIXME: available() < nread?
+        while (n != nread && Wire.available()) {
+            data[n++] = Wire.read();
+        }
+        return n;
+    }
+
+    inline int i2c_write(i2c_t* obj, uint8_t address, const char* data, uint8_t length, bool stop)
+    {
+        Wire.beginTransmission(address >> 1);
+        int n = Wire.write(data, length);
+        // FIXME: error mapping?
+        switch (Wire.endTransmission(stop)) {
+        case 0:
+            return n;
+        case 1:
+            return n;  // ???
+        case 2:
+            return I2C_ERROR_NO_SLAVE;
+        case 3:
+            return I2C_ERROR_NO_SLAVE;  // ???
+        default:
+            return I2C_ERROR_BUS_BUSY;  // ???
+        }
+    }
+
+#endif
+
 }
 
 #endif

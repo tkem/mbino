@@ -26,7 +26,10 @@
 #include <SoftwareSerial.h>
 
 #ifdef DEVICE_I2C
+// do *not* include Wire.h when using the Arduino IDE
+#ifndef ARDUINO
 #include <Wire.h>
+#endif
 #endif
 
 #ifdef DEVICE_SPI

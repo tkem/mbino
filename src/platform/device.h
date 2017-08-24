@@ -45,13 +45,10 @@
 
 #endif
 
-// I2C implementation is not ready for use yet
-#if 0
 #if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)
 #define DEVICE_I2C 1
 #define PIN_I2C_SCL PIN_WIRE_SCL
 #define PIN_I2C_SDA PIN_WIRE_SDA
-#endif
 #endif
 
 #if defined(PIN_SPI_MISO) && defined(PIN_SPI_MOSI) && defined(PIN_SPI_SCK)
