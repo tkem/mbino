@@ -26,10 +26,10 @@ Currently, the following APIs are - at least partially - supported:
 
 mbino is *not* a full port of the mbed operating system to 8-bit
 microcontrollers.  It just implements some of the basic C++ APIs that
-are used when developing applications for mbed OS.  This means you
-will still write "sketches" for your Arduino board, and you can even
-use both mbed APIs and the "Arduino language", as well as native
-Arduino libraries, in your programs.
+are commonly used when developing applications for mbed OS.  This
+means you will still write "sketches" for your Arduino board, and you
+can even use both mbed APIs and the "Arduino language", as well as
+native Arduino libraries, in your programs.
 
 So, why would you want to use this?
 
@@ -41,9 +41,9 @@ So, why would you want to use this?
 
 - You just happen to like mbed's C++ APIs, and don't want to go back.
 
-Please note that this project is still at an early stage, and probably
-not ready for production use yet.  Feel free to report any problems
-using the project's [issue
+Please note that this project is considered "feature-complete", but
+probably still not ready for production use yet.  Feel free to report
+any problems using the [issue
 tracker](https://github.com/tkem/mbino/issues/).
 
 
@@ -72,9 +72,9 @@ tracker](https://github.com/tkem/mbino/issues/).
 
 - The `SPI` API is based on the Arduino [SPI
   library](https://www.arduino.cc/en/Reference/SPI).  Only 8-bit words
-  are supported, and pin names passed to the constructor will be
-  ignored (but should be set to `SPI_MOSI`, `SPI_MISO` and `SPI_SCK`
-  for portability).
+  are supported, and pin names passed to the `SPI` constructor will be
+  ignored (but should still be set to `SPI_MOSI`, `SPI_MISO` and
+  `SPI_SCK` for portability).
 
 - The `I2C` API is based on the Arduino [Wire
   library](https://www.arduino.cc/en/Reference/Wire).  Since this
@@ -85,8 +85,8 @@ tracker](https://github.com/tkem/mbino/issues/).
   library does not support some of the lower-level `I2C` API methods,
   and that you are limited to reading and writing 32 bytes at a time.
   As with the `SPI` API, pin names passed to the `I2C` constructor
-  will be ignored for now, but should be set to `I2C_SDA` and
-  `I2C_SCL` for portability.
+  will be ignored for now (but should be set to `I2C_SDA` and
+  `I2C_SCL` nonetheless).
 
 - Although mbino has been designed so that you usually don't pay for
   what you don't use, there still may be some overhead involved when

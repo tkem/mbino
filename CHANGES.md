@@ -1,3 +1,10 @@
+## 0.6.0 (2017-08-24)
+
+- Add optional `I2C` API.
+
+- Add `SPI` API.
+
+
 ## 0.5.0 (2017-08-23)
 
 - Add `PwmOut` period and pulsewidth control.
