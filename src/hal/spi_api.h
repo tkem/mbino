@@ -36,7 +36,6 @@ namespace mbino {
         uint8_t bits;
         uint8_t mode;
         SPISettings settings;  // TODO: anonymous struct?
-        bool initialized;
     };
 
     void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk);

@@ -95,7 +95,7 @@ namespace mbino {
             }
         } else {
             if (rx_length > 0) {
-                SPI.transfer(rx_buffer, n);
+                SPI.transfer(rx_buffer, rx_length);
             }
             while (tx_length > n) {
                 SPI.transfer(tx_buffer[n++]);
