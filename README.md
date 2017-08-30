@@ -71,10 +71,10 @@ tracker](https://github.com/tkem/mbino/issues/).
   controlled by the same timer.
 
 - The `SPI` API is based on the Arduino [SPI
-  library](https://www.arduino.cc/en/Reference/SPI).  Only 8-bit words
-  are supported, and pin names passed to the `SPI` constructor will be
-  ignored (but should still be set to `SPI_MOSI`, `SPI_MISO` and
-  `SPI_SCK` for portability).
+  library](https://www.arduino.cc/en/Reference/SPI).  Only 8-bit and
+  16-bit words are supported, and pin names passed to the `SPI`
+  constructor will be ignored (but should still be set to `SPI_MOSI`,
+  `SPI_MISO` and `SPI_SCK` for portability).
 
 - The `I2C` API is based on the Arduino [Wire
   library](https://www.arduino.cc/en/Reference/Wire).  Since this

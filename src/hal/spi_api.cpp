@@ -66,8 +66,11 @@ namespace mbino {
     {
         int data;
         SPI.beginTransaction(obj->settings);
-        // TODO: 16bit support via SPI.transfer16()?
-        data = SPI.transfer(value);
+        if (obj->bits > 8) {
+            data = SPI.transfer16(value);
+        } else {
+            data = SPI.transfer(value);
+        }
         SPI.endTransaction();
         return data;
     }
@@ -83,11 +86,20 @@ namespace mbino {
         memset(rx_buffer + n, write_fill, rx_length - n);
 
         SPI.beginTransaction(obj->settings);
-        if (rx_length > 0) {
-            SPI.transfer(rx_buffer, n);
-        }
-        while (tx_length > n) {
-            SPI.transfer(tx_buffer[n++]);
+        if (obj->bits > 8) {
+            for (int i = 0; i < rx_length; ++i) {
+                rx_buffer[i] = SPI.transfer16(rx_buffer[i]);
+            }
+            while (tx_length > n) {
+                SPI.transfer16(tx_buffer[n++]);
+            }
+        } else {
+            if (rx_length > 0) {
+                SPI.transfer(rx_buffer, n);
+            }
+            while (tx_length > n) {
+                SPI.transfer(tx_buffer[n++]);
+            }
         }
         SPI.endTransaction();
     }
