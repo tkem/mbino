@@ -22,9 +22,16 @@
 
 namespace mbino {
 
-    int analogin_read_u10(analogin_t* obj)
+    void analogin_init(analogin_t* obj, PinName pin)
     {
-        return analogRead(obj->pin);
+        obj->pin = pin;
+    }
+
+    uint16_t analogin_read_u16(analogin_t* obj)
+    {
+        uint16_t value = analogRead(obj->pin);
+        // 10-bit to 16-bit conversion
+        return (value << 6) | (value >> 4);
     }
 
 }
