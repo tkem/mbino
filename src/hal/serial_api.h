@@ -21,6 +21,8 @@
 
 #include "platform/platform.h"
 
+#ifdef DEVICE_SERIAL
+
 class Stream; // forward declaration of Arduino Stream type
 
 // TBD: extern "C"?
@@ -34,10 +36,7 @@ namespace mbino {
 
     typedef Stream serial_stream_t;
 
-    struct serial_stream_interface_t {
-        void (*begin)(serial_stream_t* obj, long baud, uint8_t config);
-        void (*end)(serial_stream_t* obj);
-    };
+    struct serial_stream_interface_t;
 
     struct serial_t {
         const serial_stream_interface_t* interface;
@@ -49,9 +48,7 @@ namespace mbino {
 
     void serial_init(serial_t* obj, PinName tx, PinName rx);
 
-    int serial_usb_init(serial_t* obj);
-
-    int serial_uart_init(serial_t* obj, uint8_t uart);
+    void serial_monitor_init(serial_t* obj);
 
     void serial_free(serial_t* obj);
 
@@ -70,5 +67,7 @@ namespace mbino {
     bool serial_writable(serial_t* obj);
 
 }
+
+#endif
 
 #endif

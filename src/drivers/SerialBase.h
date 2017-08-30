@@ -21,12 +21,16 @@
 
 #include "platform/platform.h"
 
+#if defined(DEVICE_SERIAL) || defined(DOXYGEN_ONLY)
+
 #include "hal/serial_api.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {
 
     class SerialBase : private NonCopyable<SerialBase> {
+        serial_t _serial;
+
     public:
 
         enum Parity {
@@ -58,30 +62,8 @@ namespace mbino {
             serial_baud(&_serial, baud);
         }
 
-        SerialBase(usb_port::tx_type tx, usb_port::rx_type rx, long baud) {
-            serial_usb_init(&_serial);
-            serial_baud(&_serial, baud);
-        }
-
-        // avr-gcc needs some help deducing the non-type template parameter here...
-
-        SerialBase(uart_port<0>::tx_type tx, uart_port<0>::rx_type rx, long baud) {
-            serial_uart_init(&_serial, 0);
-            serial_baud(&_serial, baud);
-        }
-
-        SerialBase(uart_port<1>::tx_type tx, uart_port<1>::rx_type rx, long baud) {
-            serial_uart_init(&_serial, 1);
-            serial_baud(&_serial, baud);
-        }
-
-        SerialBase(uart_port<2>::tx_type tx, uart_port<2>::rx_type rx, long baud) {
-            serial_uart_init(&_serial, 2);
-            serial_baud(&_serial, baud);
-        }
-
-        SerialBase(uart_port<3>::tx_type tx, uart_port<3>::rx_type rx, long baud) {
-            serial_uart_init(&_serial, 3);
+        SerialBase(PinNameMonitorTX, PinNameMonitorRX, long baud) {
+            serial_monitor_init(&_serial);
             serial_baud(&_serial, baud);
         }
 
@@ -103,10 +85,10 @@ namespace mbino {
             serial_puts(&_serial, s);
             return 0;
         }
-
-        serial_t _serial;
     };
 
 }
+
+#endif
 
 #endif

@@ -20,7 +20,6 @@
 
 // include here so Arduino IDE sets correct include and library paths
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 
 #ifdef DEVICE_I2C
 // do *not* include Wire.h when using the Arduino IDE

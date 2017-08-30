@@ -23,21 +23,18 @@
 
 namespace mbino {
 
-    // serial port helpers
-    // TODO: move to "impl" namespace?
-    struct usb_port {
-        struct rx_type {};
-        struct tx_type {};
+    enum PinDirection {
+        PIN_INPUT,
+        PIN_OUTPUT
     };
 
-    template<int N>
-    struct uart_port {
-        // TODO: explicit conversion to PinName?
-        struct rx_type {};
-        struct tx_type {};
+    enum PinMode {
+        PullNone,
+        PullUp,
+        PullDefault = PullNone
     };
 
-    // TODO: enum type?  how to use A0..An then?
+    // *not* an enum type so predefined A0..An can be used as well
     typedef uint8_t PinName;
 
     static const PinName NC = -1;
@@ -119,12 +116,12 @@ namespace mbino {
     static const PinName D68 = 68;
     static const PinName D69 = 69;
 #endif
-#if NUM_DIGITAL_PINS > 70  /* !mega */
+#if NUM_DIGITAL_PINS > 70
 #warning There are more than 70 digital pins. Some pin names may not be defined.
 #endif
 
-#ifdef LED_BUILTIN
-    static const PinName LED1 = LED_BUILTIN;
+#ifdef PIN_LED1
+    static const PinName LED1 = PIN_LED1;
 #endif
 
 #ifdef DEVICE_I2C
@@ -139,32 +136,36 @@ namespace mbino {
 #endif
 
 #ifdef SERIAL_PORT_MONITOR
-    static const usb_port::rx_type USBRX;
-    static const usb_port::tx_type USBTX;
+    // these are *not* regular pins on ATmega32u4 based boards
+    // TODO: implicit conversion to PinName where that makes sense?
+    struct PinNameMonitorTX {};
+    struct PinNameMonitorRX {};
+    static const PinNameMonitorTX USBTX;
+    static const PinNameMonitorRX USBRX;
 #endif
 
 #ifdef SERIAL_PORT_HARDWARE
-    static const uart_port<0>::rx_type UART_RX;
-    static const uart_port<0>::tx_type UART_TX;
-    static const uart_port<0>::rx_type UART0_RX;
-    static const uart_port<0>::tx_type UART0_TX;
-    static const uart_port<0>::rx_type SERIAL_RX;
-    static const uart_port<0>::tx_type SERIAL_TX;
+    static const PinName UART_TX = PIN_SERIAL_PORT_HARDWARE_TX;
+    static const PinName UART_RX = PIN_SERIAL_PORT_HARDWARE_RX;
+    static const PinName UART0_TX = PIN_SERIAL_PORT_HARDWARE_TX;
+    static const PinName UART0_RX = PIN_SERIAL_PORT_HARDWARE_RX;
+    static const PinName SERIAL_TX = PIN_SERIAL_PORT_HARDWARE_TX;
+    static const PinName SERIAL_RX = PIN_SERIAL_PORT_HARDWARE_RX;
 #endif
 
 #ifdef SERIAL_PORT_HARDWARE1
-    static const uart_port<1>::rx_type UART1_RX;
-    static const uart_port<1>::tx_type UART1_TX;
+    static const PinName UART1_TX = PIN_SERIAL_PORT_HARDWARE1_TX;
+    static const PinName UART1_RX = PIN_SERIAL_PORT_HARDWARE1_RX;
 #endif
 
 #ifdef SERIAL_PORT_HARDWARE2
-    static const uart_port<2>::rx_type UART2_RX;
-    static const uart_port<2>::tx_type UART2_TX;
+    static const PinName UART2_TX = PIN_SERIAL_PORT_HARDWARE2_TX;
+    static const PinName UART2_RX = PIN_SERIAL_PORT_HARDWARE2_RX;
 #endif
 
 #ifdef SERIAL_PORT_HARDWARE3
-    static const uart_port<3>::rx_type UART3_RX;
-    static const uart_port<3>::tx_type UART3_TX;
+    static const PinName UART3_TX = PIN_SERIAL_PORT_HARDWARE3_TX;
+    static const PinName UART3_RX = PIN_SERIAL_PORT_HARDWARE3_RX;
 #endif
 }
 

@@ -21,23 +21,36 @@
 
 #include <pins_arduino.h>
 
-namespace mbino {
-
-    enum PinDirection {
-        PIN_INPUT,
-        PIN_OUTPUT
-    };
-
-    enum PinMode {
-        PullNone,
-        PullUp,
-        PullDefault = PullNone
-    };
-}
-
 // not defined for gemma?
 #ifndef NUM_DIGITAL_PINS
 #define NUM_DIGITAL_PINS 6
+#endif
+
+#ifdef LED_BUILTIN
+#define PIN_LED1 LED_BUILTIN
+#endif
+
+#if defined(SERIAL_PORT_MONITOR) || defined(SERIAL_PORT_HARDWARE)
+#define DEVICE_SERIAL 1
+
+// see https://www.arduino.cc/en/Reference/Serial
+#ifdef SERIAL_PORT_HARDWARE
+#define PIN_SERIAL_PORT_HARDWARE_TX 1
+#define PIN_SERIAL_PORT_HARDWARE_RX 0
+#endif
+#ifdef SERIAL_PORT_HARDWARE1
+#define PIN_SERIAL_PORT_HARDWARE1_TX 18
+#define PIN_SERIAL_PORT_HARDWARE1_RX 19
+#endif
+#ifdef SERIAL_PORT_HARDWARE2
+#define PIN_SERIAL_PORT_HARDWARE2_TX 16
+#define PIN_SERIAL_PORT_HARDWARE2_RX 17
+#endif
+#ifdef SERIAL_PORT_HARDWARE3
+#define PIN_SERIAL_PORT_HARDWARE3_TX 14
+#define PIN_SERIAL_PORT_HARDWARE3_RX 15
+#endif
+
 #endif
 
 #if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)

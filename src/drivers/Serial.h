@@ -19,9 +19,12 @@
 #ifndef MBINO_SERIAL_H
 #define MBINO_SERIAL_H
 
+#include "platform/platform.h"
+
+#if defined(DEVICE_SERIAL) || defined(DOXYGEN_ONLY)
+
 #include "SerialBase.h"
 
-#include "platform/platform.h"
 #include "platform/NonCopyable.h"
 #include "platform/Stream.h"
 
@@ -29,8 +32,9 @@ namespace mbino {
 
     class Serial : public SerialBase, public Stream, private NonCopyable<Serial> {
     public:
-        template<typename TX, typename RX>
-        Serial(TX tx, RX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+        Serial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+
+        Serial(PinNameMonitorTX tx, PinNameMonitorRX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
     protected:
         virtual int _getc() {
@@ -44,5 +48,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif

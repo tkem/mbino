@@ -18,6 +18,8 @@
  */
 #include "RawSerial.h"
 
+#ifdef DEVICE_SERIAL
+
 #include <alloca.h>
 #include <stdarg.h>
 
@@ -47,3 +49,5 @@ namespace mbino {
     }
 
 }
+
+#endif

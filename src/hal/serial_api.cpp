@@ -15,13 +15,19 @@
  */
 #include "serial_api.h"
 
+#ifdef DEVICE_SERIAL
+
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 
 namespace mbino {
 
+    struct serial_stream_interface_t {
+        void (*begin)(serial_stream_t* obj, long baud, uint8_t config);
+        void (*end)(serial_stream_t* obj);
+    };
+
     template<class T>
-    void serial_stream_begin(serial_stream_t* obj, long baud, uint8_t config)
+    static void serial_stream_begin(serial_stream_t* obj, long baud, uint8_t config)
     {
         T* stream = static_cast<T*>(obj);
         stream->begin(baud, config);
@@ -31,26 +37,9 @@ namespace mbino {
     }
 
     template<class T>
-    void serial_stream_end(serial_stream_t* obj)
+    static void serial_stream_end(serial_stream_t* obj)
     {
         static_cast<T*>(obj)->end();
-    }
-
-    template<>
-    void serial_stream_begin<SoftwareSerial>(serial_stream_t* obj, long baud, uint8_t)
-    {
-        // config not supported
-        static_cast<SoftwareSerial*>(obj)->begin(baud);
-    }
-
-    template<>
-    void serial_stream_end<SoftwareSerial>(serial_stream_t* obj)
-    {
-        // Arduino's Stream has virtual methods, but no virtual destructor...
-        SoftwareSerial* serial = static_cast<SoftwareSerial*>(obj);
-#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
-        delete serial;
-#pragma GCC diagnostic pop
     }
 
     template<class T>
@@ -91,66 +80,33 @@ namespace mbino {
             // make the compiler happy
         }
 #ifdef SERIAL_PORT_HARDWARE
-        else if (tx == 1 && rx == 0) {
+        else if (tx == PIN_SERIAL_PORT_HARDWARE_TX && rx == PIN_SERIAL_PORT_HARDWARE_RX) {
             serial_init(obj, &SERIAL_PORT_HARDWARE);
         }
 #endif
 #ifdef SERIAL_PORT_HARDWARE1
-        else if (tx == 18 && rx == 19) {
+        else if (tx == PIN_SERIAL_PORT_HARDWARE1_TX && rx == PIN_SERIAL_PORT_HARDWARE1_RX) {
             serial_init(obj, &SERIAL_PORT_HARDWARE1);
         }
 #endif
 #ifdef SERIAL_PORT_HARDWARE2
-        else if (tx == 16 && rx == 17) {
+        else if (tx == PIN_SERIAL_PORT_HARDWARE2_TX && rx == PIN_SERIAL_PORT_HARDWARE2_RX) {
             serial_init(obj, &SERIAL_PORT_HARDWARE2);
         }
 #endif
 #ifdef SERIAL_PORT_HARDWARE3
-        else if (tx == 14 && rx == 15) {
+        else if (tx == PIN_SERIAL_PORT_HARDWARE3_TX && rx == PIN_SERIAL_PORT_HARDWARE3_RX) {
             serial_init(obj, &SERIAL_PORT_HARDWARE3);
         }
 #endif
-        else {
-            serial_init(obj, new SoftwareSerial(rx, tx));
-        }
+        // TODO: error?
     }
 
-    int serial_usb_init(serial_t* obj)
+    void serial_monitor_init(serial_t* obj)
     {
 #ifdef SERIAL_PORT_MONITOR
         serial_init(obj, &SERIAL_PORT_MONITOR);
-        return 0;
-#else
-        return -1;
 #endif
-    }
-
-    int serial_uart_init(serial_t* obj, uint8_t uart)
-    {
-        switch (uart) {
-#ifdef SERIAL_PORT_HARDWARE
-        case 0:
-            serial_init(obj, &SERIAL_PORT_HARDWARE);
-            return 0;
-#endif
-#ifdef SERIAL_PORT_HARDWARE1
-        case 1:
-            serial_init(obj, &SERIAL_PORT_HARDWARE1);
-            return 0;
-#endif
-#ifdef SERIAL_PORT_HARDWARE2
-        case 2:
-            serial_init(obj, &SERIAL_PORT_HARDWARE2);
-            return 0;
-#endif
-#ifdef SERIAL_PORT_HARDWARE3
-        case 3:
-            serial_init(obj, &SERIAL_PORT_HARDWARE3);
-            return 0;
-#endif
-        default:
-            return -1;
-        }
     }
 
     void serial_free(serial_t* obj)
@@ -184,8 +140,8 @@ namespace mbino {
 
     int serial_getc(serial_t* obj)
     {
-        serial_begin(obj);
         // mbed getc() is blocking, while Arduino Stream::read() is not
+        serial_begin(obj);
         int c;
         do {
             c = obj->stream->read();
@@ -216,3 +172,5 @@ namespace mbino {
     }
 
 }
+
+#endif

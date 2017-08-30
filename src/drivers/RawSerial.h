@@ -19,17 +19,21 @@
 #ifndef MBINO_RAW_SERIAL_H
 #define MBINO_RAW_SERIAL_H
 
+#include "platform/platform.h"
+
+#if defined(DEVICE_SERIAL) || defined(DOXYGEN_ONLY)
+
 #include "SerialBase.h"
 
-#include "platform/platform.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {
 
     class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
     public:
-        template<typename TX, typename RX>
-        RawSerial(TX tx, RX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+        RawSerial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+
+        RawSerial(PinNameMonitorTX tx, PinNameMonitorRX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
         int getc() {
             return _base_getc();
@@ -47,5 +51,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif
