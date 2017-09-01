@@ -1,3 +1,12 @@
+## 0.6.1 (2017-09-01)
+
+- Fix `SPI::write()`.
+
+- Add 16-bit SPI support (experimental).
+
+- Add SPI EEPROM 25LC040 example.
+
+
 ## 0.6.0 (2017-08-24)
 
 - Add optional `I2C` API.
