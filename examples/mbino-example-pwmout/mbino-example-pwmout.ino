@@ -1,6 +1,6 @@
 #include "mbed.h"
 
-PwmOut pwm(PWM_OUT);
+PwmOut pwm(PWM_OUT);  // pin 0 on ATtiny, pin 10 otherwise
 
 void setup() {
     pwm.period(4.0f);  // 4 second period

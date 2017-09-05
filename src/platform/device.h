@@ -30,8 +30,8 @@
 
 #define DEVICE_PWMOUT 1
 
-#if digitalPinHasPWM(9)
-#define PIN_PWM_OUT 9
+#if digitalPinHasPWM(10)
+#define PIN_PWM_OUT 10
 #elif digitalPinHasPWM(0)
 #define PIN_PWM_OUT 0
 #else

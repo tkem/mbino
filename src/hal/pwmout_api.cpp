@@ -21,298 +21,253 @@
 #if DEVICE_PWMOUT
 
 #include <Arduino.h>
-#include <stdint.h>
+
+#include "timers.h"
 
 namespace mbino {
 
-    struct pwmtimer_t {
-        uint8_t id;  // TBD
-        volatile uint8_t* tccra;
-        volatile uint8_t* tccrb;
-        volatile uint16_t* icr;
-    };
+    // prescale shift values for CSn2:0 (0: timer stopped; 6, 7: external clock)
+    static const uint8_t pwmout16_cs_to_prescale[8] = {0xff, 0, 3, 6, 8, 10, 0, 0};
+    // we just assume these are the same for all 16-bit timers
+    static const uint8_t pwmout16_tccra_wgm_mask = 0x03;
+    static const uint8_t pwmout16_tccrb_wgm_mask = 0x18;
+    // mode 8: Phase and frequency correct PWM with TOP = ICRn
+    static const uint8_t pwmout16_tccrb_wgm_flag = 0x10;
+    static const uint8_t pwmout16_tccrb_cs_mask = 0x07;
 
-    // TODO: PROGMEM?
-#if defined(TCCR0A) && defined(TCCR0B)
-    static const pwmtimer_t timer_TCCR0A = { 0, &TCCR0A, &TCCR0B, 0 };
-#endif
-
-#if defined(TCCR1A) && defined(TCCR1B)
-    static const pwmtimer_t timer_TCCR1A = { 1, &TCCR1A, &TCCR1B, &ICR1 };
-#endif
-
-#if defined(TCCR1A) && !defined(TCCR1B)
-    static const pwmtimer_t timer_TCCR1A = { 1 };
-#endif
-#if defined(TCCR2A) && defined(TCCR2B)
-    static const pwmtimer_t timer_TCCR2A = { 2, &TCCR2A, &TCCR2B, 0 };
-#endif
-
-#if defined(TCCR3A) && defined(TCCR3B)
-    static const pwmtimer_t timer_TCCR3A = { 3, &TCCR3A, &TCCR3B, &ICR3 };
-#endif
-
-#if defined(TCCR4A) && defined(TCCR4B)
-    static const pwmtimer_t timer_TCCR4A = {
-        4,
-        &TCCR4A,
-        &TCCR4B,
-#ifdef ICR4
-        &ICR4
-#endif
-    };
-#endif
-
-#if defined(TCCR4C) && defined(TCCR4D)
-    static const pwmtimer_t timer_TCCR4C = { 4, &TCCR4C, &TCCR4D, 0 };
-#endif
-
-#if defined(TCCR5A) && defined(TCCR5B)
-    static const pwmtimer_t timer_TCCR5A = { 5, &TCCR5A, &TCCR5B, &ICR5 };
-#endif
-
-    static bool pwmtimer_enable_pwm(const pwmtimer_t* timer, uint8_t com)
+    static uint16_t pwmout16_read(pwmout_object_t* obj)
     {
-#if defined(WGM10) && defined(WGM11) && defined(WGM12) && defined(WGM13)
-        if (timer->icr) {
-            *timer->icr = 0;
-            // TODO: check that all 16-bit timers have same WGM values!
-            *timer->tccra = (*timer->tccra & ~(_BV(WGM11) | _BV(WGM10))) | _BV(com);
-            *timer->tccrb = (*timer->tccrb & ~_BV(WGM12)) | _BV(WGM13);
-            return true;
+        pwmout16_t* pwm = &obj->pwm16;
+        uint16_t value = *pwm->ocr;
+        uint16_t top = *pwm->icr;
+        if (top == 0) {
+            // TODO: always assume 8-bit phase correct PWM?
+            return (value << 8) | value;
+        } else if (value > top) {
+            return UINT16_MAX;
         } else {
-            return false;
+            uint32_t r = value;
+            r *= UINT16_MAX;
+            r /= top;
+            return r;
         }
-#else
-        return false;
-#endif
     }
 
-    static bool pwmout_timer_init(pwmout_t* obj, const pwmtimer_t* timer,
-                                  volatile uint8_t* ocr, uint8_t com1)
+    static void pwmout16_write(pwmout_object_t* obj, uint16_t value)
     {
-        obj->timer = timer;
-        obj->ocr = 0;
-        obj->com = 0;
-        if (timer->id == 0) {
-            // assume prescale factor 64, 8-bit fast pwm mode; note
-            // that "obj->period" is actually half the period for
-            // phase correct pwm
-            obj->period = 128;
-            obj->prescale = 6;
+        pwmout16_t* pwm = &obj->pwm16;
+        uint16_t top = *pwm->icr;
+        if (top == 0) {
+            // TODO: always assume 8-bit phase correct PWM?
+            *pwm->ocr = value >> 8;
         } else {
-            // assume prescale factor 64, 8-bit phase correct pwm mode
-            obj->period = 255;
-            obj->prescale = 6;
+            uint32_t r = value;
+            r *= top;
+            r /= UINT16_MAX;
+            *pwm->ocr = r;
         }
-        obj->mode = 0;
-        return true;
     }
 
-    static bool pwmout_timer_init(pwmout_t* obj, const pwmtimer_t* timer,
-                                  volatile uint16_t* ocr, uint8_t com1)
+    static void pwmout16_period(pwmout_object_t* obj, uint32_t value)
     {
-        obj->timer = timer;
-        obj->ocr = ocr;
-        obj->com = com1;
-        // assume prescale factor 64, 8-bit phase correct pwm mode
-        obj->period = 255;
-        obj->prescale = 6;
-        obj->mode = 0;
-        return true;
+        pwmout16_t* pwm = &obj->pwm16;
+        uint16_t top = UINT16_MAX;
+        uint8_t cs = 0;
+        do {
+            uint32_t v = value >> pwmout16_cs_to_prescale[++cs];
+            if (v <= UINT16_MAX) {
+                top = v;
+                break;  // from loop
+            }
+        } while (cs != 5);
+        // keep duty cycle
+        uint16_t duty = pwmout16_read(obj);
+        *pwm->icr = top;
+        *pwm->tccra &= ~pwmout16_tccra_wgm_mask;
+        *pwm->tccrb &= ~(pwmout16_tccrb_wgm_mask | pwmout16_tccrb_cs_mask);
+        *pwm->tccrb |= (pwmout16_tccrb_wgm_flag | cs);
+        pwmout16_write(obj, duty);
     }
 
-    bool pwmout_init(pwmout_t* obj, PinName pin)
+    static void pwmout16_pulsewidth(pwmout_object_t* obj, uint32_t value)
     {
-        // do *not* call analogWrite() from contructor, since timers
-        // may not be set up; at least, this sets it the pin as output
-        obj->pin = pin;
-        obj->value = 0;
-        digitalWrite(pin, 0);
-        pinMode(pin, OUTPUT);
+        pwmout16_t* pwm = &obj->pwm16;
+        value >>= pwmout16_cs_to_prescale[*pwm->tccrb & pwmout16_tccrb_cs_mask];
+        *pwm->ocr = min(value, UINT16_MAX);
+    }
 
-        // Adapted from wiring_analog.c, Copyright (c) 2005-2006 David A. Mellis
-        switch (digitalPinToTimer(pin)) {
-#if defined(TCCR0A) && defined(COM0A1)
-        case TIMER0A:
-            return pwmout_timer_init(obj, &timer_TCCR0A, &OCR0A, COM0A1);
+    static void pwmout16_init(pwmout_t* obj,
+                              volatile uint16_t* ocr,
+                              uint8_t com,
+                              volatile uint8_t* tccra,
+                              volatile uint8_t* tccrb,
+                              volatile uint16_t* icr)
+    {
+
+        static const pwmout_interface_t interface = {
+            pwmout16_read,
+            pwmout16_write,
+            pwmout16_period,
+            pwmout16_pulsewidth
+        };
+        obj->interface = &interface;
+
+        pwmout16_t* pwm = &obj->object.pwm16;
+        pwm->ocr = ocr;
+        pwm->com = com;
+        pwm->tccra = tccra;
+        pwm->tccrb = tccrb;
+        pwm->icr = icr;
+        // TODO: init tccrb? startup phase output?
+        *ocr = 0;
+        // turn off rightmost 1-bit in COM mask
+        *tccra |= com & (com - 1);
+    }
+
+    static uint16_t pwmout8_read(pwmout_object_t* obj)
+    {
+        pwmout8_t* pwm = &obj->pwm8;
+        uint16_t value;
+        if (*pwm->tccr & pwm->com) {
+            value = *pwm->ocr;
+        } else {
+            value = (*pwm->output & pwm->mask) ? UINT8_MAX : 0;
+        }
+        // 8-bit to 16-bit conversion
+        return (value << 8) | value;
+    }
+
+    static void pwmout8_write(pwmout_object_t* obj, uint16_t value)
+    {
+        pwmout8_t* pwm = &obj->pwm8;
+        if (value == 0) {
+            *pwm->output &= ~pwm->mask;
+            *pwm->tccr &= ~pwm->com;
+        } else if (value == UINT16_MAX) {
+            *pwm->output |= pwm->mask;
+            *pwm->tccr &= ~pwm->com;
+        } else {
+            *pwm->ocr = value >> 8;
+            // turn off rightmost 1-bit in COM mask
+            *pwm->tccr |= pwm->com & (pwm->com - 1);
+        }
+    }
+
+    static void pwmout8_nop(pwmout_object_t* obj, uint32_t value) {}
+
+    static void pwmout8_init(pwmout_t* obj,
+                             volatile uint8_t* ocr,
+                             uint8_t com,
+                             volatile uint8_t* tccr,
+                             volatile uint8_t* output,
+                             uint8_t mask)
+    {
+        static const pwmout_interface_t interface = {
+            pwmout8_read,
+            pwmout8_write,
+            pwmout8_nop,
+            pwmout8_nop
+        };
+        obj->interface = &interface;
+
+        pwmout8_t* pwm = &obj->object.pwm8;
+        pwm->ocr = ocr;
+        pwm->com = com;
+        pwm->tccr = tccr;
+        pwm->output = output;
+        pwm->mask = mask;
+    }
+
+    void pwmout_init(pwmout_t* obj, PinName pin)
+    {
+        uint8_t port = digitalPinToPort(pin);
+        uint8_t mask = digitalPinToBitMask(pin);
+        volatile uint8_t* mode = portModeRegister(port);
+        volatile uint8_t* output = portOutputRegister(port);
+
+        uint8_t sreg = SREG;
+        cli();
+        *output &= ~mask;
+        *mode |= mask;
+        SREG = sreg;
+
+        uint8_t timer = digitalPinToTimer(pin);
+        // FIXME: NOT_ON_TIMER?
+        volatile uint8_t* tccr = timerToControlRegister(timer);
+        volatile void* ocr = timerToOutputCompareRegister(timer);
+        uint8_t com = timerToCompareOutputModeMask(timer);
+
+        // TODO: think of something better...
+        switch ((uint16_t)tccr) {
+#if defined(TCCR1A) && defined(TCCR1B) && defined(ICR1)
+        case (uint16_t)&TCCR1A:
+            pwmout16_init(obj, (volatile uint16_t*)ocr, com, &TCCR1A, &TCCR1B, &ICR1);
+            break;
 #endif
-
-#if defined(TCCR0A) && defined(COM0B1)
-        case TIMER0B:
-            return pwmout_timer_init(obj, &timer_TCCR0A, &OCR0B, COM0B1);
+#if defined(TCCR3A) && defined(TCCR3B) && defined(ICR3)
+        case (uint16_t)&TCCR3A:
+            pwmout16_init(obj, (volatile uint16_t*)ocr, com, &TCCR3A, &TCCR3B, &ICR3);
+            break;
 #endif
-
-#if defined(TCCR1A) && defined(COM1A1)
-        case TIMER1A:
-            return pwmout_timer_init(obj, &timer_TCCR1A, &OCR1A, COM1A1);
+#if defined(TCCR4A) && defined(TCCR4B) && defined(ICR4)
+        case (uint16_t)&TCCR4A:
+            pwmout16_init(obj, (volatile uint16_t*)ocr, com, &TCCR4A, &TCCR4B, &ICR4);
+            break;
 #endif
-
-#if defined(TCCR1A) && defined(COM1B1)
-        case TIMER1B:
-            return pwmout_timer_init(obj, &timer_TCCR1A, &OCR1B, COM1B1);
-#endif
-
-#if defined(TCCR1A) && defined(COM1C1)
-        case TIMER1C:
-            return pwmout_timer_init(obj, &timer_TCCR1A, &OCR1C, COM1C1);
-#endif
-
-#if defined(TCCR2A) && defined(COM2A1)
-        case TIMER2A:
-            return pwmout_timer_init(obj, &timer_TCCR2A, &OCR2A, COM2A1);
-#endif
-
-#if defined(TCCR2A) && defined(COM2B1)
-        case TIMER2B:
-            return pwmout_timer_init(obj, &timer_TCCR2A, &OCR2B, COM2B1);
-#endif
-
-#if defined(TCCR3A) && defined(COM3A1)
-        case TIMER3A:
-            return pwmout_timer_init(obj, &timer_TCCR3A, &OCR3A, COM3A1);
-#endif
-
-#if defined(TCCR3A) && defined(COM3B1)
-        case TIMER3B:
-            return pwmout_timer_init(obj, &timer_TCCR3A, &OCR3B, COM3B1);
-#endif
-
-#if defined(TCCR3A) && defined(COM3C1)
-        case TIMER3C:
-            return pwmout_timer_init(obj, &timer_TCCR3A, &OCR3C, COM3C1);
-#endif
-
-#if defined(TCCR4A) && defined(COM4A1)
-        case TIMER4A:
-            return pwmout_timer_init(obj, &timer_TCCR4A, &OCR4A, COM4A1);
-#endif
-
-#if defined(TCCR4A) && defined(COM4B1)
-        case TIMER4B:
-            return pwmout_timer_init(obj, &timer_TCCR4A, &OCR4B, COM4B1);
-#endif
-
-#if defined(TCCR4A) && defined(COM4C1)
-        case TIMER4C:
-            return pwmout_timer_init(obj, &timer_TCCR4A, &OCR4C, COM4C1);
-#endif
-
-#if defined(TCCR4C) && defined(COM4D1)
-        case TIMER4D:
-            return pwmout_timer_init(obj, &timer_TCCR4C, &OCR4D, COM4D1);
-#endif
-
-#if defined(TCCR5A) && defined(COM5A1)
-        case TIMER5A:
-            return pwmout_timer_init(obj, &timer_TCCR5A, &OCR5A, COM5A1);
-#endif
-
-#if defined(TCCR5A) && defined(COM5B1)
-        case TIMER5B:
-            return pwmout_timer_init(obj, &timer_TCCR5A, &OCR5B, COM5B1);
-#endif
-
-#if defined(TCCR5A) && defined(COM5C1)
-        case TIMER5C:
-            return pwmout_timer_init(obj, &timer_TCCR5A, &OCR5C, COM5C1);
+#if defined(TCCR5A) && defined(TCCR5B) && defined(ICR5)
+        case (uint16_t)&TCCR5A:
+            pwmout16_init(obj, (volatile uint16_t*)ocr, com, &TCCR5A, &TCCR5B, &ICR5);
+            break;
 #endif
         default:
-            return false;
+            pwmout8_init(obj, (volatile uint8_t*)ocr, com, tccr, output, mask);
         }
     }
 
-    void pwmout_free(pwmout_t* obj)
+    void pwmout_free(pwmout_t *obj)
     {
-        digitalWrite(obj->pin, obj->value >= 128);
+        /*
+        uint8_t sreg = SREG;
+        cli();
+        *obj->timer.tccra &= ~obj->timer.com;
+        SREG = sreg;
+        */
     }
 
-    void pwmout_write_u16(pwmout_t* obj, uint16_t value)
+    uint16_t pwmout_read_u16(pwmout_t* obj)
+    {
+        uint16_t value;
+        uint8_t sreg = SREG;
+        cli();
+        value = obj->interface->read(&obj->object);
+        SREG = sreg;
+        return value;
+    }
+
+    void pwmout_write_u16(pwmout_t *obj, uint16_t value)
     {
         uint8_t sreg = SREG;
         cli();
-        obj->value = value >> 8;
-        if (obj->mode == 0) {
-            analogWrite(obj->pin, obj->value);
-        } else {
-            unsigned long duty = obj->period;
-            duty *= value;
-            *obj->ocr = duty >> 16;
-        }
+        obj->interface->write(&obj->object, value);
         SREG = sreg;
-    }
-
-    float pwmout_read(pwmout_t* obj)
-    {
-        // FIXME: use real value?
-        return obj->value * (1.0f / 255.0f);
     }
 
     void pwmout_period_us(pwmout_t* obj, long us)
     {
-        if (pwmtimer_enable_pwm(obj->timer, obj->com)) {
-            // Adapted from TimerOne library: https://playground.arduino.cc/Code/Timer1
-            // FIXME: check CSnX is same for all timers!
-            unsigned long cycles = microsecondsToClockCycles(us / 2);
-            uint8_t cs;
-            uint8_t ps;
-            if (cycles <= UINT16_MAX) {
-                cs = _BV(CS10);
-                ps = 0;
-            } else if ((cycles >>= 3) <= UINT16_MAX) {
-                cs = _BV(CS11);
-                ps = 3;
-            } else if ((cycles >>= 3) <= UINT16_MAX) {
-                cs = _BV(CS11) | _BV(CS10);
-                ps = 6;
-            } else if ((cycles >>= 2) <= UINT16_MAX) {
-                cs = _BV(CS12);
-                ps = 8;
-            } else if ((cycles >>= 2) <= UINT16_MAX) {
-                cs = _BV(CS12) | _BV(CS10);
-                ps = 10;
-            } else {
-                cs = _BV(CS12) | _BV(CS10);
-                cycles = UINT16_MAX;
-                ps = 10;
-            }
-
-            uint16_t value = 0;
-            uint8_t sreg = SREG;
-            cli();
-            value = obj->value;
-            obj->prescale = ps;
-            *obj->timer->icr = obj->period = cycles;
-            *obj->timer->tccrb &= ~(_BV(CS10) | _BV(CS11) | _BV(CS12));
-            *obj->timer->tccrb |= cs;
-            obj->mode = 1;
-            SREG = sreg;
-
-            if (value != 0) {
-                pwmout_write_u16(obj, (value << 8) | value);
-            }
-        }
+        uint32_t cycles = microsecondsToClockCycles(us / 2);
+        uint8_t sreg = SREG;
+        cli();
+        obj->interface->period(&obj->object, cycles);
+        SREG = sreg;
     }
 
     void pwmout_pulsewidth_us(pwmout_t* obj, long us)
     {
-        unsigned long value = microsecondsToClockCycles(us / 2);
-        uint16_t period;
-        uint8_t prescale;
+        uint32_t cycles = microsecondsToClockCycles(us / 2);
         uint8_t sreg = SREG;
         cli();
-        period = obj->period;
-        prescale = obj->prescale;
+        obj->interface->pulsewidth(&obj->object, cycles);
         SREG = sreg;
-
-        value >>= prescale;
-        if (value >= period) {
-            value = period - 1;
-        }
-        value <<= 16;
-        value /= period;
-
-        pwmout_write_u16(obj, value);
     }
 
 }

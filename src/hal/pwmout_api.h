@@ -26,20 +26,40 @@
 // TBD: extern "C"?
 namespace mbino {
 
-    struct pwmtimer_t;
-
-    struct pwmout_t {
-        const pwmtimer_t* timer;
+    struct pwmout16_t {
+        volatile uint8_t* tccra;
+        volatile uint8_t* tccrb;
         volatile uint16_t* ocr;
+        volatile uint16_t* icr;
         uint8_t com;
-        uint16_t period;
-        uint8_t prescale;
-        uint8_t mode;
-        PinName pin;
-        uint8_t value;
     };
 
-    bool pwmout_init(pwmout_t* obj, PinName pin);
+    struct pwmout8_t {
+        volatile uint8_t* ocr;
+        volatile uint8_t* tccr;
+        volatile uint8_t* output;
+        uint8_t com;
+        uint8_t mask;
+    };
+
+    union pwmout_object_t {
+        pwmout16_t pwm16;
+        pwmout8_t pwm8;
+    };
+
+    struct pwmout_interface_t {
+        uint16_t (*read)(pwmout_object_t* obj);
+        void (*write)(pwmout_object_t* obj, uint16_t duty);
+        void (*period)(pwmout_object_t* obj, uint32_t cycles);
+        void (*pulsewidth)(pwmout_object_t* obj, uint32_t cycles);
+    };
+
+    struct pwmout_t {
+        const pwmout_interface_t* interface;
+        pwmout_object_t object;
+    };
+
+    void pwmout_init(pwmout_t* obj, PinName pin);
 
     void pwmout_free(pwmout_t *obj);
 
@@ -55,7 +75,11 @@ namespace mbino {
         }
     }
 
-    float pwmout_read(pwmout_t* obj);
+    uint16_t pwmout_read_u16(pwmout_t* obj);
+
+    inline float pwmout_read(pwmout_t* obj) {
+        return pwmout_read_u16(obj) * (1.0f / 65535.0f);
+    }
 
     void pwmout_period_us(pwmout_t* obj, long us);
 
