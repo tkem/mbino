@@ -1,3 +1,8 @@
+## 0.6.2 (2017-09-05)
+
+- Refactor (and fix) `PwmOut` API.
+
+
 ## 0.6.1 (2017-09-01)
 
 - Fix `SPI::write()`.
