@@ -34,10 +34,6 @@ namespace mbino {
             pwmout_init(&_pwm, pin);
         }
 
-        ~PwmOut() {
-            pwmout_free(&_pwm); // mbed doesn't do this...
-        }
-
         void write(float value) {
             pwmout_write(&_pwm, value);
         }

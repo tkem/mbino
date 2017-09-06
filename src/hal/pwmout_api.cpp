@@ -23,6 +23,13 @@
 
 namespace mbino {
 
+    struct pwmout_interface_t {
+        uint16_t (*read)(pwmout_object_t* obj);
+        void (*write)(pwmout_object_t* obj, uint16_t value);
+        void (*period)(pwmout_object_t* obj, uint32_t value);
+        void (*pulsewidth)(pwmout_object_t* obj, uint32_t value);
+    };
+
     // prescale shift values for CSn2:0 (0: timer stopped; 6, 7: external clock)
     static const uint8_t pwmout16_cs_to_prescale[8] = {0xff, 0, 3, 6, 8, 10, 0, 0};
     // we just assume these are the same for all 16-bit timers
@@ -115,10 +122,14 @@ namespace mbino {
         pwm->tccra = tccra;
         pwm->tccrb = tccrb;
         pwm->icr = icr;
+
+        uint8_t sreg = SREG;
+        cli();
         // TODO: init tccrb? startup phase output?
         *ocr = 0;
         // turn off rightmost 1-bit in COM mask
         *tccra |= com & (com - 1);
+        SREG = sreg;
     }
 
     static uint16_t pwmout8_read(pwmout_object_t* obj)
@@ -219,16 +230,6 @@ namespace mbino {
         default:
             pwmout8_init(obj, (volatile uint8_t*)ocr, com, tccr, output, mask);
         }
-    }
-
-    void pwmout_free(pwmout_t *obj)
-    {
-        /*
-        uint8_t sreg = SREG;
-        cli();
-        *obj->timer.tccra &= ~obj->timer.com;
-        SREG = sreg;
-        */
     }
 
     uint16_t pwmout_read_u16(pwmout_t* obj)

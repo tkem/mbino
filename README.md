@@ -65,10 +65,10 @@ tracker](https://github.com/tkem/mbino/issues/).
   ticker interrupts.  Therefore, `Ticker` only provides a resolution
   of about one millisecond.
 
-- The `PwmOut::period()` family of methods is only supported for PWM
-  pins controlled by 16-bit timers, and is ignored for all other pins.
-  Note that setting a period for one pin will also affect other pins
-  controlled by the same timer.
+- The `PwmOut::period()` and `PwmOut::pulsewidth()` methods are only
+  supported for PWM pins controlled by 16-bit timers, and are ignored
+  for all other pins.  Note that setting a period for one pin will
+  also affect other pins controlled by the same timer.
 
 - The `SPI` API is based on the Arduino [SPI
   library](https://www.arduino.cc/en/Reference/SPI).  Only 8-bit and

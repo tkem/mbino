@@ -26,6 +26,8 @@
 // TBD: extern "C"?
 namespace mbino {
 
+    struct pwmout_interface_t;
+
     struct pwmout16_t {
         volatile uint8_t* tccra;
         volatile uint8_t* tccrb;
@@ -47,21 +49,12 @@ namespace mbino {
         pwmout8_t pwm8;
     };
 
-    struct pwmout_interface_t {
-        uint16_t (*read)(pwmout_object_t* obj);
-        void (*write)(pwmout_object_t* obj, uint16_t duty);
-        void (*period)(pwmout_object_t* obj, uint32_t cycles);
-        void (*pulsewidth)(pwmout_object_t* obj, uint32_t cycles);
-    };
-
     struct pwmout_t {
         const pwmout_interface_t* interface;
         pwmout_object_t object;
     };
 
     void pwmout_init(pwmout_t* obj, PinName pin);
-
-    void pwmout_free(pwmout_t *obj);
 
     void pwmout_write_u16(pwmout_t *obj, uint16_t value);
 

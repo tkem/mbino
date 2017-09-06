@@ -30,11 +30,11 @@ namespace mbino {
 
     void gpio_init_out(gpio_t* obj, PinName pin, bool value = false);
 
-    inline void gpio_dir_in(gpio_t* obj, PinMode pull = PullDefault) {
+    inline void gpio_dir_in(gpio_t* obj, PinMode pull) {
         port_dir_in(obj, pull);
     }
 
-    inline void gpio_dir_out(gpio_t* obj, bool value = false) {
+    inline void gpio_dir_out(gpio_t* obj, bool value) {
         port_dir_out(obj, value ? obj->mask : 0);
     }
 
