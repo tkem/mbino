@@ -1,3 +1,12 @@
+## 0.6.4 (2017-09-06)
+
+- Remove `PwmOut` destructor.
+
+- Clean up `AnalogIn` API.
+
+- Update license headers.
+
+
 ## 0.6.2 (2017-09-05)
 
 - Refactor (and fix) `PwmOut` API.
