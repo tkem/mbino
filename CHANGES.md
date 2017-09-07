@@ -1,4 +1,11 @@
-## 0.6.4 (2017-09-06)
+## 0.6.4 (2017-09-07)
+
+- Fix template parameter deduction error in `SerialBase` constructor.
+
+- Fix timer control register table.
+
+
+## 0.6.3 (2017-09-06)
 
 - Remove `PwmOut` destructor.
 
