@@ -63,9 +63,25 @@ namespace mbino {
             serial_baud(&_serial, baud);
         }
 
-        template<int N>
-        SerialBase(typename uart_port<N>::tx_type tx, typename uart_port<N>::rx_type rx, long baud) {
-            serial_uart_init(&_serial, N);
+        // avr-gcc needs some help deducing the non-type template parameter here...
+
+        SerialBase(uart_port<0>::tx_type tx, uart_port<0>::rx_type rx, long baud) {
+            serial_uart_init(&_serial, 0);
+            serial_baud(&_serial, baud);
+        }
+
+        SerialBase(uart_port<1>::tx_type tx, uart_port<1>::rx_type rx, long baud) {
+            serial_uart_init(&_serial, 1);
+            serial_baud(&_serial, baud);
+        }
+
+        SerialBase(uart_port<2>::tx_type tx, uart_port<2>::rx_type rx, long baud) {
+            serial_uart_init(&_serial, 2);
+            serial_baud(&_serial, baud);
+        }
+
+        SerialBase(uart_port<3>::tx_type tx, uart_port<3>::rx_type rx, long baud) {
+            serial_uart_init(&_serial, 3);
             serial_baud(&_serial, baud);
         }
 
