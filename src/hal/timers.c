@@ -19,39 +19,59 @@ const uint16_t PROGMEM timer_to_tccr_PGM[] = {
 #if defined(TCCR0)
     [TIMER0A] = (uint16_t)&TCCR0,
 #endif
-#if defined(TCCR0A)
+#if defined(TCCR0A) && defined(COM0A1)
     [TIMER0A] = (uint16_t)&TCCR0A,
+#endif
+#if defined(TCCR0A) && defined(COM0B1)
     [TIMER0B] = (uint16_t)&TCCR0A,
 #endif
-#if defined(TCCR1A)
+#if defined(TCCR1A) && defined(COM1A1)
     [TIMER1A] = (uint16_t)&TCCR1A,
+#endif
+#if defined(TCCR1A) && defined(COM1B1)
     [TIMER1B] = (uint16_t)&TCCR1A,
+#endif
+#if defined(TCCR1A) && defined(COM1C1)
     [TIMER1C] = (uint16_t)&TCCR1A,
 #endif
 #if defined(TCCR2)
     [TIMER2] = (uint16_t)&TCCR2,
 #endif
-#if defined(TCCR2A)
+#if defined(TCCR2A) && defined(COM2A1)
     [TIMER2A] = (uint16_t)&TCCR2A,
+#endif
+#if defined(TCCR2A) && defined(COM2B1)
     [TIMER2B] = (uint16_t)&TCCR2A,
 #endif
-#if defined(TCCR3A)
+#if defined(TCCR3A) && defined(COM3A1)
     [TIMER3A] = (uint16_t)&TCCR3A,
+#endif
+#if defined(TCCR3A) && defined(COM3B1)
     [TIMER3B] = (uint16_t)&TCCR3A,
+#endif
+#if defined(TCCR3A) && defined(COM3C1)
     [TIMER3C] = (uint16_t)&TCCR3A,
 #endif
-#if defined(TCCR4A)
+#if defined(TCCR4A) && defined(COM4A1)
     [TIMER4A] = (uint16_t)&TCCR4A,
-    [TIMER4B] = (uint16_t)&TCCR4B,
-    [TIMER4C] = (uint16_t)&TCCR4C,
 #endif
-#if defined(TCCR4C)
+#if defined(TCCR4A) && defined(COM4B1)
+    [TIMER4B] = (uint16_t)&TCCR4A,
+#endif
+#if defined(TCCR4A) && defined(COM4C1)
+    [TIMER4C] = (uint16_t)&TCCR4A,
+#endif
+#if defined(TCCR4C) && defined(COM4D1)
     [TIMER4D] = (uint16_t)&TCCR4C,
 #endif
-#if defined(TCCR5A)
+#if defined(TCCR5A) && defined(COM5A1)
     [TIMER5A] = (uint16_t)&TCCR5A,
-    [TIMER5B] = (uint16_t)&TCCR5B,
-    [TIMER5C] = (uint16_t)&TCCR5C
+#endif
+#if defined(TCCR5A) && defined(COM5B1)
+    [TIMER5B] = (uint16_t)&TCCR5A,
+#endif
+#if defined(TCCR5A) && defined(COM5C1)
+    [TIMER5C] = (uint16_t)&TCCR5A
 #endif
 };
 
