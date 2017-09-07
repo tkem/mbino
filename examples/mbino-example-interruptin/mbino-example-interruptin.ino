@@ -1,8 +1,8 @@
 #include "mbed.h"
 
-InterruptIn button(BUTTON1);
+InterruptIn button(D2);
 DigitalOut led(LED1);
-DigitalOut flash(LED2);
+DigitalOut flash(D3);
 
 void flip() {
     led = !led;

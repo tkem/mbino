@@ -21,28 +21,23 @@
 
 #include <pins_arduino.h>
 
+namespace mbino {
+
+    enum PinDirection {
+        PIN_INPUT,
+        PIN_OUTPUT
+    };
+
+    enum PinMode {
+        PullNone,
+        PullUp,
+        PullDefault = PullNone
+    };
+}
+
 // not defined for gemma?
 #ifndef NUM_DIGITAL_PINS
 #define NUM_DIGITAL_PINS 6
-#endif
-
-#ifdef digitalPinHasPWM
-
-#define DEVICE_PWMOUT 1
-
-#if digitalPinHasPWM(10)
-#define PIN_PWM_OUT 10
-#elif digitalPinHasPWM(0)
-#define PIN_PWM_OUT 0
-#else
-#warning No default PWM output pin found for this platform
-#endif
-
-#elif defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
-
-#define DEVICE_PWMOUT 1
-#define PIN_PWM_OUT 0
-
 #endif
 
 #if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)

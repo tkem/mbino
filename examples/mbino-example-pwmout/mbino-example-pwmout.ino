@@ -1,6 +1,6 @@
 #include "mbed.h"
 
-PwmOut pwm(PWM_OUT);  // pin 0 on ATtiny, pin 10 otherwise
+PwmOut pwm(D9);  // change to D11 on Arduino Mega
 
 void setup() {
     pwm.period(4.0f);  // 4 second period

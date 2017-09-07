@@ -37,17 +37,6 @@ namespace mbino {
         struct tx_type {};
     };
 
-    enum PinDirection {
-        PIN_INPUT,
-        PIN_OUTPUT
-    };
-
-    enum PinMode {
-        PullNone,
-        PullUp,
-        PullDefault = PullNone
-    };
-
     // TODO: enum type?  how to use A0..An then?
     typedef uint8_t PinName;
 
@@ -136,15 +125,6 @@ namespace mbino {
 
 #ifdef LED_BUILTIN
     static const PinName LED1 = LED_BUILTIN;
-    static const PinName LED2 = LED1;
-    static const PinName LED3 = LED2;
-    static const PinName LED4 = LED3;
-#endif
-
-#ifdef DEVICE_PWMOUT
-#ifdef PIN_PWM_OUT
-    static const PinName PWM_OUT = PIN_PWM_OUT;
-#endif
 #endif
 
 #ifdef DEVICE_I2C
@@ -157,9 +137,6 @@ namespace mbino {
     static const PinName SPI_MISO = PIN_SPI_MISO;
     static const PinName SPI_SCK = PIN_SPI_SCK;
 #endif
-
-    // TODO: use digitalPinToInterrupt()?
-    static const PinName BUTTON1 = 2;
 
 #ifdef SERIAL_PORT_MONITOR
     static const usb_port::rx_type USBRX;

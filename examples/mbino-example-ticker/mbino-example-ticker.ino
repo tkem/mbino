@@ -2,7 +2,7 @@
 
 Ticker flipper;
 DigitalOut led(LED1);
-DigitalOut flash(LED2);
+DigitalOut flash(D2);
 
 void flip() {
     led = !led;
