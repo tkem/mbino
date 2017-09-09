@@ -1,3 +1,13 @@
+## 0.7.0 (2017-09-09)
+
+- Remove `SoftwareSerial` support (breaking change).
+
+- Remove `PWM_OUT`, `LED2`, `LED3`, `LED4` and `BUTTON1` pin name
+  constants (breaking change).
+
+- Fix I2C LM75 temperature sensor example.
+
+
 ## 0.6.4 (2017-09-07)
 
 - Fix template parameter deduction error in `SerialBase` constructor.
