@@ -63,4 +63,6 @@
 #define DEVICE_SPI 1
 #endif
 
+#define DEVICE_PWMOUT 1
+
 #endif
