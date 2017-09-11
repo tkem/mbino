@@ -15,7 +15,8 @@ env:
 - BOARD=nucleo_f446re
 
 script:
-- for e in ${EXAMPLES:=examples/*}; do
+- set -eo pipefail;
+  for e in ${EXAMPLES:=examples/*}; do
     case "$BOARD" in
         nucleo*)
             mv "$e/"*.ino "$e"/$(basename "$e"/*.ino .ino).cpp;
