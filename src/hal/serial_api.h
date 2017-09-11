@@ -25,7 +25,6 @@
 
 class Stream; // forward declaration of Arduino Stream type
 
-// TBD: extern "C"?
 namespace mbino {
 
     typedef enum {

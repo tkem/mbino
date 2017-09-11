@@ -23,7 +23,6 @@
 
 #include <stdint.h>
 
-// TBD: extern "C"?
 namespace mbino {
 
     enum gpio_irq_event { IRQ_NONE = 0, IRQ_RISE = 1, IRQ_FALL = 2 };

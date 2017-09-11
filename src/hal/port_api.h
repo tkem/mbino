@@ -21,7 +21,6 @@
 
 #include "platform/platform.h"
 
-// TBD: extern "C"?
 namespace mbino {
 
     struct port_t {
@@ -38,9 +37,7 @@ namespace mbino {
 
     void port_dir_out(port_t* obj, uint8_t value = 0);
 
-    inline int port_read(port_t* obj) {
-        return *obj->reg & obj->mask;
-    }
+    int port_read(port_t* obj);
 
     void port_write(port_t* obj, uint8_t value);
 

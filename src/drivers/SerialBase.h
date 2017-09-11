@@ -68,7 +68,7 @@ namespace mbino {
         }
 
         ~SerialBase() {
-            // FIXME: serial_free(&_serial) not called in mbed?
+            // TODO: serial_free(&_serial) not called in mbed?
         }
 
         int _base_getc() {

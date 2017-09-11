@@ -21,7 +21,6 @@
 
 #include <string.h>
 
-// TBD: extern "C"?
 namespace mbino {
 
     static void spi_init_settings(spi_t* obj)
@@ -33,12 +32,14 @@ namespace mbino {
 
     void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk)
     {
-        // TODO: handle pin names (software SPI?)
-        SPI.begin();  // Arduino SPI has its own init counter
-        obj->clock = 1000000;
-        obj->bits = 8;
-        obj->mode = 0;
-        spi_init_settings(obj);
+        if (mosi == PIN_SPI_MOSI && miso == PIN_SPI_MISO && sclk == PIN_SPI_SCK) {
+            SPI.begin();  // Arduino SPI has its own init counter
+            obj->clock = 1000000;
+            obj->bits = 8;
+            obj->mode = 0;
+            spi_init_settings(obj);
+        }
+        // TODO: error handling?
     }
 
     void spi_free(spi_t* obj)

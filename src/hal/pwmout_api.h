@@ -23,7 +23,6 @@
 
 #if DEVICE_PWMOUT
 
-// TBD: extern "C"?
 namespace mbino {
 
     struct pwmout_interface_t;

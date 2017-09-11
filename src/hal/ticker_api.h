@@ -21,7 +21,6 @@
 
 #include <stdint.h>
 
-// TBD: extern "C"?
 namespace mbino {
 
     typedef uint32_t timestamp_t;
@@ -57,10 +56,7 @@ namespace mbino {
 
     void ticker_irq_handler(const ticker_data_t* ticker);
 
-    inline void ticker_init_event(ticker_event_t* obj, ticker_event_handler handler, intptr_t id) {
-        obj->handler = handler;
-        obj->id = id;
-    }
+    void ticker_init_event(ticker_event_t* obj, ticker_event_handler handler, intptr_t id);
 
     void ticker_insert_event(const ticker_data_t* ticker, ticker_event_t* obj, timestamp_t timestamp);
 
@@ -68,11 +64,10 @@ namespace mbino {
 
     void ticker_remove_event(const ticker_data_t* ticker, ticker_event_t* obj);
 
-    inline timestamp_t ticker_read(const ticker_data_t* ticker) {
-        return ticker->interface->read();
-    }
+    timestamp_t ticker_read(const ticker_data_t* ticker);
 
     us_timestamp_t ticker_read_us(const ticker_data_t* ticker);
+
 }
 
 #endif

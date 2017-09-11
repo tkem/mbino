@@ -79,6 +79,12 @@ namespace mbino {
         schedule_interrupt(ticker);
     }
 
+    void ticker_init_event(ticker_event_t* obj, ticker_event_handler handler, intptr_t id)
+    {
+        obj->handler = handler;
+        obj->id = id;
+    }
+
     void ticker_insert_event(const ticker_data_t* ticker, ticker_event_t* obj, timestamp_t timestamp)
     {
         uint8_t sreg = SREG;
@@ -135,6 +141,11 @@ namespace mbino {
         }
 
         SREG = sreg;
+    }
+
+    timestamp_t ticker_read(const ticker_data_t* ticker)
+    {
+        return ticker->interface->read();
     }
 
     us_timestamp_t ticker_read_us(const ticker_data_t* ticker)

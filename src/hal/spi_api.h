@@ -26,7 +26,6 @@
 // TODO: do we really have to include SPI.h here?
 #include <SPI.h>
 
-// TBD: extern "C"?
 namespace mbino {
 
     static const char SPI_FILL_CHAR = 0xFF;

@@ -47,9 +47,8 @@ namespace mbino {
         };
         */
 
-        // FIXME: pin type magic?
         I2C(PinName sda, PinName scl)  {
-            i2c_init(&_i2c);
+            i2c_init(&_i2c, sda, scl);
         }
 
         void frequency(long hz) {

@@ -28,9 +28,9 @@ namespace mbino {
 
     Stream::~Stream()
     {
-        // TODO: according to AVR Libc docs, this is neither necessary
-        // nor desired...
-        // fclose(&_file);
+        // according to AVR Libc docs, this is neither necessary nor
+        // desired...
+        //fclose(&_file);
     }
 
     int Stream::printf(const char* format, ...)

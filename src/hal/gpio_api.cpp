@@ -49,6 +49,21 @@ namespace mbino {
         gpio_pwm_off(pin);
     }
 
+    void gpio_dir_in(gpio_t* obj, PinMode pull)
+    {
+        port_dir_in(obj, pull);
+    }
+
+    void gpio_dir_out(gpio_t* obj, bool value)
+    {
+        port_dir_out(obj, value ? obj->mask : 0);
+    }
+
+    bool gpio_read(gpio_t* obj)
+    {
+        return port_read(obj) != 0;
+    }
+
     void gpio_write(gpio_t* obj, bool value)
     {
         uint8_t sreg = SREG;
@@ -59,5 +74,15 @@ namespace mbino {
             *obj->reg &= ~obj->mask;
         }
         SREG = sreg;
+    }
+
+    void gpio_mode(gpio_t* obj, PinMode pull)
+    {
+        port_mode(obj, pull);
+    }
+
+    bool gpio_is_connected(gpio_t* obj)
+    {
+        return obj->port != NC;
     }
 }

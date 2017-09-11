@@ -200,7 +200,7 @@ namespace mbino {
         SREG = sreg;
 
         uint8_t timer = digitalPinToTimer(pin);
-        // FIXME: NOT_ON_TIMER?
+        // TODO: NOT_ON_TIMER?
         volatile uint8_t* tccr = timerToControlRegister(timer);
         volatile void* ocr = timerToOutputCompareRegister(timer);
         uint8_t com = timerToCompareOutputModeMask(timer);

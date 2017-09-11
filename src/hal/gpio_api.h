@@ -21,7 +21,6 @@
 
 #include "port_api.h"
 
-// TBD: extern "C"?
 namespace mbino {
 
     typedef port_t gpio_t;
@@ -30,27 +29,18 @@ namespace mbino {
 
     void gpio_init_out(gpio_t* obj, PinName pin, bool value = false);
 
-    inline void gpio_dir_in(gpio_t* obj, PinMode pull) {
-        port_dir_in(obj, pull);
-    }
+    void gpio_dir_in(gpio_t* obj, PinMode pull);
 
-    inline void gpio_dir_out(gpio_t* obj, bool value) {
-        port_dir_out(obj, value ? obj->mask : 0);
-    }
+    void gpio_dir_out(gpio_t* obj, bool value);
 
-    inline bool gpio_read(gpio_t* obj) {
-        return port_read(obj) != 0;
-    }
+    bool gpio_read(gpio_t* obj);
 
     void gpio_write(gpio_t* obj, bool value);
 
-    inline void gpio_mode(gpio_t* obj, PinMode pull) {
-        port_mode(obj, pull);
-    }
+    void gpio_mode(gpio_t* obj, PinMode pull);
 
-    inline bool gpio_is_connected(gpio_t* obj) {
-        return obj->port != NC;
-    }
+    bool gpio_is_connected(gpio_t* obj);
+
 }
 
 #endif

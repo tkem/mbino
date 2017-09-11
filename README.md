@@ -70,12 +70,6 @@ tracker](https://github.com/tkem/mbino/issues/).
   for all other pins.  Note that setting a period for one pin will
   also affect other pins controlled by the same timer.
 
-- The `SPI` API is based on the Arduino [SPI
-  library](https://www.arduino.cc/en/Reference/SPI).  Only 8-bit and
-  16-bit words are supported, and pin names passed to the `SPI`
-  constructor will be ignored (but should still be set to `SPI_MOSI`,
-  `SPI_MISO` and `SPI_SCK` for portability).
-
 - The `I2C` API is based on the Arduino [Wire
   library](https://www.arduino.cc/en/Reference/Wire).  Since this
   library can substantially increase code size and RAM usage, I2C
@@ -84,9 +78,6 @@ tracker](https://github.com/tkem/mbino/issues/).
   the I2C [examples](examples/) for details.  Also note that the Wire
   library does not support some of the lower-level `I2C` API methods,
   and that you are limited to reading and writing 32 bytes at a time.
-  As with the `SPI` API, pin names passed to the `I2C` constructor
-  will be ignored for now (but should be set to `I2C_SDA` and
-  `I2C_SCL` nonetheless).
 
 - Although mbino has been designed so that you usually don't pay for
   what you don't use, there still may be some overhead involved when

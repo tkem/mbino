@@ -21,7 +21,6 @@
 
 #include "platform/platform.h"
 
-// TBD: extern "C"?
 namespace mbino {
 
     struct analogin_t {

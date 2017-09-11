@@ -23,7 +23,6 @@
 
 #ifdef DEVICE_I2C
 
-// TBD: extern "C"?
 namespace mbino {
 
     enum {
@@ -33,7 +32,7 @@ namespace mbino {
 
     struct i2c_t {};
 
-    void i2c_init(i2c_t* obj);
+    void i2c_init(i2c_t* obj, PinName sda, PinName scl);
 
     void i2c_frequency(i2c_t* obj, long hz);
 
@@ -44,10 +43,13 @@ namespace mbino {
 #ifdef WIRE_HAS_END
     // assume Wire.h was already included and the global Wire object is available
 
-    inline void i2c_init(i2c_t* obj)
+    inline void i2c_init(i2c_t* obj, PinName sda, PinName scl)
     {
-        // FIXME: on first call? Prevent multiple initialization?
-        Wire.begin();
+        if (sda == I2C_SDA && scl == I2C_SCL) {
+            // FIXME: on first call? Prevent multiple initialization?
+            Wire.begin();
+        }
+        // TODO: error handling?
     }
 
     inline void i2c_frequency(i2c_t* obj, long hz)

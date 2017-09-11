@@ -21,12 +21,10 @@
 
 #include "ticker_api.h"
 
-// we don't want to pollute the global namespace (yet)
 extern "C" {
     unsigned long micros();
 }
 
-// TBD: extern "C"?
 namespace mbino {
 
     const ticker_data_t* get_us_ticker_data();
@@ -34,6 +32,8 @@ namespace mbino {
     void us_ticker_init();
 
     inline uint32_t us_ticker_read() {
+        // make this inline so simply using us_ticker_read() does not
+        // pull in whole ticker API...
         return micros();
     }
 

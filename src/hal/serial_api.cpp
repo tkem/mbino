@@ -99,7 +99,7 @@ namespace mbino {
             serial_init(obj, &SERIAL_PORT_HARDWARE3);
         }
 #endif
-        // TODO: error?
+        // TODO: error handling?
     }
 
     void serial_monitor_init(serial_t* obj)
