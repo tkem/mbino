@@ -28,7 +28,7 @@ void setup() {
 }
 
 void loop() {
-    const char tx_buffer[16] = "0123456789ABCDEF";
+    const char tx_buffer[] = "0123456789ABCDEF";
     char rx_buffer[16];
 
     pc.printf("write @0x%03x: %.16s\r\n", address, tx_buffer);
@@ -46,7 +46,7 @@ void loop() {
     wait_ms(1);
     spi.write(WRITE | ((address & 0x100) >> 5));
     spi.write(address & 0xff);
-    spi.write(tx_buffer, sizeof tx_buffer, 0, 0);
+    spi.write(tx_buffer, sizeof tx_buffer - 1 /* terminating NULL */, 0, 0);
     wait_ms(1);
     cs = 1;
 
