@@ -1,3 +1,12 @@
+## 0.7.1 (2017-09-11)
+
+- Re-enable `PwmOut`.
+
+- Fix compiler warnings in several examples.
+
+- Code cleanup.
+
+
 ## 0.7.0 (2017-09-09)
 
 - Remove `SoftwareSerial` support (breaking change).
