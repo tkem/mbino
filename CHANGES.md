@@ -1,3 +1,10 @@
+## 0.8.0 (2017-09-13)
+
+- Add multi-parameter callbacks.
+
+- Use `pgm_read_ptr()` for accessing timer registers.
+
+
 ## 0.7.1 (2017-09-11)
 
 - Re-enable `PwmOut`.
