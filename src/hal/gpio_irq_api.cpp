@@ -43,6 +43,7 @@ namespace mbino {
         obj->handler(obj->id, event);
     }
 
+    // TODO: PROGMEM?
     static const irq_handler gpio_irq_handlers[EXTERNAL_NUM_INTERRUPTS] = {
 #if EXTERNAL_NUM_INTERRUPTS > 0
         gpio_irq_isr<0>,

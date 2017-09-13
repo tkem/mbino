@@ -22,12 +22,12 @@
 extern "C"{
 #endif
 
-extern const uint16_t PROGMEM timer_to_tccr_PGM[];
-extern const uint16_t PROGMEM timer_to_ocr_PGM[];
+extern volatile uint8_t *const PROGMEM timer_to_tccr_PGM[];
+extern volatile void *const PROGMEM timer_to_ocr_PGM[];
 extern const uint8_t PROGMEM timer_to_com_mask_PGM[];
 
-#define timerToControlRegister(T) ((volatile uint8_t *)(pgm_read_word(timer_to_tccr_PGM + (T))))
-#define timerToOutputCompareRegister(T) ((volatile void *)(pgm_read_word(timer_to_ocr_PGM + (T))))
+#define timerToControlRegister(T) ((volatile uint8_t *)(pgm_read_ptr(timer_to_tccr_PGM + (T))))
+#define timerToOutputCompareRegister(T) ((volatile void *)(pgm_read_ptr(timer_to_ocr_PGM + (T))))
 #define timerToCompareOutputModeMask(T) (pgm_read_byte(timer_to_com_mask_PGM + (T)))
 
 #ifdef __cplusplus

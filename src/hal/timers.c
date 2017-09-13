@@ -15,123 +15,123 @@
  */
 #include "timers.h"
 
-const uint16_t PROGMEM timer_to_tccr_PGM[] = {
+volatile uint8_t *const PROGMEM timer_to_tccr_PGM[] = {
 #if defined(TCCR0)
-    [TIMER0A] = (uint16_t)&TCCR0,
+    [TIMER0A] = &TCCR0,
 #endif
 #if defined(TCCR0A) && defined(COM0A1)
-    [TIMER0A] = (uint16_t)&TCCR0A,
+    [TIMER0A] = &TCCR0A,
 #endif
 #if defined(TCCR0A) && defined(COM0B1)
-    [TIMER0B] = (uint16_t)&TCCR0A,
+    [TIMER0B] = &TCCR0A,
 #endif
 #if defined(TCCR1A) && defined(COM1A1)
-    [TIMER1A] = (uint16_t)&TCCR1A,
+    [TIMER1A] = &TCCR1A,
 #endif
 #if defined(TCCR1A) && defined(COM1B1)
-    [TIMER1B] = (uint16_t)&TCCR1A,
+    [TIMER1B] = &TCCR1A,
 #endif
 #if defined(TCCR1A) && defined(COM1C1)
-    [TIMER1C] = (uint16_t)&TCCR1A,
+    [TIMER1C] = &TCCR1A,
 #endif
 #if defined(TCCR2)
-    [TIMER2] = (uint16_t)&TCCR2,
+    [TIMER2] = &TCCR2,
 #endif
 #if defined(TCCR2A) && defined(COM2A1)
-    [TIMER2A] = (uint16_t)&TCCR2A,
+    [TIMER2A] = &TCCR2A,
 #endif
 #if defined(TCCR2A) && defined(COM2B1)
-    [TIMER2B] = (uint16_t)&TCCR2A,
+    [TIMER2B] = &TCCR2A,
 #endif
 #if defined(TCCR3A) && defined(COM3A1)
-    [TIMER3A] = (uint16_t)&TCCR3A,
+    [TIMER3A] = &TCCR3A,
 #endif
 #if defined(TCCR3A) && defined(COM3B1)
-    [TIMER3B] = (uint16_t)&TCCR3A,
+    [TIMER3B] = &TCCR3A,
 #endif
 #if defined(TCCR3A) && defined(COM3C1)
-    [TIMER3C] = (uint16_t)&TCCR3A,
+    [TIMER3C] = &TCCR3A,
 #endif
 #if defined(TCCR4A) && defined(COM4A1)
-    [TIMER4A] = (uint16_t)&TCCR4A,
+    [TIMER4A] = &TCCR4A,
 #endif
 #if defined(TCCR4A) && defined(COM4B1)
-    [TIMER4B] = (uint16_t)&TCCR4A,
+    [TIMER4B] = &TCCR4A,
 #endif
 #if defined(TCCR4A) && defined(COM4C1)
-    [TIMER4C] = (uint16_t)&TCCR4A,
+    [TIMER4C] = &TCCR4A,
 #endif
 #if defined(TCCR4C) && defined(COM4D1)
-    [TIMER4D] = (uint16_t)&TCCR4C,
+    [TIMER4D] = &TCCR4C,
 #endif
 #if defined(TCCR5A) && defined(COM5A1)
-    [TIMER5A] = (uint16_t)&TCCR5A,
+    [TIMER5A] = &TCCR5A,
 #endif
 #if defined(TCCR5A) && defined(COM5B1)
-    [TIMER5B] = (uint16_t)&TCCR5A,
+    [TIMER5B] = &TCCR5A,
 #endif
 #if defined(TCCR5A) && defined(COM5C1)
-    [TIMER5C] = (uint16_t)&TCCR5A
+    [TIMER5C] = &TCCR5A
 #endif
 };
 
-const uint16_t PROGMEM timer_to_ocr_PGM[] = {
+volatile void *const PROGMEM timer_to_ocr_PGM[] = {
 #if defined(OCR0)
-    [TIMER0A] = (uint16_t)&OCR0,
+    [TIMER0A] = &OCR0,
 #endif
 #if defined(OCR0A)
-    [TIMER0A] = (uint16_t)&OCR0A,
+    [TIMER0A] = &OCR0A,
 #endif
 #if defined(OCR0B)
-    [TIMER0B] = (uint16_t)&OCR0B,
+    [TIMER0B] = &OCR0B,
 #endif
 #if defined(OCR1A)
-    [TIMER1A] = (uint16_t)&OCR1A,
+    [TIMER1A] = &OCR1A,
 #endif
 #if defined(OCR1B)
-    [TIMER1B] = (uint16_t)&OCR1B,
+    [TIMER1B] = &OCR1B,
 #endif
 #if defined(OCR1C)
-    [TIMER1C] = (uint16_t)&OCR1C,
+    [TIMER1C] = &OCR1C,
 #endif
 #if defined(OCR2)
-    [TIMER2] = (uint16_t)&OCR2,
+    [TIMER2] = &OCR2,
 #endif
 #if defined(OCR2A)
-    [TIMER2A] = (uint16_t)&OCR2A,
+    [TIMER2A] = &OCR2A,
 #endif
 #if defined(OCR2B)
-    [TIMER2B] = (uint16_t)&OCR2B,
+    [TIMER2B] = &OCR2B,
 #endif
 #if defined(OCR3A)
-    [TIMER3A] = (uint16_t)&OCR3A,
+    [TIMER3A] = &OCR3A,
 #endif
 #if defined(OCR3B)
-    [TIMER3B] = (uint16_t)&OCR3B,
+    [TIMER3B] = &OCR3B,
 #endif
 #if defined(OCR3C)
-    [TIMER3C] = (uint16_t)&OCR3C,
+    [TIMER3C] = &OCR3C,
 #endif
 #if defined(OCR4A)
-    [TIMER4A] = (uint16_t)&OCR4A,
+    [TIMER4A] = &OCR4A,
 #endif
 #if defined(OCR4B)
-    [TIMER4B] = (uint16_t)&OCR4B,
+    [TIMER4B] = &OCR4B,
 #endif
 #if defined(OCR4C)
-    [TIMER4C] = (uint16_t)&OCR4C,
+    [TIMER4C] = &OCR4C,
 #endif
 #if defined(OCR4D)
-    [TIMER4D] = (uint16_t)&OCR4D,
+    [TIMER4D] = &OCR4D,
 #endif
 #if defined(OCR5A)
-    [TIMER5A] = (uint16_t)&OCR5A,
+    [TIMER5A] = &OCR5A,
 #endif
 #if defined(OCR5B)
-    [TIMER5B] = (uint16_t)&OCR5B,
+    [TIMER5B] = &OCR5B,
 #endif
 #if defined(OCR5C)
-    [TIMER5C] = (uint16_t)&OCR5C
+    [TIMER5C] = &OCR5C
 #endif
 };
 
