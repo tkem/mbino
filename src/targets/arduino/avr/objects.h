@@ -16,7 +16,10 @@
 #ifndef MBINO_AVR_OBJECTS_H
 #define MBINO_AVR_OBJECTS_H
 
+#include "PortNames.h"
 #include "gpio_object.h"
+
+#include <stdint.h>
 
 #define DEVICE_INTERRUPTIN 1
 #define DEVICE_PORTIN 1

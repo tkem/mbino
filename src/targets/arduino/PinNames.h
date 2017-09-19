@@ -182,19 +182,4 @@ namespace mbino {
 #endif
 #endif
 
-// TODO: enum type?
-typedef uint8_t PortName;
-
-static const PortName PortA = 1;
-static const PortName PortB = 2;
-static const PortName PortC = 3;
-static const PortName PortD = 4;
-static const PortName PortE = 5;
-static const PortName PortF = 6;
-static const PortName PortG = 7;
-static const PortName PortH = 8;
-static const PortName PortJ = 10;
-static const PortName PortK = 11;
-static const PortName PortL = 12;
-
 #endif

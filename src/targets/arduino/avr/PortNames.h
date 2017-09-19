@@ -13,33 +13,23 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_GPIO_OBJECT_H
-#define MBINO_GPIO_OBJECT_H
+#ifndef MBINO_PORT_NAMES_H
+#define MBINO_PORT_NAMES_H
 
-#include <stdint.h>
+// TODO: board-specific?
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
-typedef struct {
-    volatile uint8_t *reg;
-    uint8_t port;
-    uint8_t mask;
-} gpio_t;
-
-static inline int gpio_read(gpio_t *obj)
-{
-    return (*obj->reg & obj->mask) ? 1 : 0;
-}
-
-static inline int gpio_is_connected(const gpio_t *obj)
-{
-    return obj->port != NC;
-}
-
-#ifdef __cplusplus
-}  // extern "C"
-#endif
+typedef enum {
+    PortA = 1,
+    PortB = 2,
+    PortC = 3,
+    PortD = 4,
+    PortE = 5,
+    PortF = 6,
+    PortG = 7,
+    PortH = 8,
+    PortJ = 10,
+    PortK = 11,
+    PortL = 12
+} PortName;
 
 #endif
