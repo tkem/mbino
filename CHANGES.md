@@ -1,3 +1,12 @@
+## 0.8.2 (2017-09-19)
+
+- Move `PortNames.h` to architecture directory.
+
+- Reformat static inline functions.
+
+- Add `gpio_object.h`.
+
+
 ## 0.8.1 (2017-09-19)
 
 - Refactor HAL layer:
