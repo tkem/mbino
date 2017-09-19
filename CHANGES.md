@@ -1,3 +1,12 @@
+## 0.8.1 (2017-09-19)
+
+- Refactor HAL layer:
+
+  * make HAL interfaces `extern "C"`.
+  * add `targets` folder.
+  * prepare for multiple architectures.
+
+
 ## 0.8.0 (2017-09-13)
 
 - Add multi-parameter callbacks.
