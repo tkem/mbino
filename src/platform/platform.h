@@ -19,14 +19,12 @@
 #ifndef MBINO_PLATFORM_H
 #define MBINO_PLATFORM_H
 
+#include "hal/device.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "device.h"
-#include "PinNames.h"
-#include "PortNames.h"
 
 #ifdef getc
 #undef getc

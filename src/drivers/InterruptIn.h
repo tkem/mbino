@@ -19,6 +19,10 @@
 #ifndef MBINO_INTERRUPT_IN_H
 #define MBINO_INTERRUPT_IN_H
 
+#include "platform/platform.h"
+
+#if defined (DEVICE_INTERRUPTIN) || defined(DOXYGEN_ONLY)
+
 #include "hal/gpio_api.h"
 #include "hal/gpio_irq_api.h"
 #include "platform/Callback.h"
@@ -71,5 +75,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif

@@ -33,7 +33,7 @@ namespace mbino {
         }
 
         DigitalOut(PinName pin, int value) {
-            gpio_init_out(&gpio, pin, value != 0);
+            gpio_init_out_ex(&gpio, pin, value != 0);
         }
 
         void write(int value) {

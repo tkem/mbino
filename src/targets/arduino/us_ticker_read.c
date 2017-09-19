@@ -13,22 +13,11 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "analogin_api.h"
+#include "hal/us_ticker_api.h"
 
 #include <Arduino.h>
 
-namespace mbino {
-
-    void analogin_init(analogin_t* obj, PinName pin)
-    {
-        obj->pin = pin;
-    }
-
-    uint16_t analogin_read_u16(analogin_t* obj)
-    {
-        uint16_t value = analogRead(obj->pin);
-        // 10-bit to 16-bit conversion
-        return (value << 6) | (value >> 4);
-    }
-
+uint32_t us_ticker_read(void)
+{
+    return micros();
 }

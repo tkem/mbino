@@ -18,6 +18,9 @@
  */
 #include "Stream.h"
 
+// FIXME!
+#ifdef ARDUINO_ARCH_AVR
+
 namespace mbino {
 
     Stream::Stream()
@@ -72,3 +75,5 @@ namespace mbino {
     }
 
 }
+
+#endif

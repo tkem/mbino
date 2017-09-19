@@ -16,46 +16,13 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_DIGITAL_IN_H
-#define MBINO_DIGITAL_IN_H
+#ifndef MBINO_DEVICE_H
+#define MBINO_DEVICE_H
 
-#include "platform/platform.h"
-#include "hal/gpio_api.h"
-
-namespace mbino {
-
-    class DigitalIn {
-    public:
-
-        DigitalIn(PinName pin) {
-            gpio_init_in(&gpio, pin);
-        }
-
-        DigitalIn(PinName pin, PinMode mode) {
-            gpio_init_in_ex(&gpio, pin, mode);
-        }
-
-        int read() {
-            return gpio_read(&gpio);
-        }
-
-        void mode(PinMode mode) {
-            gpio_mode(&gpio, mode);
-        }
-
-        int is_connected() {
-            return gpio_is_connected(&gpio);
-        }
-
-        operator int() {
-            return read();
-        }
-
-    protected:
-        gpio_t gpio;
-
-    };
-
-}
+#if defined(ARDUINO)
+#include "targets/arduino/objects.h"
+#else
+#error “This library only supports the Arduino platform.”
+#endif
 
 #endif

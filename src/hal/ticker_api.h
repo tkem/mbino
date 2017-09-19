@@ -19,55 +19,70 @@
 #ifndef MBINO_TICKER_API_H
 #define MBINO_TICKER_API_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
-namespace mbino {
+#define MBED_TICKER_INTERRUPT_TIMESTAMP_MAX_DELTA 0x70000000ULL
 
-    typedef uint32_t timestamp_t;
+typedef uint32_t timestamp_t;
 
-    typedef uint64_t us_timestamp_t;
+typedef uint64_t us_timestamp_t;
 
-    typedef void (*ticker_event_handler)(intptr_t id);
+// mbino extension: change id type to intptr_t
+typedef void (*ticker_event_handler)(intptr_t id);
 
-    struct ticker_event_t {
-        us_timestamp_t timestamp;
-        ticker_event_t* next;
-        ticker_event_handler handler;
-        intptr_t id;
-    };
+typedef struct ticker_event_s {
+    us_timestamp_t timestamp;
+    intptr_t id;
+    struct ticker_event_s *next;
+    // mbino extension: store handler with ticker_event_t
+    ticker_event_handler event_handler;
+} ticker_event_t;
 
-    struct ticker_interface_t {
-        void (*init)();
-        uint32_t (*read)();
-        void (*set_interrupt)(timestamp_t timestamp);
-        uint32_t interrupt_timestamp_max_delta;
-    };
+typedef struct {
+    void (*init)(void);
+    uint32_t (*read)(void);
+    // TODO: disable_interrupt, clear_interrupt, fire_interrupt
+    void (*set_interrupt)(timestamp_t timestamp);
+} ticker_interface_t;
 
-    struct ticker_event_queue_t {
-        us_timestamp_t present_time;
-        ticker_event_t* head;
-        bool initialized;
-    };
+typedef struct {
+    // mbino extension: moved event_handler to ticker_event_t
+    ticker_event_t *head;
+    us_timestamp_t present_time;
+    bool initialized;
+} ticker_event_queue_t;
 
-    struct ticker_data_t {
-        const ticker_interface_t* interface;
-        ticker_event_queue_t* queue;
-    };
+typedef struct {
+    const ticker_interface_t *interface;
+    ticker_event_queue_t *queue;
+} ticker_data_t;
 
-    void ticker_irq_handler(const ticker_data_t* ticker);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void ticker_init_event(ticker_event_t* obj, ticker_event_handler handler, intptr_t id);
+void ticker_irq_handler(const ticker_data_t *const ticker);
 
-    void ticker_insert_event(const ticker_data_t* ticker, ticker_event_t* obj, timestamp_t timestamp);
+// mbino extension
+void ticker_init_event(ticker_event_t *obj, ticker_event_handler handler, intptr_t id);
 
-    void ticker_insert_event_us(const ticker_data_t* const ticker, ticker_event_t* obj, us_timestamp_t timestamp);
+void ticker_remove_event(const ticker_data_t *const ticker, ticker_event_t *obj);
 
-    void ticker_remove_event(const ticker_data_t* ticker, ticker_event_t* obj);
+// mbino extension: moved id initialization to ticker_init_event()
+void ticker_insert_event(const ticker_data_t *const ticker, ticker_event_t *obj, timestamp_t timestamp);
 
-    timestamp_t ticker_read(const ticker_data_t* ticker);
+// mbino extension: moved id initialization to ticker_init_event()
+void ticker_insert_event_us(const ticker_data_t *const ticker, ticker_event_t *obj, us_timestamp_t timestamp);
 
-    us_timestamp_t ticker_read_us(const ticker_data_t* ticker);
+timestamp_t ticker_read(const ticker_data_t *const ticker);
 
+us_timestamp_t ticker_read_us(const ticker_data_t *const ticker);
+
+int ticker_get_next_timestamp(const ticker_data_t *const ticker, timestamp_t *timestamp);
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif

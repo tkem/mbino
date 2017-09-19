@@ -18,6 +18,8 @@
  */
 #include "PortInOut.h"
 
+#ifdef DEVICE_PORTINOUT
+
 #include "platform/mbed_critical.h"
 
 namespace mbino {
@@ -25,7 +27,7 @@ namespace mbino {
     PortInOut::PortInOut(PortName port, int mask)
         : _mode(PullDefault), _value(0)
     {
-        port_init_in(&_port, port, mask, _mode);
+        port_init_in_ex(&_port, port, mask, _mode);
     }
 
     void PortInOut::write(int value)
@@ -53,3 +55,5 @@ namespace mbino {
     }
 
 }
+
+#endif

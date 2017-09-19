@@ -19,30 +19,48 @@
 #ifndef MBINO_PORT_API_H
 #define MBINO_PORT_API_H
 
-#include "platform/platform.h"
+#include "device.h"
 
-namespace mbino {
+#if DEVICE_PORTIN || DEVICE_PORTOUT
 
-    struct port_t {
-        volatile uint8_t* reg;
-        uint8_t port;
-        uint8_t mask;
-    };
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void port_init_in(port_t* obj, PortName port, uint8_t mask, PinMode pull = PullDefault);
+typedef struct port_s port_t;
 
-    void port_init_out(port_t* obj, PortName port, uint8_t mask, uint8_t value = 0);
+void port_init(port_t *obj, PortName port, int mask, PinDirection direction);
 
-    void port_dir_in(port_t* obj, PinMode pull = PullDefault);
+// mbino extension
+void port_init_in(port_t *obj, PortName port, int mask);
 
-    void port_dir_out(port_t* obj, uint8_t value = 0);
+// mbino extension
+void port_init_in_ex(port_t *obj, PortName port, int mask, PinMode mode);
 
-    int port_read(port_t* obj);
+// mbino extension
+void port_init_out(port_t *obj, PortName port, int mask);
 
-    void port_write(port_t* obj, uint8_t value);
+// mbino extension
+void port_init_out_ex(port_t *obj, PortName port, int mask, int value);
 
-    void port_mode(port_t* obj, PinMode pull);
+void port_dir(port_t *obj, PinDirection direction);
 
+// mbino extension
+void port_dir_in(port_t *obj, PinMode mode);
+
+// mbino extension
+void port_dir_out(port_t *obj, int value);
+
+void port_write(port_t *obj, int value);
+
+int port_read(port_t *obj);
+
+void port_mode(port_t *obj, PinMode mode);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif
 
 #endif

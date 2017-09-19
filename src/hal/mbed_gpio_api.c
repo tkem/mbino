@@ -16,46 +16,28 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_DIGITAL_IN_H
-#define MBINO_DIGITAL_IN_H
+#include "gpio_api.h"
 
-#include "platform/platform.h"
-#include "hal/gpio_api.h"
-
-namespace mbino {
-
-    class DigitalIn {
-    public:
-
-        DigitalIn(PinName pin) {
-            gpio_init_in(&gpio, pin);
-        }
-
-        DigitalIn(PinName pin, PinMode mode) {
-            gpio_init_in_ex(&gpio, pin, mode);
-        }
-
-        int read() {
-            return gpio_read(&gpio);
-        }
-
-        void mode(PinMode mode) {
-            gpio_mode(&gpio, mode);
-        }
-
-        int is_connected() {
-            return gpio_is_connected(&gpio);
-        }
-
-        operator int() {
-            return read();
-        }
-
-    protected:
-        gpio_t gpio;
-
-    };
-
+void gpio_init(gpio_t *obj, PinName pin)
+{
+    gpio_init_in(obj, pin);
 }
 
-#endif
+void gpio_init_in(gpio_t *obj, PinName pin)
+{
+    gpio_init_in_ex(obj, pin, PullDefault);
+}
+
+void gpio_init_out(gpio_t *obj, PinName pin)
+{
+    gpio_init_out_ex(obj, pin, 0);
+}
+
+void gpio_dir(gpio_t *obj, PinDirection direction)
+{
+    if (direction == PIN_INPUT) {
+        gpio_dir_in(obj, PullDefault);
+    } else {
+        gpio_dir_out(obj, 0);
+    }
+}

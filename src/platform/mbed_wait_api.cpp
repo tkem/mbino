@@ -20,13 +20,9 @@
 
 #include "hal/us_ticker_api.h"
 
-namespace mbino {
-
-    void wait_us(long us) {
-        // TODO: use delayMicroseconds() (16bit) for short waits?
-        uint32_t start = us_ticker_read();
-        while ((us_ticker_read() - start) < (uint32_t)us)
-            ;
-    }
-
+void wait_us(long us)
+{
+    uint32_t start = us_ticker_read();
+    while ((us_ticker_read() - start) < (uint32_t)us)
+        ;
 }

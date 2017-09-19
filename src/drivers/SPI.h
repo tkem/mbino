@@ -51,8 +51,7 @@ namespace mbino {
         }
 
         int write(const char* tx_buffer, int tx_length, char* rx_buffer, int rx_length) {
-            spi_master_block_write(&_spi, tx_buffer, tx_length, rx_buffer, rx_length, _write_fill);
-            return tx_length > rx_length ? tx_length : rx_length;
+            return spi_master_block_write(&_spi, tx_buffer, tx_length, rx_buffer, rx_length, _write_fill);
         }
 
         void set_default_write_value(char data) {

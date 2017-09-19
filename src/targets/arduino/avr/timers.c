@@ -13,6 +13,8 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
+#ifdef ARDUINO_ARCH_AVR
+
 #include "timers.h"
 
 volatile uint8_t *const PROGMEM timer_to_tccr_PGM[] = {
@@ -194,3 +196,5 @@ const uint8_t PROGMEM timer_to_com_mask_PGM[] = {
     [TIMER5C] = _BV(COM5C0) | _BV(COM5C1)
 #endif
 };
+
+#endif

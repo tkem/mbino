@@ -1,9 +1,6 @@
 /* mbino - basic mbed APIs for the Arduino platform
  * Copyright (c) 2017 Thomas Kemmer
  *
- * mbed Microcontroller Library
- * Copyright (c) 2006-2013 ARM Limited
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You
  * may obtain a copy of the License at
@@ -16,32 +13,29 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_ANALOGIN_API_H
-#define MBINO_ANALOGIN_API_H
+#ifdef ARDUINO_ARCH_AVR
 
-#include "device.h"
+#include "platform/mbed_critical.h"
 
-#if DEVICE_ANALOGIN
+#include <Arduino.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+static volatile uint8_t core_util_critical_section_counter = 0;
+static volatile uint8_t core_util_critical_section_sreg;
 
-typedef struct analogin_s analogin_t;
-
-void analogin_init(analogin_t *obj, PinName pin);
-
-uint16_t analogin_read_u16(analogin_t *obj);
-
-// mbino extension: inline floating point
-static inline float analogin_read(analogin_t *obj) {
-    return analogin_read_u16(obj) * (1.0f / 65535.0f);
+void core_util_critical_section_enter(void)
+{
+    uint8_t sreg = SREG;
+    cli();
+    if (core_util_critical_section_counter++ == 0) {
+        core_util_critical_section_sreg = sreg;
+    }
 }
 
-#ifdef __cplusplus
+void core_util_critical_section_exit(void)
+{
+    if (--core_util_critical_section_counter == 0) {
+        SREG = core_util_critical_section_sreg;
+    }
 }
-#endif
-
-#endif
 
 #endif

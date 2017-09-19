@@ -16,27 +16,36 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_PORT_NAMES_H
-#define MBINO_PORT_NAMES_H
+#include "port_api.h"
 
-namespace mbino {
+#if DEVICE_PORTIN || DEVICE_PORTOUT
 
-    // TODO: enum type?
-    typedef uint8_t PortName;
+void port_init(port_t *obj, PortName port, int mask, PinDirection direction)
+{
+    if (direction == PIN_INPUT) {
+        port_init_in(obj, port, mask);
+    } else {
+        port_init_out(obj, port, mask);
+    }
+}
 
+void port_init_in(port_t *obj, PortName port, int mask)
+{
+    port_init_in_ex(obj, port, mask, PullDefault);
+}
 
-    static const PortName PortA = 1;
-    static const PortName PortB = 2;
-    static const PortName PortC = 3;
-    static const PortName PortD = 4;
-    static const PortName PortE = 5;
-    static const PortName PortF = 6;
-    static const PortName PortG = 7;
-    static const PortName PortH = 8;
-    static const PortName PortJ = 10;
-    static const PortName PortK = 11;
-    static const PortName PortL = 12;
+void port_init_out(port_t *obj, PortName port, int mask)
+{
+    port_init_out_ex(obj, port, mask, 0);
+}
 
+void port_dir(port_t *obj, PinDirection direction)
+{
+    if (direction == PIN_INPUT) {
+        port_dir_in(obj, PullDefault);
+    } else {
+        port_dir_out(obj, 0);
+    }
 }
 
 #endif

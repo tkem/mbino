@@ -25,16 +25,16 @@ namespace mbino {
     DigitalInOut::DigitalInOut(PinName pin)
         : _mode(PullDefault), _value(false)
     {
-        gpio_init_in(&gpio, pin, _mode);
+        gpio_init_in_ex(&gpio, pin, _mode);
     }
 
     DigitalInOut::DigitalInOut(PinName pin, PinDirection direction, PinMode mode, int value)
         : _mode(mode), _value(value != 0)
     {
         if (direction == PIN_INPUT) {
-            gpio_init_in(&gpio, pin, _mode);
+            gpio_init_in_ex(&gpio, pin, _mode);
         } else {
-            gpio_init_out(&gpio, pin, _value);
+            gpio_init_out_ex(&gpio, pin, _value);
         }
     }
 

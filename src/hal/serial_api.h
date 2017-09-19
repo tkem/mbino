@@ -19,53 +19,52 @@
 #ifndef MBINO_SERIAL_API_H
 #define MBINO_SERIAL_API_H
 
-#include "platform/platform.h"
+#include "device.h"
 
 #ifdef DEVICE_SERIAL
 
-class Stream; // forward declaration of Arduino Stream type
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace mbino {
+typedef enum {
+    ParityNone = 0,
+    ParityOdd = 1,
+    ParityEven = 2
+} SerialParity;
 
-    typedef enum {
-        ParityNone = 0,
-        ParityOdd = 1,
-        ParityEven = 2
-    } SerialParity;
+typedef struct serial_s serial_t;
 
-    typedef Stream serial_stream_t;
+void serial_init(serial_t *obj, PinName tx, PinName rx);
 
-    struct serial_stream_interface_t;
+// mbino extension
+void serial_monitor_init(serial_t *obj);
 
-    struct serial_t {
-        const serial_stream_interface_t* interface;
-        serial_stream_t* stream;
-        long baudrate;
-        uint8_t config;
-        bool initialized;
-    };
+void serial_free(serial_t *obj);
 
-    void serial_init(serial_t* obj, PinName tx, PinName rx);
+// mbino extension: change baudrate type to long
+void serial_baud(serial_t *obj, long baudrate);
 
-    void serial_monitor_init(serial_t* obj);
+void serial_format(serial_t *obj, int data_bits, SerialParity parity, int stop_bits);
 
-    void serial_free(serial_t* obj);
+// TODO: serial_irq_handler, serial_irq_set
 
-    void serial_baud(serial_t* obj, long baudrate);
+int serial_getc(serial_t *obj);
 
-    void serial_format(serial_t* obj, uint8_t data_bits, SerialParity parity, uint8_t stop_bits);
+void serial_putc(serial_t *obj, int c);
 
-    int serial_getc(serial_t* obj);
+// mbino extension
+void serial_puts(serial_t *obj, const char *s);
 
-    void serial_putc(serial_t* obj, int c);
+int serial_readable(serial_t *obj);
 
-    void serial_puts(serial_t* obj, const char* s);
+int serial_writable(serial_t *obj);
 
-    bool serial_readable(serial_t* obj);
+// TODO: serial_clear, serial_break_set, serial_break_clear, serial_set_flow_control, ...
 
-    bool serial_writable(serial_t* obj);
-
+#ifdef __cplusplus
 }
+#endif
 
 #endif
 

@@ -19,41 +19,46 @@
 #ifndef MBINO_SPI_API_H
 #define MBINO_SPI_API_H
 
-#include "platform/platform.h"
+#include "device.h"
 
 #ifdef DEVICE_SPI
 
-// TODO: do we really have to include SPI.h here?
-#include <SPI.h>
+// DEVICE_SPI_ASYNCH is not supported
 
-namespace mbino {
+#define SPI_FILL_CHAR 0xFF
+#define SPI_FILL_WORD 0xFFFF
 
-    static const char SPI_FILL_CHAR = 0xFF;
+typedef struct spi_s spi_t;
 
-    struct spi_t {
-        uint32_t clock;
-        uint8_t bits;
-        uint8_t mode;
-        SPISettings settings;  // TODO: anonymous struct?
-    };
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk);
+// FIXME: ssel support?
+void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk/*, PinName ssel */);
 
-    void spi_free(spi_t* obj);
+void spi_free(spi_t *obj);
 
-    void spi_format(spi_t* obj, uint8_t bits, uint8_t mode);
+// FIXME: SPI slave support?
+void spi_format(spi_t *obj, int bits, int mode/*, int slave*/);
 
-    void spi_frequency(spi_t* obj, long hz);
+// mbino extension: change hz type to long
+void spi_frequency(spi_t *obj, long hz);
 
-    int spi_master_write(spi_t* obj, int value);
+int spi_master_write(spi_t *obj, int value);
 
-    void spi_master_block_write(
-        spi_t* obj,
-        const char* tx_buffer, int tx_length,
-        char* rx_buffer, int rx_length,
-        char write_fill);
+int spi_master_block_write(spi_t *obj, const char *tx_buffer, int tx_length, char *rx_buffer,
+                           int rx_length, char write_fill);
 
+// TODO: slave support
+// int spi_slave_receive(spi_t *obj);
+// int spi_slave_read(spi_t *obj);
+// void spi_slave_write(spi_t *obj, int value);
+// int spi_busy(spi_t *obj);
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif
 

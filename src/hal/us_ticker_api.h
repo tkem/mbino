@@ -21,24 +21,24 @@
 
 #include "ticker_api.h"
 
+#include <stdint.h>
+
+#ifdef __cplusplus
 extern "C" {
-    unsigned long micros();
+#endif
+
+const ticker_data_t *get_us_ticker_data(void);
+
+void us_ticker_irq_handler(void);
+
+void us_ticker_init(void);
+
+uint32_t us_ticker_read(void);
+
+void us_ticker_set_interrupt(timestamp_t timestamp);
+
+#ifdef __cplusplus
 }
-
-namespace mbino {
-
-    const ticker_data_t* get_us_ticker_data();
-
-    void us_ticker_init();
-
-    inline uint32_t us_ticker_read() {
-        // make this inline so simply using us_ticker_read() does not
-        // pull in whole ticker API...
-        return micros();
-    }
-
-    void us_ticker_set_interrupt(timestamp_t timestamp);
-
-}
+#endif
 
 #endif

@@ -18,6 +18,8 @@
  */
 #include "PortOut.h"
 
+#ifdef DEVICE_PORTOUT
+
 #include "platform/mbed_critical.h"
 
 namespace mbino {
@@ -30,3 +32,5 @@ namespace mbino {
     }
 
 }
+
+#endif

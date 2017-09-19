@@ -16,29 +16,27 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "mbed_critical.h"
+#include "us_ticker_api.h"
 
-#include <Arduino.h>
+static ticker_event_queue_t us_ticker_events;
 
-namespace mbino {
+static const ticker_interface_t us_ticker_interface = {
+    .init = us_ticker_init,
+    .read = us_ticker_read,
+    .set_interrupt = us_ticker_set_interrupt
+};
 
-    static volatile uint8_t core_util_critical_section_counter = 0;
-    static volatile uint8_t core_util_critical_section_sreg;
+static const ticker_data_t us_ticker_data = {
+    .interface = &us_ticker_interface,
+    .queue = &us_ticker_events
+};
 
-    void core_util_critical_section_enter()
-    {
-        uint8_t sreg = SREG;
-        cli();
-        if (core_util_critical_section_counter++ == 0) {
-            core_util_critical_section_sreg = sreg;
-        }
-    }
+const ticker_data_t *get_us_ticker_data(void)
+{
+    return &us_ticker_data;
+}
 
-    void core_util_critical_section_exit()
-    {
-        if (--core_util_critical_section_counter == 0) {
-            SREG = core_util_critical_section_sreg;
-        }
-    }
-
+void us_ticker_irq_handler(void)
+{
+    ticker_irq_handler(&us_ticker_data);
 }

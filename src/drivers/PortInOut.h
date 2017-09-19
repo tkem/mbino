@@ -21,6 +21,8 @@
 
 #include "platform/platform.h"
 
+#if defined(DEVICE_PORTINOUT) || defined(DOXYGEN_ONLY)
+
 #include "hal/port_api.h"
 
 namespace mbino {
@@ -63,5 +65,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif

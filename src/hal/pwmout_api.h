@@ -19,81 +19,71 @@
 #ifndef MBINO_PWMOUT_API_H
 #define MBINO_PWMOUT_API_H
 
-#include "platform/platform.h"
+#include "device.h"
 
 #if DEVICE_PWMOUT
 
-namespace mbino {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    struct pwmout_interface_t;
+typedef struct pwmout_s pwmout_t;
 
-    struct pwmout16_t {
-        volatile uint8_t* tccra;
-        volatile uint8_t* tccrb;
-        volatile uint16_t* ocr;
-        volatile uint16_t* icr;
-        uint8_t com;
-    };
+void pwmout_init(pwmout_t *obj, PinName pin);
 
-    struct pwmout8_t {
-        volatile uint8_t* ocr;
-        volatile uint8_t* tccr;
-        volatile uint8_t* output;
-        uint8_t com;
-        uint8_t mask;
-    };
+void pwmout_free(pwmout_t *obj);
 
-    union pwmout_object_t {
-        pwmout16_t pwm16;
-        pwmout8_t pwm8;
-    };
+// mbino extension
+void pwmout_write_u16(pwmout_t *obj, uint16_t value);
 
-    struct pwmout_t {
-        const pwmout_interface_t* interface;
-        pwmout_object_t object;
-    };
-
-    void pwmout_init(pwmout_t* obj, PinName pin);
-
-    void pwmout_write_u16(pwmout_t *obj, uint16_t value);
-
-    inline void pwmout_write(pwmout_t *obj, float value) {
-        if (value <= 0.0f) {
-            pwmout_write_u16(obj, 0);
-        } else if (value >= 1.0f) {
-            pwmout_write_u16(obj, 0xffff);
-        } else {
-            pwmout_write_u16(obj, value * 65535.0f);
-        }
+// mbino extension: inline floating point
+static inline void pwmout_write(pwmout_t *obj, float value) {
+    if (value <= 0.0f) {
+        pwmout_write_u16(obj, 0);
+    } else if (value >= 1.0f) {
+        pwmout_write_u16(obj, 0xffff);
+    } else {
+        pwmout_write_u16(obj, value * 65535.0f);
     }
-
-    uint16_t pwmout_read_u16(pwmout_t* obj);
-
-    inline float pwmout_read(pwmout_t* obj) {
-        return pwmout_read_u16(obj) * (1.0f / 65535.0f);
-    }
-
-    void pwmout_period_us(pwmout_t* obj, long us);
-
-    inline void pwmout_period_ms(pwmout_t* obj, long ms) {
-        pwmout_period_us(obj, ms * 1000);
-    }
-
-    inline void pwmout_period(pwmout_t* obj, float seconds) {
-        pwmout_period_us(obj, seconds * 1000000.0f);
-    }
-
-    void pwmout_pulsewidth_us(pwmout_t* obj, long us);
-
-    inline void pwmout_pulsewidth_ms(pwmout_t* obj, long ms) {
-        pwmout_pulsewidth_us(obj, ms * 1000);
-    }
-
-    inline void pwmout_pulsewidth(pwmout_t* obj, float seconds) {
-        pwmout_pulsewidth_us(obj, seconds * 1000000.0f);
-    }
-
 }
+
+// mbino extension
+uint16_t pwmout_read_u16(pwmout_t *obj);
+
+// mbino extension: inline floating point
+static inline float pwmout_read(pwmout_t *obj) {
+    return pwmout_read_u16(obj) * (1.0f / 65535.0f);
+}
+
+// mbino extension: change us type to long
+void pwmout_period_us(pwmout_t *obj, long us);
+
+// mbino extension: change ms type to long, inline forward
+static inline void pwmout_period_ms(pwmout_t* obj, long ms) {
+    pwmout_period_us(obj, ms * 1000);
+}
+
+// mbino extension: inline floating point
+static inline void pwmout_period(pwmout_t* obj, float seconds) {
+    pwmout_period_us(obj, seconds * 1000000.0f);
+}
+
+// mbino extension: change us type to long
+void pwmout_pulsewidth_us(pwmout_t* obj, long us);
+
+// mbino extension: change ms type to long, inline forward
+static inline void pwmout_pulsewidth_ms(pwmout_t* obj, long ms) {
+    pwmout_pulsewidth_us(obj, ms * 1000);
+}
+
+// mbino extension: inline floating point
+static inline void pwmout_pulsewidth(pwmout_t* obj, float seconds) {
+    pwmout_pulsewidth_us(obj, seconds * 1000000.0f);
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

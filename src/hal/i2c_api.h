@@ -19,78 +19,45 @@
 #ifndef MBINO_I2C_API_H
 #define MBINO_I2C_API_H
 
-#include "platform/platform.h"
+#include "device.h"
 
 #ifdef DEVICE_I2C
 
-namespace mbino {
+// DEVICE_I2C_ASYNCH and DEVICE_I2CSLAVE are not supported
 
-    enum {
-        I2C_ERROR_NO_SLAVE = -1,
-        I2C_ERROR_BUS_BUSY = -2
-    };
+typedef struct i2c_s i2c_t;
 
-    struct i2c_t {};
+enum {
+    I2C_ERROR_NO_SLAVE = -1,
+    I2C_ERROR_BUS_BUSY = -2
+};
 
-    void i2c_init(i2c_t* obj, PinName sda, PinName scl);
-
-    void i2c_frequency(i2c_t* obj, long hz);
-
-    int i2c_read(i2c_t* obj, uint8_t address, char* data, uint8_t length, bool stop);
-
-    int i2c_write(i2c_t* obj, uint8_t address, const char* data, uint8_t length, bool stop);
-
-#ifdef WIRE_HAS_END
-    // assume Wire.h was already included and the global Wire object is available
-
-    inline void i2c_init(i2c_t* obj, PinName sda, PinName scl)
-    {
-        if (sda == I2C_SDA && scl == I2C_SCL) {
-            // FIXME: on first call? Prevent multiple initialization?
-            Wire.begin();
-        }
-        // TODO: error handling?
-    }
-
-    inline void i2c_frequency(i2c_t* obj, long hz)
-    {
-        Wire.setClock(hz);
-    }
-
-    inline int i2c_read(i2c_t* obj, uint8_t address, char* data, uint8_t length, bool stop)
-    {
-        // FIXME: nread > length?
-        uint8_t nread = Wire.requestFrom(uint8_t(address >> 1), length, uint8_t(stop));
-        int n = 0;
-        // FIXME: available() < nread?
-        while (n != nread && Wire.available()) {
-            data[n++] = Wire.read();
-        }
-        return n;
-    }
-
-    inline int i2c_write(i2c_t* obj, uint8_t address, const char* data, uint8_t length, bool stop)
-    {
-        Wire.beginTransmission(address >> 1);
-        int n = Wire.write(data, length);
-        // FIXME: error mapping?
-        switch (Wire.endTransmission(stop)) {
-        case 0:
-            return n;
-        case 1:
-            return n;  // ???
-        case 2:
-            return I2C_ERROR_NO_SLAVE;
-        case 3:
-            return I2C_ERROR_NO_SLAVE;  // ???
-        default:
-            return I2C_ERROR_BUS_BUSY;  // ???
-        }
-    }
-
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+void i2c_init(i2c_t *obj, PinName sda, PinName scl);
+
+// mbino extension: change hz type to long
+void i2c_frequency(i2c_t *obj, long hz);
+
+int i2c_start(i2c_t *obj);
+
+int i2c_stop(i2c_t *obj);
+
+int i2c_read(i2c_t *obj, int address, char *data, int length, int stop);
+
+int i2c_write(i2c_t *obj, int address, const char *data, int length, int stop);
+
+void i2c_reset(i2c_t *obj);
+
+int i2c_byte_read(i2c_t *obj, int last);
+
+int i2c_byte_write(i2c_t *obj, int data);
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif
 

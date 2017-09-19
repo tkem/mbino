@@ -16,15 +16,19 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_CRITICAL_H
-#define MBINO_MBED_CRITICAL_H
+#ifndef MBINO_UTIL_CRITICAL_H
+#define MBINO_UTIL_CRITICAL_H
 
-namespace mbino {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void core_util_critical_section_enter();
+void core_util_critical_section_enter(void);
 
-    void core_util_critical_section_exit();
+void core_util_critical_section_exit(void);
 
-}
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

@@ -21,6 +21,8 @@
 
 #include "platform/platform.h"
 
+#if defined (DEVICE_ANALOGIN) || defined(DOXYGEN_ONLY)
+
 #include "hal/analogin_api.h"
 
 namespace mbino {
@@ -48,5 +50,7 @@ namespace mbino {
     };
 
 }
+
+#endif
 
 #endif

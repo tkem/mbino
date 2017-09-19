@@ -19,36 +19,35 @@
 #ifndef MBINO_GPIO_IRQ_API_H
 #define MBINO_GPIO_IRQ_API_H
 
-#include "platform/platform.h"
+#include "device.h"
 
-#include <stdint.h>
+#if DEVICE_INTERRUPTIN
 
-namespace mbino {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    enum gpio_irq_event { IRQ_NONE = 0, IRQ_RISE = 1, IRQ_FALL = 2 };
+typedef struct gpio_irq_s gpio_irq_t;
 
-    typedef void(*gpio_irq_handler)(intptr_t id, gpio_irq_event event);
+// mbino extension: change id type from uint32_t to intptr_t
+typedef void (*gpio_irq_handler)(intptr_t id, gpio_irq_event event);
 
-    struct gpio_irq_t {
-        gpio_irq_handler handler;
-        intptr_t id;
-        const volatile uint8_t* reg;
-        uint8_t mask;
-        uint8_t irq;
-        uint8_t events;
-        bool enabled;
-    };
+// mbino extension: change id type from uint32_t to intptr_t
+int gpio_irq_init(gpio_irq_t *obj, PinName pin, gpio_irq_handler handler, intptr_t id);
 
-    int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr_t id);
+void gpio_irq_free(gpio_irq_t *obj);
 
-    void gpio_irq_free(gpio_irq_t* obj);
+// mbino extension: change enable type from uint32_t to int (bool)
+void gpio_irq_set(gpio_irq_t *obj, gpio_irq_event event, int enable);
 
-    void gpio_irq_set(gpio_irq_t* obj, gpio_irq_event event, bool enable);
+void gpio_irq_enable(gpio_irq_t *obj);
 
-    void gpio_irq_enable(gpio_irq_t* obj);
+void gpio_irq_disable(gpio_irq_t *obj);
 
-    void gpio_irq_disable(gpio_irq_t* obj);
-
+#ifdef __cplusplus
 }
+#endif
+
+#endif
 
 #endif

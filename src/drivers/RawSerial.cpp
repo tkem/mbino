@@ -29,7 +29,7 @@ namespace mbino {
 
     static int rsnprintf(RawSerial* obj, size_t n, const char* format, va_list arg)
     {
-        char* buf = alloca(n);
+        char* buf = static_cast<char*>(alloca(n));
         int len = vsnprintf(buf, n, format, arg);
         if (len >= 0 && size_t(len) < n) {
             obj->puts(buf);

@@ -19,28 +19,40 @@
 #ifndef MBINO_GPIO_API_H
 #define MBINO_GPIO_API_H
 
-#include "port_api.h"
+#include "device.h"
 
-namespace mbino {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    typedef port_t gpio_t;
+void gpio_init(gpio_t *obj, PinName pin);
 
-    void gpio_init_in(gpio_t* obj, PinName pin, PinMode pull = PullDefault);
+void gpio_init_in(gpio_t* gpio, PinName pin);
 
-    void gpio_init_out(gpio_t* obj, PinName pin, bool value = false);
+void gpio_init_in_ex(gpio_t* gpio, PinName pin, PinMode mode);
 
-    void gpio_dir_in(gpio_t* obj, PinMode pull);
+void gpio_init_out(gpio_t* gpio, PinName pin);
 
-    void gpio_dir_out(gpio_t* obj, bool value);
+void gpio_init_out_ex(gpio_t* gpio, PinName pin, int value);
 
-    bool gpio_read(gpio_t* obj);
+void gpio_dir(gpio_t *obj, PinDirection direction);
 
-    void gpio_write(gpio_t* obj, bool value);
+// mbino extension
+void gpio_dir_in(gpio_t *obj, PinMode mode);
 
-    void gpio_mode(gpio_t* obj, PinMode pull);
+// mbino extension
+void gpio_dir_out(gpio_t *obj, int value);
 
-    bool gpio_is_connected(gpio_t* obj);
+void gpio_write(gpio_t *obj, int value);
 
+int gpio_read(gpio_t *obj);
+
+void gpio_mode(gpio_t *obj, PinMode mode);
+
+int gpio_is_connected(const gpio_t *obj);
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif

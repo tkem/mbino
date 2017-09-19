@@ -18,6 +18,8 @@
  */
 #include "InterruptIn.h"
 
+#ifdef DEVICE_INTERRUPTIN
+
 #include "platform/mbed_critical.h"
 
 namespace mbino {
@@ -70,3 +72,5 @@ namespace mbino {
         }
     }
 }
+
+#endif

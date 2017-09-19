@@ -19,18 +19,25 @@
 #ifndef MBINO_MBED_WAIT_API_H
 #define MBINO_MBED_WAIT_API_H
 
-namespace mbino {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    void wait_us(long us);
+// mbed extension: change us type to long
+void wait_us(long us);
 
-    inline void wait_ms(long ms) {
-        wait_us(ms * 1000L);
-    }
-
-    inline void wait(float s) {
-        wait_us(s * 1000000.0f);
-    }
-
+// mbed extension: change ms type to long, inline forward
+static inline void wait_ms(long ms) {
+    wait_us(ms * 1000L);
 }
+
+// mbed extension: inline floating point
+static inline void wait(float s) {
+    wait_us(s * 1000000.0f);
+}
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
