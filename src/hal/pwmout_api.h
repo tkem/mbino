@@ -37,7 +37,8 @@ void pwmout_free(pwmout_t *obj);
 void pwmout_write_u16(pwmout_t *obj, uint16_t value);
 
 // mbino extension: inline floating point
-static inline void pwmout_write(pwmout_t *obj, float value) {
+static inline void pwmout_write(pwmout_t *obj, float value)
+{
     if (value <= 0.0f) {
         pwmout_write_u16(obj, 0);
     } else if (value >= 1.0f) {
@@ -51,7 +52,8 @@ static inline void pwmout_write(pwmout_t *obj, float value) {
 uint16_t pwmout_read_u16(pwmout_t *obj);
 
 // mbino extension: inline floating point
-static inline float pwmout_read(pwmout_t *obj) {
+static inline float pwmout_read(pwmout_t *obj)
+{
     return pwmout_read_u16(obj) * (1.0f / 65535.0f);
 }
 
@@ -59,12 +61,14 @@ static inline float pwmout_read(pwmout_t *obj) {
 void pwmout_period_us(pwmout_t *obj, long us);
 
 // mbino extension: change ms type to long, inline forward
-static inline void pwmout_period_ms(pwmout_t* obj, long ms) {
+static inline void pwmout_period_ms(pwmout_t* obj, long ms)
+{
     pwmout_period_us(obj, ms * 1000);
 }
 
 // mbino extension: inline floating point
-static inline void pwmout_period(pwmout_t* obj, float seconds) {
+static inline void pwmout_period(pwmout_t* obj, float seconds)
+{
     pwmout_period_us(obj, seconds * 1000000.0f);
 }
 
@@ -72,12 +76,14 @@ static inline void pwmout_period(pwmout_t* obj, float seconds) {
 void pwmout_pulsewidth_us(pwmout_t* obj, long us);
 
 // mbino extension: change ms type to long, inline forward
-static inline void pwmout_pulsewidth_ms(pwmout_t* obj, long ms) {
+static inline void pwmout_pulsewidth_ms(pwmout_t* obj, long ms)
+{
     pwmout_pulsewidth_us(obj, ms * 1000);
 }
 
 // mbino extension: inline floating point
-static inline void pwmout_pulsewidth(pwmout_t* obj, float seconds) {
+static inline void pwmout_pulsewidth(pwmout_t* obj, float seconds)
+{
     pwmout_pulsewidth_us(obj, seconds * 1000000.0f);
 }
 

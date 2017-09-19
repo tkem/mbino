@@ -16,17 +16,15 @@
 #ifndef MBINO_GPIO_OBJECT_H
 #define MBINO_GPIO_OBJECT_H
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 typedef struct {
     volatile uint8_t *reg;
     uint8_t port;
     uint8_t mask;
 } gpio_t;
-
-// TODO: static inline gpio_write(), gpio_read(), gpio_is_connected()?
-
-#ifdef __cplusplus
-extern "C"{
-#endif
 
 static inline int gpio_read(gpio_t *obj)
 {

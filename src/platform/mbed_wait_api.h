@@ -27,12 +27,14 @@ extern "C" {
 void wait_us(long us);
 
 // mbed extension: change ms type to long, inline forward
-static inline void wait_ms(long ms) {
+static inline void wait_ms(long ms)
+{
     wait_us(ms * 1000L);
 }
 
 // mbed extension: inline floating point
-static inline void wait(float s) {
+static inline void wait(float s)
+{
     wait_us(s * 1000000.0f);
 }
 

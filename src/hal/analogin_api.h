@@ -34,7 +34,8 @@ void analogin_init(analogin_t *obj, PinName pin);
 uint16_t analogin_read_u16(analogin_t *obj);
 
 // mbino extension: inline floating point
-static inline float analogin_read(analogin_t *obj) {
+static inline float analogin_read(analogin_t *obj)
+{
     return analogin_read_u16(obj) * (1.0f / 65535.0f);
 }
 
