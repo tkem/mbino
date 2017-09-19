@@ -36,33 +36,53 @@ static void gpio_pwm_off(PinName pin)
 
 void gpio_init_in_ex(gpio_t *obj, PinName pin, PinMode mode)
 {
-    uint8_t port = digitalPinToPort(pin);
-    uint8_t mask = digitalPinToBitMask(pin);
-    port_init_in_ex(obj, port, mask, mode);
     gpio_pwm_off(pin);  // in case it's later turned into an output
+    obj->port = digitalPinToPort(pin);
+    obj->mask = digitalPinToBitMask(pin);
+    gpio_dir_in(obj, mode);
 }
 
 void gpio_init_out_ex(gpio_t *obj, PinName pin, int value)
 {
-    uint8_t port = digitalPinToPort(pin);
-    uint8_t mask = digitalPinToBitMask(pin);
-    port_init_out_ex(obj, port, mask, value ? mask : 0);
     gpio_pwm_off(pin);
+    obj->port = digitalPinToPort(pin);
+    obj->mask = digitalPinToBitMask(pin);
+    gpio_dir_out(obj, value);
 }
 
-void gpio_dir_in(gpio_t *obj, PinMode mode)
+void gpio_dir_in(gpio_t *obj, PinMode pull)
 {
-    port_dir_in(obj, mode);
+    volatile uint8_t *mode = portModeRegister(obj->port);
+    volatile uint8_t *input = portInputRegister(obj->port);
+    volatile uint8_t *output = portOutputRegister(obj->port);
+
+    uint8_t sreg = SREG;
+    cli();
+    obj->reg = input;
+    *mode &= ~obj->mask;
+    if (pull == PullUp) {
+        *output |= obj->mask;
+    } else {
+        *output &= obj->mask;
+    }
+    SREG = sreg;
 }
 
 void gpio_dir_out(gpio_t *obj, int value)
 {
-    port_dir_out(obj, value ? obj->mask : 0);
-}
+    volatile uint8_t *mode = portModeRegister(obj->port);
+    volatile uint8_t *output = portOutputRegister(obj->port);
 
-int gpio_read(gpio_t *obj)
-{
-    return !!port_read(obj);
+    uint8_t sreg = SREG;
+    cli();
+    obj->reg = output;
+    if (value) {
+        *output |= obj->mask;
+    } else {
+        *output &= ~obj->mask;
+    }
+    *mode |= obj->mask;
+    SREG = sreg;
 }
 
 void gpio_write(gpio_t *obj, int value)
@@ -79,12 +99,16 @@ void gpio_write(gpio_t *obj, int value)
 
 void gpio_mode(gpio_t *obj, PinMode mode)
 {
-    port_mode(obj, mode);
-}
+    volatile uint8_t *output = portOutputRegister(obj->port);
 
-int gpio_is_connected(const gpio_t *obj)
-{
-    return obj->port != NC;
+    uint8_t sreg = SREG;
+    cli();
+    if (mode == PullUp) {
+        *output |= obj->mask;
+    } else {
+        *output &= obj->mask;
+    }
+    SREG = sreg;
 }
 
 #endif

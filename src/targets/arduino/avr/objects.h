@@ -16,6 +16,8 @@
 #ifndef MBINO_AVR_OBJECTS_H
 #define MBINO_AVR_OBJECTS_H
 
+#include "gpio_object.h"
+
 #define DEVICE_INTERRUPTIN 1
 #define DEVICE_PORTIN 1
 #define DEVICE_PORTINOUT 1
@@ -27,8 +29,6 @@ struct port_s {
     uint8_t port;
     uint8_t mask;
 };
-
-typedef struct port_s gpio_t;
 
 typedef enum {
     IRQ_NONE,
