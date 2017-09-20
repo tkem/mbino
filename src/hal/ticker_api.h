@@ -19,6 +19,8 @@
 #ifndef MBINO_TICKER_API_H
 #define MBINO_TICKER_API_H
 
+#include "device.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 

@@ -39,7 +39,7 @@ static inline int gpio_is_connected(const gpio_t *obj)
 }
 
 #ifdef __cplusplus
-}  // extern "C"
+}
 #endif
 
 #endif

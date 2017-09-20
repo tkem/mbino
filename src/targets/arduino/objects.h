@@ -17,6 +17,7 @@
 #define MBINO_OBJECTS_H
 
 #include "PinNames.h"
+#include "tickers.h"
 
 #include <pins_arduino.h>
 
