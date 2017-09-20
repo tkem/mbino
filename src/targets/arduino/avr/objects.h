@@ -21,7 +21,6 @@
 
 #include <stdint.h>
 
-#define DEVICE_INTERRUPTIN 1
 #define DEVICE_PORTIN 1
 #define DEVICE_PORTINOUT 1
 #define DEVICE_PORTOUT 1
@@ -31,22 +30,6 @@ struct port_s {
     volatile uint8_t *reg;
     uint8_t port;
     uint8_t mask;
-};
-
-typedef enum {
-    IRQ_NONE,
-    IRQ_RISE,
-    IRQ_FALL
-} gpio_irq_event;
-
-struct gpio_irq_s {
-    void (*handler)(intptr_t id, gpio_irq_event event);
-    intptr_t id;
-    const volatile uint8_t *reg;
-    uint8_t mask;
-    uint8_t irq;
-    uint8_t events;
-    uint8_t enabled;
 };
 
 typedef struct {

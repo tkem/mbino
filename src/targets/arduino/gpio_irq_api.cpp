@@ -13,11 +13,11 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifdef ARDUINO_ARCH_AVR
-
 #include "hal/gpio_irq_api.h"
+#include "hal/gpio_api.h"
 
 #include <Arduino.h>
+// for EXTERNAL_NUM_INTERRUPTS
 #include <wiring_private.h>
 
 // see e.g. https://github.com/damellis/attiny/issues/81
@@ -31,51 +31,50 @@
 #endif
 #endif
 
-typedef void(*irq_handler)();
+typedef void(*irq_handler_fn)();
 
 static gpio_irq_t* gpio_irq_objects[EXTERNAL_NUM_INTERRUPTS];
 
 template<int N>
-static void gpio_irq_isr()
+static void gpio_interrup_handler()
 {
     gpio_irq_t* obj = gpio_irq_objects[N];
-    // try to detect event as early as possible in irq handler
-    gpio_irq_event event = (*obj->reg & obj->mask) ? IRQ_RISE : IRQ_FALL;
+    gpio_irq_event event = gpio_read(&obj->gpio) ? IRQ_RISE : IRQ_FALL;
     obj->handler(obj->id, event);
 }
 
 // TODO: PROGMEM?
-static const irq_handler gpio_irq_handlers[EXTERNAL_NUM_INTERRUPTS] = {
+static const irq_handler_fn gpio_irq_handlers[EXTERNAL_NUM_INTERRUPTS] = {
 #if EXTERNAL_NUM_INTERRUPTS > 0
-    gpio_irq_isr<0>,
+    gpio_interrup_handler<0>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 1
-    gpio_irq_isr<1>,
+    gpio_interrup_handler<1>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 2
-    gpio_irq_isr<2>,
+    gpio_interrup_handler<2>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 3
-    gpio_irq_isr<3>,
+    gpio_interrup_handler<3>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 4
-    gpio_irq_isr<4>,
+    gpio_interrup_handler<4>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 5
-    gpio_irq_isr<5>,
+    gpio_interrup_handler<5>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 6
-    gpio_irq_isr<6>,
+    gpio_interrup_handler<6>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 7
-    gpio_irq_isr<7>,
+    gpio_interrup_handler<7>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 8
 #warning There are more than 8 external interrupts. Some callbacks may not be initialized.
 #endif
 };
 
-static void gpio_irq_attach(gpio_irq_t* obj)
+static void gpio_irq_update(gpio_irq_t* obj)
 {
     static const uint8_t mode[] = {0, RISING, FALLING, CHANGE};
     if (obj->enabled && obj->events) {
@@ -89,10 +88,9 @@ int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr
 {
     int irq = digitalPinToInterrupt(pin);
     if (irq != NOT_AN_INTERRUPT) {
+        gpio_init_in(&obj->gpio, pin);
         obj->handler = handler;
         obj->id = id;
-        obj->reg = portInputRegister(digitalPinToPort(pin));
-        obj->mask = digitalPinToBitMask(pin);
         obj->irq = irq;
         obj->events = IRQ_NONE;
         obj->enabled = true;
@@ -118,19 +116,17 @@ void gpio_irq_set(gpio_irq_t* obj, gpio_irq_event event, int enable)
     } else {
         obj->events &= ~event;
     }
-    gpio_irq_attach(obj);
+    gpio_irq_update(obj);
 }
 
 void gpio_irq_enable(gpio_irq_t* obj)
 {
     obj->enabled = true;
-    gpio_irq_attach(obj);
+    gpio_irq_update(obj);
 }
 
 void gpio_irq_disable(gpio_irq_t* obj)
 {
     obj->enabled = false;
-    detachInterrupt(obj->irq);
+    gpio_irq_update(obj);
 }
-
-#endif
