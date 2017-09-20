@@ -1,3 +1,14 @@
+## 0.8.3 (2017-09-20)
+
+- Refactor `us_ticker_read()`.
+
+- Refactor `gpio_irq_api` implementation.
+
+- Implement missing core util functions.
+
+- General interface cleanup.
+
+
 ## 0.8.2 (2017-09-19)
 
 - Move `PortNames.h` to architecture directory.
