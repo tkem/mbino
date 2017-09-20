@@ -51,6 +51,7 @@ namespace mbino {
             i2c_init(&_i2c, sda, scl);
         }
 
+        // mbino extension: change hz type to long
         void frequency(long hz) {
             i2c_frequency(&_i2c, hz);
         }
@@ -59,13 +60,12 @@ namespace mbino {
             return i2c_read(&_i2c, address, data, length, !repeated);
         }
 
-        int write(int address, const char* data, int length, bool repeated = false) {
-            return i2c_write(&_i2c, address, data, length, !repeated) != length;
-        }
-
-        /* TODO: not supported by Arduino Wire library?
         int read(int ack) {
             return i2c_byte_read(&_i2c, !ack);
+        }
+
+        int write(int address, const char* data, int length, bool repeated = false) {
+            return i2c_write(&_i2c, address, data, length, !repeated) != length;
         }
 
         int write(int data) {
@@ -79,6 +79,19 @@ namespace mbino {
         void stop(void) {
             i2c_stop(&_i2c);
         }
+
+        /* mbino restriction: no virtual lock methods
+        virtual void lock();
+        virtual void unlock();
+        */
+
+#if DEVICE_I2C_ASYNCH
+#error "I2C anynchronous operation is not suupported."
+#endif
+
+    protected:
+        /* TODO: acquire() support?
+        void aquire();
         */
     };
 

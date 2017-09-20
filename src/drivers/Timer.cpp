@@ -59,7 +59,7 @@ namespace mbino {
     }
 
     long Timer::read_us() {
-        // only 32 bits needed
+        // mbino enhancement: only 32 bits needed for read_us()
         timestamp_t time;
         core_util_critical_section_enter();
         if (_running) {

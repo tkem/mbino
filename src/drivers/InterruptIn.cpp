@@ -59,7 +59,7 @@ namespace mbino {
 
     void InterruptIn::_irq_handler(intptr_t id, gpio_irq_event event)
     {
-        InterruptIn* obj = (InterruptIn*)id;
+        InterruptIn* obj = reinterpret_cast<InterruptIn*>(id);
         switch (event) {
         case IRQ_RISE:
             obj->_rise();
@@ -71,6 +71,7 @@ namespace mbino {
             break;
         }
     }
+
 }
 
 #endif

@@ -26,7 +26,9 @@
 namespace mbino {
 
     class Timeout : public Ticker, private NonCopyable<Timeout> {
+
     protected:
+
         virtual void handler();
     };
 

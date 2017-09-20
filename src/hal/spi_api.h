@@ -28,19 +28,21 @@
 #define SPI_FILL_CHAR 0xFF
 #define SPI_FILL_WORD 0xFFFF
 
+#if DEVICE_SPI_ASYNCH
+#error "SPI asynchronous operation not supported."
+#else
 typedef struct spi_s spi_t;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// FIXME: ssel support?
-void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk/*, PinName ssel */);
+void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel);
 
 void spi_free(spi_t *obj);
 
-// FIXME: SPI slave support?
-void spi_format(spi_t *obj, int bits, int mode/*, int slave*/);
+void spi_format(spi_t *obj, int bits, int mode, int slave);
 
 // mbino extension: change hz type to long
 void spi_frequency(spi_t *obj, long hz);
@@ -50,11 +52,19 @@ int spi_master_write(spi_t *obj, int value);
 int spi_master_block_write(spi_t *obj, const char *tx_buffer, int tx_length, char *rx_buffer,
                            int rx_length, char write_fill);
 
-// TODO: slave support
-// int spi_slave_receive(spi_t *obj);
-// int spi_slave_read(spi_t *obj);
-// void spi_slave_write(spi_t *obj, int value);
-// int spi_busy(spi_t *obj);
+int spi_slave_receive(spi_t *obj);
+
+int spi_slave_read(spi_t *obj);
+
+void spi_slave_write(spi_t *obj, int value);
+
+int spi_busy(spi_t *obj);
+
+uint8_t spi_get_module(spi_t *obj);
+
+#if DEVICE_SPI_ASYNCH
+#error "SPI asynchronous operation not supported."
+#endif
 
 #ifdef __cplusplus
 }

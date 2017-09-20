@@ -31,8 +31,10 @@ namespace mbino {
 
     class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
     public:
+        // mbino extension: change baud type to long
         RawSerial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
+        // FIXME: mbino extension for Arduino monitor/USB connection w/o physical pins
         RawSerial(PinNameMonitorTX tx, PinNameMonitorRX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
         int getc() {
@@ -48,6 +50,12 @@ namespace mbino {
         }
 
         int printf(const char* format, ...);
+
+    protected:
+        /* mbino restriction: no lock methods
+        virtual void lock();
+        virtual void unlock();
+        */
     };
 
 }

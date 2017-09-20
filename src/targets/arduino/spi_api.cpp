@@ -41,8 +41,9 @@ static const SPISettings& spi_get_settings(spi_t* obj)
     return *reinterpret_cast<SPISettings*>(&obj->settings);
 }
 
-void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk)
+void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk, PinName ssel)
 {
+    // FIXME: ssel handling if not NC?
     if (mosi == PIN_SPI_MOSI && miso == PIN_SPI_MISO && sclk == PIN_SPI_SCK) {
         SPI.begin();  // Arduino SPI has its own init counter
         obj->clock = 1000000;
@@ -58,8 +59,9 @@ void spi_free(spi_t* obj)
     SPI.end();
 }
 
-void spi_format(spi_t* obj, int bits, int mode)
+void spi_format(spi_t* obj, int bits, int mode, int slave)
 {
+    // FIXME: assert slave == 0
     obj->bits = bits;
     obj->mode = mode;
     spi_init_settings(obj);

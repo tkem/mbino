@@ -26,7 +26,7 @@
 
 namespace mbino {
     class Timer : private NonCopyable<Timer> {
-        const ticker_data_t *_ticker_data;
+        const ticker_data_t* _ticker_data;
         us_timestamp_t _start;
         us_timestamp_t _time;
         bool _running;
@@ -44,13 +44,15 @@ namespace mbino {
         void reset();
 
         float read() {
-            return read_high_resolution_us() / 1000000.0f;
+            return read_high_resolution_us() * (1.0f / 1000000.0f);
         }
 
+        // mbino extension: change return type to long
         long read_ms() {
             return read_high_resolution_us() / 1000;
         }
 
+        // mbino extension: change return type to long
         long read_us();
 
         us_timestamp_t read_high_resolution_us();

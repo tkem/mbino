@@ -56,6 +56,8 @@ namespace mbino {
         const ticker_data_t *_ticker_data;
 
     protected:
+
+        // mbino extension: change id type to intptr_t
         static void irq(intptr_t id);
     };
 

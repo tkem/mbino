@@ -47,6 +47,12 @@ namespace mbino {
         operator float() {
             return read();
         }
+
+    protected:
+        /* mbino restriction: no lock methods
+        virtual void lock();
+        virtual void unlock();
+        */
     };
 
 }

@@ -24,23 +24,41 @@
 #if defined(DEVICE_SERIAL) || defined(DOXYGEN_ONLY)
 
 #include "hal/serial_api.h"
+#include "platform/Callback.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {
 
     class SerialBase : private NonCopyable<SerialBase> {
         serial_t _serial;
+        long _baud;
 
     public:
 
         enum Parity {
             None = ParityNone,
             Odd = ParityOdd,
-            Even = ParityEven
+            Even = ParityEven,
+            Forced1 = ParityForced1,
+            Forced0 = ParityForced0
         };
 
-        void baud(int baudrate) {
-            serial_baud(&_serial, baudrate);
+        enum IrqType {
+            RxIrq = 0,
+            TxIrq,
+            IrqCnt
+        };
+
+        enum Flow {
+            Disabled = FlowControlNone,
+            RTS = FlowControlRTS,
+            CTS = FlowControlCTS,
+            RTSCTS = FlowControlRTSCTS
+        };
+
+        // mbino extension: change baudrate type to long
+        void baud(long baudrate) {
+            serial_baud(&_serial, (_baud = baudrate));
         }
 
         void format(int bits = 8, Parity parity = SerialBase::None, int stop_bits = 1) {
@@ -55,17 +73,26 @@ namespace mbino {
             return serial_writable(&_serial);
         }
 
+        // mbino extension: pass const reference to func
+        void attach(const Callback<void()>& func, IrqType type = RxIrq);
+
+        void send_break();
+
+#if DEVICE_SERIAL_FC
+        void set_flow_control(Flow type, PinName flow1 = NC, PinName flow2 = NC);
+#endif
+
+#if DEVICE_SERIAL_ASYNCH
+#error "Serial anynchronous operation is not suupported."
+#endif
+
     protected:
 
-        SerialBase(PinName tx, PinName rx, long baud) {
-            serial_init(&_serial, tx, rx);
-            serial_baud(&_serial, baud);
-        }
+        // mbino extension: change baudrate type to long
+        SerialBase(PinName tx, PinName rx, long baud);
 
-        SerialBase(PinNameMonitorTX, PinNameMonitorRX, long baud) {
-            serial_monitor_init(&_serial);
-            serial_baud(&_serial, baud);
-        }
+        // FIXME mbino extension: Arduino monitor serial w/o hardware pins
+        SerialBase(PinNameMonitorTX, PinNameMonitorRX, long baud);
 
         ~SerialBase() {
             // TODO: serial_free(&_serial) not called in mbed?
@@ -85,6 +112,17 @@ namespace mbino {
             serial_puts(&_serial, s);
             return 0;
         }
+
+        /* mbino restriction: no lock methods
+        virtual void lock();
+        virtual void unlock();
+        */
+
+    private:
+        Callback<void()> _irq[IrqCnt];
+
+        // mbino extension: change id type to intptr_t
+        static void _irq_handler(intptr_t id, SerialIrq irq_type);
     };
 
 }

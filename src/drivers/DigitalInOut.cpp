@@ -22,14 +22,13 @@
 
 namespace mbino {
 
-    DigitalInOut::DigitalInOut(PinName pin)
-        : _mode(PullDefault), _value(false)
+    DigitalInOut::DigitalInOut(PinName pin) : _mode(PullDefault), _value(0)
     {
         gpio_init_in_ex(&gpio, pin, _mode);
     }
 
     DigitalInOut::DigitalInOut(PinName pin, PinDirection direction, PinMode mode, int value)
-        : _mode(mode), _value(value != 0)
+        : _mode(mode), _value(value)
     {
         if (direction == PIN_INPUT) {
             gpio_init_in_ex(&gpio, pin, _mode);
@@ -41,16 +40,15 @@ namespace mbino {
     void DigitalInOut::write(int value)
     {
         core_util_critical_section_enter();
-        _value = value != 0;
-        gpio_write(&gpio, _value);
+        gpio_write(&gpio, (_value = value));
+        _value = value;
         core_util_critical_section_exit();
     }
 
-    void DigitalInOut::mode(PinMode mode)
+    void DigitalInOut::mode(PinMode pull)
     {
         core_util_critical_section_enter();
-        _mode = mode;
-        gpio_mode(&gpio, _mode = mode);
+        gpio_mode(&gpio, (_mode = pull));
         core_util_critical_section_exit();
     }
 

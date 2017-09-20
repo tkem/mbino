@@ -19,6 +19,8 @@
 
 #include <Arduino.h>
 
+// TODO: irq handling, break, flow control, ...
+
 template<class T>
 static void serial_stream_begin(Stream* obj, long baud, int data, int parity, int stop)
 {
@@ -140,6 +142,16 @@ void serial_format(serial_t* obj, int data_bits, SerialParity parity, int stop_b
     serial_restart(obj);
 }
 
+void serial_irq_handler(serial_t *obj, uart_irq_handler handler, intptr_t id)
+{
+    // FIXME: not implemented, yet
+}
+
+void serial_irq_set(serial_t *obj, SerialIrq irq, int enable)
+{
+    // FIXME: not implemented, yet
+}
+
 int serial_getc(serial_t* obj)
 {
     // mbed getc() is blocking, while Arduino Stream::read() is not
@@ -165,17 +177,26 @@ void serial_puts(serial_t* obj, const char* s)
 
 int serial_readable(serial_t* obj)
 {
-    return !!obj->stream->available();
+    return obj->stream->available() != 0;
 }
 
 int serial_writable(serial_t* obj)
 {
     // FIXME: Print::availableForWrite() not available on SAM?
 #ifdef ARDUINO_ARCH_AVR
-    return !!obj->stream->availableForWrite();
+    return obj->stream->availableForWrite() != 0;
 #else
     return 1;
 #endif
 }
+
+// TODO: check possible implementations
+void serial_clear(serial_t *obj);
+
+void serial_break_set(serial_t *obj);
+
+void serial_break_clear(serial_t *obj);
+
+void serial_pinout_tx(PinName tx);
 
 #endif

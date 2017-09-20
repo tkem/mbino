@@ -40,8 +40,8 @@ namespace mbino {
             return port_read(&_port);
         }
 
-        void mode(PinMode mode) {
-            port_mode(&_port, mode);
+        void mode(PinMode pull) {
+            port_mode(&_port, pull);
         }
 
         operator int() {

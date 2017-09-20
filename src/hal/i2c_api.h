@@ -23,9 +23,11 @@
 
 #ifdef DEVICE_I2C
 
-// DEVICE_I2C_ASYNCH and DEVICE_I2CSLAVE are not supported
-
+#if DEVICE_I2C_ASYNCH
+#error "I2C asynchronous operation not supported."
+#else
 typedef struct i2c_s i2c_t;
+#endif
 
 enum {
     I2C_ERROR_NO_SLAVE = -1,
@@ -54,6 +56,14 @@ void i2c_reset(i2c_t *obj);
 int i2c_byte_read(i2c_t *obj, int last);
 
 int i2c_byte_write(i2c_t *obj, int data);
+
+#if DEVICE_I2CSLAVE
+#error "I2C slave operation not supported."
+#endif
+
+#if DEVICE_I2C_ASYNCH
+#error "I2C asynchronous operation not supported."
+#endif
 
 #ifdef __cplusplus
 }

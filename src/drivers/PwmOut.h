@@ -46,10 +46,12 @@ namespace mbino {
             pwmout_period(&_pwm, seconds);
         }
 
+        // mbino extension: change ms type to long
         void period_ms(long ms) {
             pwmout_period_ms(&_pwm, ms);
         }
 
+        // mbino extension: change us type to long
         void period_us(long us) {
             pwmout_period_us(&_pwm, us);
         }
@@ -58,10 +60,12 @@ namespace mbino {
             pwmout_pulsewidth(&_pwm, seconds);
         }
 
+        // mbino extension: change ms type to long
         void pulsewidth_ms(long ms) {
             pwmout_pulsewidth_ms(&_pwm, ms);
         }
 
+        // mbino extension: change us type to long
         void pulsewidth_us(long us) {
             pwmout_pulsewidth_us(&_pwm, us);
         }

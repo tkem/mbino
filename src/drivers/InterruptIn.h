@@ -38,6 +38,7 @@ namespace mbino {
 
         InterruptIn(PinName pin);
 
+        // mbino restriction: destructor not virtual
         ~InterruptIn() {
             gpio_irq_free(&gpio_irq);
         }
@@ -46,12 +47,18 @@ namespace mbino {
             return gpio_read(&gpio);
         }
 
+        operator int() {
+            return read();
+        }
+
+        // mbino extension: pass const reference to func
         void rise(const Callback<void()>& func);
 
+        // mbino extension: pass const reference to func
         void fall(const Callback<void()>& func);
 
-        void mode(PinMode mode) {
-            gpio_mode(&gpio, mode);
+        void mode(PinMode pull) {
+            gpio_mode(&gpio, pull);
         }
 
         void enable_irq() {
@@ -62,15 +69,12 @@ namespace mbino {
             gpio_irq_disable(&gpio_irq);
         }
 
-        operator int() {
-            return read();
-        }
-
     protected:
         gpio_t gpio;
         gpio_irq_t gpio_irq;
 
     private:
+        // mbino extension: change id type to intptr_t
         static void _irq_handler(intptr_t id, gpio_irq_event event);
     };
 

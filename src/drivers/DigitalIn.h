@@ -39,8 +39,8 @@ namespace mbino {
             return gpio_read(&gpio);
         }
 
-        void mode(PinMode mode) {
-            gpio_mode(&gpio, mode);
+        void mode(PinMode pull) {
+            gpio_mode(&gpio, pull);
         }
 
         int is_connected() {

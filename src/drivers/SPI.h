@@ -34,22 +34,27 @@ namespace mbino {
 
     public:
 
-        SPI(PinName mosi, PinName miso, PinName sclk) : _write_fill(SPI_FILL_CHAR) {
-            spi_init(&_spi, mosi, miso, sclk);
+        SPI(PinName mosi, PinName miso, PinName sclk, PinName ssel = NC)
+            : _write_fill(SPI_FILL_CHAR)
+        {
+            spi_init(&_spi, mosi, miso, sclk, ssel);
         }
 
         void format(int bits, int mode = 0) {
-            spi_format(&_spi, bits, mode);
+            spi_format(&_spi, bits, mode, 0);
         }
 
+        // mbino extension: change hz type to long
         void frequency(long hz = 1000000) {
             spi_frequency(&_spi, hz);
         }
 
+        // mbino restriction: no virtual methods
         int write(int value) {
             return spi_master_write(&_spi, value);
         }
 
+        // mbino restriction: no virtual methods
         int write(const char* tx_buffer, int tx_length, char* rx_buffer, int rx_length) {
             return spi_master_block_write(&_spi, tx_buffer, tx_length, rx_buffer, rx_length, _write_fill);
         }
@@ -58,9 +63,19 @@ namespace mbino {
             _write_fill = data;
         }
 
-        // no multithreading support
-        void lock() {}
-        void unlock() {}
+        /* mbino restriction: no virtual lock methods
+        virtual void lock();
+        virtual void unlock();
+        */
+
+#if DEVICE_SPI_ASYNCH
+#error "SPI anynchronous operation is not suupported."
+#endif
+
+    protected:
+        /* TODO: acquire() support?
+        void aquire();
+        */
     };
 
 }

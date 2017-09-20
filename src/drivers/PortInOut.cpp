@@ -24,8 +24,7 @@
 
 namespace mbino {
 
-    PortInOut::PortInOut(PortName port, int mask)
-        : _mode(PullDefault), _value(0)
+    PortInOut::PortInOut(PortName port, int mask) : _mode(PullDefault), _value(0)
     {
         port_init_in_ex(&_port, port, mask, _mode);
     }
@@ -33,16 +32,14 @@ namespace mbino {
     void PortInOut::write(int value)
     {
         core_util_critical_section_enter();
-        _value = value;
-        port_write(&_port, _value);
+        port_write(&_port, (_value = value));
         core_util_critical_section_exit();
     }
 
-    void PortInOut::mode(PinMode mode)
+    void PortInOut::mode(PinMode pull)
     {
         core_util_critical_section_enter();
-        _mode = mode;
-        port_mode(&_port, _mode);
+        port_mode(&_port, (_mode = pull));
         core_util_critical_section_exit();
     }
 

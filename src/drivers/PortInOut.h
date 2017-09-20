@@ -50,7 +50,7 @@ namespace mbino {
             port_dir_in(&_port, _mode);
         }
 
-        void mode(PinMode mode);
+        void mode(PinMode pull);
 
         PortInOut& operator=(int value) {
             write(value);

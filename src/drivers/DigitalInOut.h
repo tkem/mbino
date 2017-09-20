@@ -27,7 +27,7 @@ namespace mbino {
 
     class DigitalInOut {
         PinMode _mode;
-        bool _value;
+        int _value;
 
     public:
 
@@ -49,7 +49,7 @@ namespace mbino {
             gpio_dir_in(&gpio, _mode);
         }
 
-        void mode(PinMode mode);
+        void mode(PinMode pull);
 
         int is_connected() {
             return gpio_is_connected(&gpio);

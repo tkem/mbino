@@ -23,8 +23,11 @@
 #include "NonCopyable.h"
 
 #include <stdarg.h>
+#include <stdio.h>
 
 namespace mbino {
+
+    // mbino restriction: FileLike/FileHandle not supported
 
     class Stream : private NonCopyable<Stream> {
         FILE _file;
@@ -71,6 +74,11 @@ namespace mbino {
         virtual int isatty();
         virtual int sync();
         virtual off_t size();
+        */
+
+        /* lock method stubs not supported
+        virtual void lock() {}
+        virtual void unlock() {}
         */
 
         virtual int _putc(int c) = 0;

@@ -21,6 +21,8 @@
 
 #include "device.h"
 
+#include <stdint.h>
+
 #ifdef DEVICE_SERIAL
 
 #ifdef __cplusplus
@@ -30,14 +32,34 @@ extern "C" {
 typedef enum {
     ParityNone = 0,
     ParityOdd = 1,
-    ParityEven = 2
+    ParityEven = 2,
+    ParityForced1 = 3,
+    ParityForced0 = 4
 } SerialParity;
 
+typedef enum {
+    RxIrq,
+    TxIrq
+} SerialIrq;
+
+typedef enum {
+    FlowControlNone,
+    FlowControlRTS,
+    FlowControlCTS,
+    FlowControlRTSCTS
+} FlowControl;
+
+typedef void (*uart_irq_handler)(intptr_t id, SerialIrq event);
+
+#if DEVICE_SERIAL_ASYNCH
+#error "Serial asynchronous operation not supported."
+#else
 typedef struct serial_s serial_t;
+#endif
 
 void serial_init(serial_t *obj, PinName tx, PinName rx);
 
-// mbino extension
+// FIXME: mbino extension for Arduino monitor/USB serial w/o hardware pins
 void serial_monitor_init(serial_t *obj);
 
 void serial_free(serial_t *obj);
@@ -47,7 +69,11 @@ void serial_baud(serial_t *obj, long baudrate);
 
 void serial_format(serial_t *obj, int data_bits, SerialParity parity, int stop_bits);
 
-// TODO: serial_irq_handler, serial_irq_set
+// mbino extension: change id type to intptr_t
+void serial_irq_handler(serial_t *obj, uart_irq_handler handler, intptr_t id);
+
+// mbino extension: change enable type to int
+void serial_irq_set(serial_t *obj, SerialIrq irq, int enable);
 
 int serial_getc(serial_t *obj);
 
@@ -60,7 +86,19 @@ int serial_readable(serial_t *obj);
 
 int serial_writable(serial_t *obj);
 
-// TODO: serial_clear, serial_break_set, serial_break_clear, serial_set_flow_control, ...
+void serial_clear(serial_t *obj);
+
+void serial_break_set(serial_t *obj);
+
+void serial_break_clear(serial_t *obj);
+
+void serial_pinout_tx(PinName tx);
+
+void serial_set_flow_control(serial_t *obj, FlowControl type, PinName rxflow, PinName txflow);
+
+#if DEVICE_SERIAL_ASYNCH
+#error "Serial asynchronous operation not supported."
+#endif
 
 #ifdef __cplusplus
 }

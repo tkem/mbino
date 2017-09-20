@@ -32,9 +32,24 @@ namespace mbino {
 
     class Serial : public SerialBase, public Stream, private NonCopyable<Serial> {
     public:
+        // mbino restriction: no "name" support
+        // mbino extension: change baud type to long
         Serial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
+        // FIXME: mbino extension for Arduino monitor/USB connection w/o physical pins
         Serial(PinNameMonitorTX tx, PinNameMonitorRX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
+
+        bool readable() {
+            return SerialBase::readable();
+        }
+
+        bool writable() {
+            return SerialBase::writeable();
+        }
+
+        bool writeable() {
+            return SerialBase::writeable();
+        }
 
     protected:
         virtual int _getc() {
@@ -45,6 +60,10 @@ namespace mbino {
             return _base_putc(c);
         }
 
+        /* mbino restriction: no lock methods
+        virtual void lock();
+        virtual void unlock();
+        */
     };
 
 }

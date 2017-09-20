@@ -37,15 +37,20 @@ namespace mbino {
             detach();
         }
 
+        // mbino extension: pass const reference to func
         void attach(const Callback<void()>& func, float t) {
             attach_us(func, t * 1000000.0f);
         }
 
+        // mbino extension: pass const reference to func
         void attach_us(const Callback<void()>& func, us_timestamp_t t);
 
         void detach();
 
     protected:
+        /* TODO: setup() support?
+        void setup(us_timestamp_t t);
+        */
         virtual void handler();
 
     protected:

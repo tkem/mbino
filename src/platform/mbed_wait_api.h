@@ -23,23 +23,23 @@
 extern "C" {
 #endif
 
-// mbed extension: change us type to long
+// mbino extension: change us type to long
 void wait_us(long us);
 
-// mbed extension: change ms type to long, inline forward
+// mbino extension: change ms type to long, inline forward
 static inline void wait_ms(long ms)
 {
     wait_us(ms * 1000L);
 }
 
-// mbed extension: inline floating point
+// mbino extension: inline floating point
 static inline void wait(float s)
 {
     wait_us(s * 1000000.0f);
 }
 
 #ifdef __cplusplus
-} // extern "C"
+}
 #endif
 
 #endif
