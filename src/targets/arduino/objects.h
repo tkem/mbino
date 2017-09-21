@@ -48,16 +48,8 @@ struct analogin_s {
     uint8_t pin;
 };
 
-// TODO: hal?
-typedef enum {
-    IRQ_NONE = 0,
-    IRQ_RISE = 1,
-    IRQ_FALL = 2
-} gpio_irq_event;
-
 struct gpio_irq_s {
     gpio_t gpio;
-    void (*handler)(intptr_t id, gpio_irq_event event);
     intptr_t id;
     uint8_t irq;
     uint8_t events;

@@ -27,6 +27,12 @@
 extern "C" {
 #endif
 
+typedef enum {
+    IRQ_NONE = 0,
+    IRQ_RISE = 1,
+    IRQ_FALL = 2
+} gpio_irq_event;
+
 typedef struct gpio_irq_s gpio_irq_t;
 
 // mbino extension: change id type from uint32_t to intptr_t

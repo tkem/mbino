@@ -33,41 +33,43 @@
 
 typedef void(*irq_handler_fn)();
 
-static gpio_irq_t* gpio_irq_objects[EXTERNAL_NUM_INTERRUPTS];
+static gpio_irq_handler irq_handler = 0;
+
+static gpio_irq_t* irq_objects[EXTERNAL_NUM_INTERRUPTS];
 
 template<int N>
-static void gpio_interrup_handler()
+static void gpio_interrupt_handler()
 {
-    gpio_irq_t* obj = gpio_irq_objects[N];
+    gpio_irq_t* obj = irq_objects[N];
     gpio_irq_event event = gpio_read(&obj->gpio) ? IRQ_RISE : IRQ_FALL;
-    obj->handler(obj->id, event);
+    irq_handler(obj->id, event);
 }
 
 // TODO: PROGMEM?
 static const irq_handler_fn gpio_irq_handlers[EXTERNAL_NUM_INTERRUPTS] = {
 #if EXTERNAL_NUM_INTERRUPTS > 0
-    gpio_interrup_handler<0>,
+    gpio_interrupt_handler<0>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 1
-    gpio_interrup_handler<1>,
+    gpio_interrupt_handler<1>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 2
-    gpio_interrup_handler<2>,
+    gpio_interrupt_handler<2>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 3
-    gpio_interrup_handler<3>,
+    gpio_interrupt_handler<3>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 4
-    gpio_interrup_handler<4>,
+    gpio_interrupt_handler<4>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 5
-    gpio_interrup_handler<5>,
+    gpio_interrupt_handler<5>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 6
-    gpio_interrup_handler<6>,
+    gpio_interrupt_handler<6>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 7
-    gpio_interrup_handler<7>,
+    gpio_interrupt_handler<7>,
 #endif
 #if EXTERNAL_NUM_INTERRUPTS > 8
 #warning There are more than 8 external interrupts. Some callbacks may not be initialized.
@@ -89,12 +91,13 @@ int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr
     int irq = digitalPinToInterrupt(pin);
     if (irq != NOT_AN_INTERRUPT) {
         gpio_init_in(&obj->gpio, pin);
-        obj->handler = handler;
         obj->id = id;
         obj->irq = irq;
         obj->events = IRQ_NONE;
         obj->enabled = true;
-        gpio_irq_objects[irq] = obj;
+         // this *really* sets the global handler...
+        irq_handler = handler;
+        irq_objects[irq] = obj;
         return 0;
     } else {
         return -1;
@@ -106,7 +109,7 @@ void gpio_irq_free(gpio_irq_t* obj)
     if (obj->events) {
         detachInterrupt(obj->irq);
     }
-    gpio_irq_objects[obj->irq] = 0;
+    irq_objects[obj->irq] = 0;
 }
 
 void gpio_irq_set(gpio_irq_t* obj, gpio_irq_event event, int enable)
