@@ -20,17 +20,17 @@
 #define MBINO_STREAM_H
 
 #include "platform.h"
+#include "FileHandle.h"
 #include "NonCopyable.h"
 
 #include <stdarg.h>
-#include <stdio.h>
 
 namespace mbino {
 
-    // mbino restriction: FileLike/FileHandle not supported
+    // mbino restriction: FileLike not supported
 
-    class Stream : private NonCopyable<Stream> {
-        FILE _file;
+    class Stream : public FileHandle, private NonCopyable<Stream> {
+        FILE* _file;
 
     public:
         Stream();
@@ -38,19 +38,19 @@ namespace mbino {
         virtual ~Stream();
 
         int putc(int c) {
-            return fputc(c, &_file);
+            return fputc(c, _file);
         }
 
         int puts(const char* s) {
-            return fputs(s, &_file);
+            return fputs(s, _file);
         }
 
         int getc() {
-            return fgetc(&_file);
+            return fgetc(_file);
         }
 
         char* gets(char* s, int size) {
-            return fgets(s, size, &_file);
+            return fgets(s, size, _file);
         }
 
         int printf(const char* format, ...);
@@ -61,10 +61,10 @@ namespace mbino {
 
         int vscanf(const char* format, va_list args);
 
-        operator FILE*() { return &_file; }
+        operator FILE*() { return _file; }
 
     protected:
-        /* TODO: not necessary for Serial?
+        /* TODO: not necessary for Serial
         virtual int close();
         virtual ssize_t write(const void* buffer, size_t length);
         virtual ssize_t read(void* buffer, size_t length);
@@ -83,10 +83,6 @@ namespace mbino {
 
         virtual int _putc(int c) = 0;
         virtual int _getc() = 0;
-
-    private:
-        static int _put(char c, FILE* stream);
-        static int _get(FILE* stream);
     };
 
 }

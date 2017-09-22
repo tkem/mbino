@@ -18,29 +18,23 @@
  */
 #include "Stream.h"
 
-// FIXME!
-#ifdef ARDUINO_ARCH_AVR
-
 namespace mbino {
 
     Stream::Stream()
     {
-        fdev_setup_stream(&_file, &Stream::_put, &Stream::_get, _FDEV_SETUP_RW);
-        fdev_set_udata(&_file, this);
+        _file = fdopen(this, "w+");
     }
 
     Stream::~Stream()
     {
-        // according to AVR Libc docs, this is neither necessary nor
-        // desired...
-        //fclose(&_file);
+        fclose(_file);
     }
 
     int Stream::printf(const char* format, ...)
     {
         va_list arg;
         va_start(arg, format);
-        int r = vfprintf(&_file, format, arg);
+        int r = vfprintf(_file, format, arg);
         va_end(arg);
         return r;
     }
@@ -49,31 +43,19 @@ namespace mbino {
     {
         va_list arg;
         va_start(arg, format);
-        int r = vfscanf(&_file, format, arg);
+        int r = vfscanf(_file, format, arg);
         va_end(arg);
         return r;
     }
 
     int Stream::vprintf(const char* format, va_list args)
     {
-        return vfprintf(&_file, format, args);
+        return vfprintf(_file, format, args);
     }
 
     int Stream::vscanf(const char* format, va_list args)
     {
-        return vfscanf(&_file, format, args);
-    }
-
-    int Stream::_put(char c, FILE* stream)
-    {
-        return static_cast<Stream*>(fdev_get_udata(stream))->_putc(c);
-    }
-
-    int Stream::_get(FILE* stream)
-    {
-        return static_cast<Stream*>(fdev_get_udata(stream))->_getc();
+        return vfscanf(_file, format, args);
     }
 
 }
-
-#endif
