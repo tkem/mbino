@@ -79,6 +79,11 @@ tracker](https://github.com/tkem/mbino/issues/).
   library does not support some of the lower-level `I2C` API methods,
   and that you are limited to reading and writing 32 bytes at a time.
 
+- Serial interrupts are implemented using Arduino's
+  [serialEvent](https://www.arduino.cc/en/Reference/SerialEvent) API.
+  This means they are not really asynchronous, and may be deferred
+  until your `loop()` function returns.  Only `RxIrq` is supported.
+
 - Although mbino has been designed so that you usually don't pay for
   what you don't use, there still may be some overhead involved when
   compared to "native" Arduino code.

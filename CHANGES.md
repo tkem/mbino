@@ -1,3 +1,12 @@
+## 0.9.0 (2017-09-22)
+
+- Add serial event handling.
+
+- Add basic `FileHandle` API.
+
+- Refactor `gpio_irq_api`.
+
+
 ## 0.8.3 (2017-09-20)
 
 - Refactor `us_ticker_read()`.
