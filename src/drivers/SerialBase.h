@@ -95,7 +95,9 @@ namespace mbino {
         SerialBase(PinNameMonitorTX, PinNameMonitorRX, long baud);
 
         ~SerialBase() {
-            // TODO: serial_free(&_serial) not called in mbed?
+            // mbino extension: serial_free() not called in mbed, but
+            // need to detach IRQ handlers...
+            serial_free(&_serial);
         }
 
         int _base_getc() {

@@ -19,7 +19,28 @@
 
 #include <Arduino.h>
 
-// TODO: irq handling, break, flow control, ...
+#if defined(SERIAL_PORT_HARDWARE3)
+#define NUM_HARDWARE_SERIAL_PORTS 4
+#elif defined(SERIAL_PORT_HARDWARE2)
+#define NUM_HARDWARE_SERIAL_PORTS 3
+#elif defined(SERIAL_PORT_HARDWARE1)
+#define NUM_HARDWARE_SERIAL_PORTS 2
+#elif defined(SERIAL_PORT_HARDWARE)
+#define NUM_HARDWARE_SERIAL_PORTS 1
+#else
+#define NUM_HARDWARE_SERIAL_PORTS 0
+#endif
+
+static uart_irq_handler event_handler = 0;
+
+static serial_t* event_objects[NUM_HARDWARE_SERIAL_PORTS];
+
+static void serial_rx_event(uint8_t n)
+{
+    if (serial_t* obj = event_objects[n]) {
+        event_handler(obj->irq_id, RxIrq);
+    }
+}
 
 template<class T>
 static void serial_stream_begin(Stream* obj, long baud, int data, int parity, int stop)
@@ -79,7 +100,7 @@ static void serial_begin(serial_t* obj)
     }
 }
 
-static void serial_restart(serial_t* obj)
+static void serial_reset(serial_t* obj)
 {
     // serial API is not synchronized
     if (obj->initialized) {
@@ -91,29 +112,24 @@ static void serial_restart(serial_t* obj)
 void serial_init(serial_t* obj, PinName tx, PinName rx)
 {
     if (false) {
-        // make the compiler happy
-    }
+        // keep the compiler happy
 #ifdef SERIAL_PORT_HARDWARE
-    else if (tx == UART0_TX && rx == UART0_RX) {
+    } else if (tx == UART0_TX && rx == UART0_RX) {
         serial_init(obj, &SERIAL_PORT_HARDWARE);
-    }
 #endif
 #ifdef SERIAL_PORT_HARDWARE1
-    else if (tx == UART1_TX && rx == UART1_RX) {
+    } else if (tx == UART1_TX && rx == UART1_RX) {
         serial_init(obj, &SERIAL_PORT_HARDWARE1);
-    }
 #endif
 #ifdef SERIAL_PORT_HARDWARE2
-    else if (tx == UART2_TX && rx == UART2_RX) {
+    } else if (tx == UART2_TX && rx == UART2_RX) {
         serial_init(obj, &SERIAL_PORT_HARDWARE2);
-    }
 #endif
 #ifdef SERIAL_PORT_HARDWARE3
-    else if (tx == UART3_TX && rx == UART3_RX) {
+    } else if (tx == UART3_TX && rx == UART3_RX) {
         serial_init(obj, &SERIAL_PORT_HARDWARE3);
-    }
 #endif
-    // TODO: error handling?
+    }
 }
 
 void serial_monitor_init(serial_t* obj)
@@ -125,13 +141,15 @@ void serial_monitor_init(serial_t* obj)
 
 void serial_free(serial_t* obj)
 {
+    serial_irq_set(obj, RxIrq, 0);
+    serial_irq_set(obj, TxIrq, 0);
     obj->interface->end(obj->stream);
 }
 
 void serial_baud(serial_t* obj, long baudrate)
 {
     obj->baudrate = baudrate;
-    serial_restart(obj);
+    serial_reset(obj);
 }
 
 void serial_format(serial_t* obj, int data_bits, SerialParity parity, int stop_bits)
@@ -139,17 +157,43 @@ void serial_format(serial_t* obj, int data_bits, SerialParity parity, int stop_b
     obj->data = data_bits - 5;
     obj->parity = parity;
     obj->stop = stop_bits - 1;
-    serial_restart(obj);
+    serial_reset(obj);
 }
 
 void serial_irq_handler(serial_t *obj, uart_irq_handler handler, intptr_t id)
 {
-    // FIXME: not implemented, yet
+    // this *really* sets the global handler...
+    event_handler = handler;
+    obj->irq_id = id;
 }
 
 void serial_irq_set(serial_t *obj, SerialIrq irq, int enable)
 {
-    // FIXME: not implemented, yet
+    serial_begin(obj);
+    // serial events are synchronous, so no need for locking
+    if (irq == RxIrq) {
+        if (false) {
+            // keep the compiler happy
+#ifdef SERIAL_PORT_HARDWARE
+        } else if (obj->stream == &SERIAL_PORT_HARDWARE) {
+            event_objects[0] = enable ? obj : 0;
+#endif
+#ifdef SERIAL_PORT_HARDWARE1
+        } else if (obj->stream == &SERIAL_PORT_HARDWARE1) {
+            event_objects[1] = enable ? obj : 0;
+#endif
+#ifdef SERIAL_PORT_HARDWARE2
+        } else if (obj->stream == &SERIAL_PORT_HARDWARE2) {
+            event_objects[2] = enable ? obj : 0;
+#endif
+#ifdef SERIAL_PORT_HARDWARE3
+        } else if (obj->stream == &SERIAL_PORT_HARDWARE3) {
+            event_objects[3] = enable ? obj : 0;
+#endif
+        }
+    } else {
+        // TxIrq not supported
+    }
 }
 
 int serial_getc(serial_t* obj)
@@ -190,13 +234,58 @@ int serial_writable(serial_t* obj)
 #endif
 }
 
-// TODO: check possible implementations
-void serial_clear(serial_t *obj);
+void serial_clear(serial_t *obj)
+{
+    if (obj->initialized) {
+        // not really "clear", but close
+        obj->stream->flush();
+    }
+}
 
-void serial_break_set(serial_t *obj);
+void serial_break_set(serial_t *obj)
+{
+    if (obj->initialized) {
+        obj->interface->end(obj->stream);
+        // TODO: set TX high?
+    }
+}
 
-void serial_break_clear(serial_t *obj);
+void serial_break_clear(serial_t *obj)
+{
+    if (obj->initialized) {
+        obj->interface->begin(obj->stream, obj->baudrate, obj->data, obj->parity, obj->stop);
+    }
+}
 
+// FIXME: what is this?
 void serial_pinout_tx(PinName tx);
+
+#ifdef SERIAL_PORT_HARDWARE
+void serialEvent()
+{
+    serial_rx_event(0);
+}
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE1
+void serialEvent1()
+{
+    serial_rx_event(1);
+}
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE2
+void serialEvent2()
+{
+    serial_rx_event(2);
+}
+#endif
+
+#ifdef SERIAL_PORT_HARDWARE3
+void serialEvent3()
+{
+    serial_rx_event(3);
+}
+#endif
 
 #endif

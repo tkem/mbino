@@ -68,6 +68,7 @@ struct serial_s {
     const serial_stream_interface_t *interface;
     struct Stream *stream;
     long baudrate;
+    intptr_t irq_id;
     // TODO: bit fields or compact single-byte encoding
     uint8_t data;
     uint8_t parity;
