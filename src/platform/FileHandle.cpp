@@ -1,6 +1,9 @@
 /* mbino - basic mbed APIs for the Arduino platform
  * Copyright (c) 2017 Thomas Kemmer
  *
+ * mbed Microcontroller Library
+ * Copyright (c) 2006-2013 ARM Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You
  * may obtain a copy of the License at
@@ -13,30 +16,14 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifdef ARDUINO_ARCH_AVR
-
-#include "platform/FileHandle.h"
+#include "FileHandle.h"
+#include "mbed_retarget.h"
 
 namespace mbino {
 
-    static int put(char c, FILE* fp)
-    {
-        return static_cast<FileHandle*>(fdev_get_udata(fp))->_putc(c);
-    }
-
-    static int get(FILE* fp)
-    {
-        return static_cast<FileHandle*>(fdev_get_udata(fp))->_getc();
-    }
-
     FILE* fdopen(FileHandle* fh, const char* mode)
     {
-        // TODO: check mode
-        FILE* fp = fdevopen(put, get);
-        fdev_set_udata(fp, fh);
-        return fp;
+        return mbed_fdopen(fh, mode);
     }
 
 }
-
-#endif

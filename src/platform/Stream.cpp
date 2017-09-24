@@ -17,12 +17,16 @@
  * permissions and limitations under the License.
  */
 #include "Stream.h"
+#include "mbed_retarget.h"
 
 namespace mbino {
 
     Stream::Stream()
     {
         _file = fdopen(this, "w+");
+        if (_file) {
+            mbed_set_unbuffered_stream(_file);
+        }
     }
 
     Stream::~Stream()
@@ -56,6 +60,42 @@ namespace mbino {
     int Stream::vscanf(const char* format, va_list args)
     {
         return vfscanf(_file, format, args);
+    }
+
+    ssize_t Stream::read(void* buffer, size_t length)
+    {
+        char* ptr = static_cast<char*>(buffer);
+        char* end = ptr + length;
+        while (ptr != end) {
+            int c = _getc();
+            if (c == EOF) {
+                break;
+            }
+            *ptr++ = c;
+        }
+        return ptr - static_cast<char*>(buffer);
+    }
+
+    ssize_t Stream::write(const void* buffer, size_t length)
+    {
+        const char* ptr = static_cast<const char*>(buffer);
+        const char* end = ptr + length;
+        while (ptr != end) {
+            if (_putc(*ptr++) == EOF) {
+                break;
+            }
+        }
+        return ptr - static_cast<const char*>(buffer);
+    }
+
+    off_t Stream::seek(off_t offset, int whence)
+    {
+        return 0;
+    }
+
+    int Stream::close()
+    {
+        return 0;
     }
 
 }

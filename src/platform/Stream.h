@@ -64,25 +64,18 @@ namespace mbino {
         operator FILE*() { return _file; }
 
     protected:
-        /* TODO: not necessary for Serial
-        virtual int close();
-        virtual ssize_t write(const void* buffer, size_t length);
         virtual ssize_t read(void* buffer, size_t length);
+        virtual ssize_t write(const void* buffer, size_t length);
         virtual off_t seek(off_t offset, int whence);
-        virtual off_t tell();
-        virtual void rewind();
-        virtual int isatty();
-        virtual int sync();
-        virtual off_t size();
-        */
-
-        /* lock method stubs not supported
-        virtual void lock() {}
-        virtual void unlock() {}
-        */
+        virtual int close();
 
         virtual int _putc(int c) = 0;
         virtual int _getc() = 0;
+
+        /* mbino restriction: lock method stubs not supported
+        virtual void lock() {}
+        virtual void unlock() {}
+        */
     };
 
 }

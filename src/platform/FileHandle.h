@@ -22,19 +22,12 @@
 #include "platform.h"
 #include "NonCopyable.h"
 
-#include <stdio.h>
-
 namespace mbino {
 
     class FileHandle : private NonCopyable<FileHandle> {
     public:
         virtual ~FileHandle() {}
 
-        // FIXME: minimal/experimental implementation for Stream only
-        virtual int _putc(int c) = 0;
-        virtual int _getc() = 0;
-
-#if 0
         virtual ssize_t read(void* buffer, size_t size) = 0;
 
         virtual ssize_t write(const void* buffer, size_t size) = 0;
@@ -43,20 +36,23 @@ namespace mbino {
 
         virtual int close() = 0;
 
+        // mbino restriction: not virtual
+        off_t tell() {
+            return seek(0, SEEK_CUR);
+        }
+
+        // mbino restriction: not virtual
+        void rewind() {
+            seek(0, SEEK_SET);
+        }
+
+        /* mbino restriction: these are  not supported (yet)
         virtual int sync() {
             return 0;
         }
 
         virtual int isatty() {
-            return false;
-        }
-
-        virtual off_t tell() {
-            return seek(0, SEEK_CUR);
-        }
-
-        virtual void rewind() {
-            seek(0, SEEK_SET);
+            return 0;
         }
 
         virtual off_t size();
@@ -81,7 +77,8 @@ namespace mbino {
         virtual void sigio(Callback<void()> func) {
             // Default for real files. Do nothing for real files.
         }
-#endif
+        */
+
     };
 
     FILE* fdopen(FileHandle* fh, const char* mode);

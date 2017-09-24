@@ -16,16 +16,34 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_PLATFORM_H
-#define MBINO_PLATFORM_H
+#ifndef MBINO_MBED_RETARGET_H
+#define MBINO_MBED_RETARGET_H
 
-#include <stddef.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
-#include "mbed_retarget.h"
+#ifdef __AVR__
+typedef long off_t;
+typedef long ssize_t;
+#endif
 
-#include "hal/device.h"
+#ifdef getc
+#undef getc
+#endif
+
+#ifdef putc
+#undef putc
+#endif
+
+#ifdef __cplusplus
+namespace mbino {
+
+    class FileHandle;
+
+    FILE* mbed_fdopen(FileHandle* fh, const char* mode);
+
+    void mbed_set_unbuffered_stream(FILE* fp);
+
+}
+#endif
 
 #endif
