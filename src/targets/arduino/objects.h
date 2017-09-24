@@ -45,7 +45,7 @@
 #endif
 
 struct analogin_s {
-    uint8_t pin;
+    PinName pin;
 };
 
 struct gpio_irq_s {

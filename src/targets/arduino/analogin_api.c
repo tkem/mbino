@@ -19,12 +19,18 @@
 
 void analogin_init(analogin_t *obj, PinName pin)
 {
+#ifdef ADC_RESOLUTION
+    analogReadResolution(ADC_RESOLUTION);
+#endif
     obj->pin = pin;
 }
 
 uint16_t analogin_read_u16(analogin_t *obj)
 {
     uint16_t value = analogRead(obj->pin);
-    // 10-bit to 16-bit conversion
+#ifdef ADC_RESOLUTION
+    return (value << (16 - ADC_RESOLUTION)) | (value >> (2 * ADC_RESOLUTION - 16));
+#else
     return (value << 6) | (value >> 4);
+#endif
 }
