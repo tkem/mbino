@@ -37,7 +37,16 @@ namespace mbino {
         return len;
     }
 
-    int RawSerial::printf(const char* format, ...) {
+    int RawSerial::puts(const char* str)
+    {
+        while (*str) {
+            _base_putc(*str++);
+        }
+        return 0;
+    }
+
+    int RawSerial::printf(const char* format, ...)
+    {
         va_list arg;
         va_start(arg, format);
         int n = rsnprintf(this, STRING_STACK_LIMIT, format, arg);

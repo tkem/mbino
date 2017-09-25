@@ -109,12 +109,6 @@ namespace mbino {
             return c;
         }
 
-        // mbino extension
-        int _base_puts(const char* s) {
-            serial_puts(&_serial, s);
-            return 0;
-        }
-
         /* mbino restriction: no lock methods
         virtual void lock();
         virtual void unlock();

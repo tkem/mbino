@@ -29,7 +29,7 @@
 
 namespace mbino {
 
-    class RawSerial: public SerialBase, private NonCopyable<RawSerial> {
+    class RawSerial : public SerialBase, private NonCopyable<RawSerial> {
     public:
         // mbino extension: change baud type to long
         RawSerial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
@@ -45,9 +45,7 @@ namespace mbino {
             return _base_putc(c);
         }
 
-        int puts(const char* str) {
-            return _base_puts(str);
-        }
+        int puts(const char* str);
 
         int printf(const char* format, ...);
 

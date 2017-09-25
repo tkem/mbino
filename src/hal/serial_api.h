@@ -79,9 +79,6 @@ int serial_getc(serial_t *obj);
 
 void serial_putc(serial_t *obj, int c);
 
-// mbino extension
-void serial_puts(serial_t *obj, const char *s);
-
 int serial_readable(serial_t *obj);
 
 int serial_writable(serial_t *obj);

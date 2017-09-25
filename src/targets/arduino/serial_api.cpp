@@ -213,12 +213,6 @@ void serial_putc(serial_t* obj, int c)
     obj->stream->write(c);
 }
 
-void serial_puts(serial_t* obj, const char* s)
-{
-    serial_begin(obj);
-    obj->stream->write(s);
-}
-
 int serial_readable(serial_t* obj)
 {
     return obj->stream->available() != 0;
