@@ -1,3 +1,12 @@
+## 0.9.1 (2017-09-25)
+
+- Extend `FileHandle` implementation.
+
+- Use `analogReadResolution()` if available.
+
+- Remove custom `serial_puts()`.
+
+
 ## 0.9.0 (2017-09-22)
 
 - Add serial event handling.
