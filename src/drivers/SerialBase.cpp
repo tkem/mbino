@@ -32,9 +32,9 @@ namespace mbino {
         serial_irq_handler(&_serial, SerialBase::_irq_handler, (intptr_t)this);
     }
 
-    SerialBase::SerialBase(PinNameMonitorTX, PinNameMonitorRX, long baud) : _baud(baud)
+    SerialBase::SerialBase(PinNameUSBTX, PinNameUSBRX, long baud) : _baud(baud)
     {
-        serial_monitor_init(&_serial);
+        serial_usb_init(&_serial);
         serial_baud(&_serial, _baud);
         serial_irq_handler(&_serial, SerialBase::_irq_handler, (intptr_t)this);
     }

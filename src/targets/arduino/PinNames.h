@@ -169,17 +169,17 @@ static const PinName UART3_TX = 14;
 static const PinName UART3_RX = 15;
 #endif
 
-#ifdef SERIAL_PORT_MONITOR
-// these are *not* regular pins on ATmega32u4 based boards
-// TODO: implicit conversion to PinName where that makes sense?
-#ifdef __cplusplus
-namespace mbino {
-    struct PinNameMonitorTX {};
-    struct PinNameMonitorRX {};
-    static const PinNameMonitorTX USBTX;
-    static const PinNameMonitorRX USBRX;
-}
-#endif
+// mbino extension: "virtual" serial USB pins
+struct PinNameUSBTX {};
+struct PinNameUSBRX {};
+
+#if defined(SERIAL_PORT_USBVIRTUAL)
+static const struct PinNameUSBTX USBTX;
+static const struct PinNameUSBRX USBRX;
+#elif defined(SERIAL_PORT_MONITOR)
+// correct for all known boards...
+static const PinName USBTX = 1;
+static const PinName USBRX = 0;
 #endif
 
 #endif

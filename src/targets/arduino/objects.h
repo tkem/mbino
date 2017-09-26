@@ -60,19 +60,16 @@ struct gpio_irq_s {
 struct Stream; // forward declaration of Arduino Stream class
 
 typedef struct {
-    void (*begin)(struct Stream *obj, long baud, int data, int parity, int stop);
+    void (*begin)(struct Stream *obj, long baud, uint8_t format);
     void (*end)(struct Stream *obj);
 } serial_stream_interface_t;
 
 struct serial_s {
     const serial_stream_interface_t *interface;
     struct Stream *stream;
-    long baudrate;
     intptr_t irq_id;
-    // TODO: bit fields or compact single-byte encoding
-    uint8_t data;
-    uint8_t parity;
-    uint8_t stop;
+    long baudrate;
+    uint8_t format;
     bool initialized;
 };
 #endif

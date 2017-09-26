@@ -57,10 +57,10 @@ typedef void (*uart_irq_handler)(intptr_t id, SerialIrq event);
 typedef struct serial_s serial_t;
 #endif
 
-void serial_init(serial_t *obj, PinName tx, PinName rx);
+// mbino extension for Arduino "virtual" serial USB port
+void serial_usb_init(serial_t *obj);
 
-// FIXME: mbino extension for Arduino monitor/USB serial w/o hardware pins
-void serial_monitor_init(serial_t *obj);
+void serial_init(serial_t *obj, PinName tx, PinName rx);
 
 void serial_free(serial_t *obj);
 
