@@ -18,6 +18,7 @@
 
 #if defined(ARDUINO_ARCH_AVR)
 #include "avr/gpio_object.h"
+#include "avr/serial_stream_object.h"
 #else
 #error “This library only supports boards with an AVR processor.”
 #endif
@@ -27,8 +28,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-
-struct Stream; // forward declaration of Arduino Stream class
 
 struct analogin_s {
     uint8_t pin;
@@ -42,17 +41,16 @@ struct gpio_irq_s {
     bool enabled;
 };
 
-typedef struct {
-    void (*begin)(struct Stream *obj, long baud, uint8_t format);
-    void (*end)(struct Stream *obj);
-} serial_stream_interface_t;
+typedef struct serial_stream_interface_s serial_stream_interface_t;
 
 struct serial_s {
     const serial_stream_interface_t *interface;
     struct Stream *stream;
     intptr_t irq_id;
     long baudrate;
-    uint8_t format;
+    unsigned cs : 2;  // data_bits - 5
+    unsigned pm : 3;  // parity
+    unsigned sb : 1;  // stop_bits - 1
     bool initialized;
 };
 
@@ -63,7 +61,8 @@ struct spi_s {
     // cannot use SPISettings class in C interface
     union {
         int i;
-        char c[6];  // needed on SAM processors
+        long l;
+        char c[6];  // sizeof(SPISettings) on SAM processors
     } settings;
 };
 

@@ -20,6 +20,7 @@
 #include "../common_objects.h"
 #include "PortNames.h"
 #include "gpio_object.h"
+#include "serial_stream_object.h"
 
 #include <stdint.h>
 

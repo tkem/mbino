@@ -35,128 +35,15 @@ static uart_irq_handler event_handler = 0;
 
 static serial_t* event_objects[NUM_HARDWARE_SERIAL_PORTS];
 
-static void serial_rx_event(uint8_t n)
-{
-    if (serial_t* obj = event_objects[n]) {
-        event_handler(obj->irq_id, RxIrq);
-    }
-}
-
-template<class T, typename U>
-static void serial_stream_begin_config(T* stream, long baud, U config)
-{
-    stream->begin(baud, config);
-}
-
-#ifdef ARDUINO_ARCH_SAM
-static void serial_stream_begin_config(UARTClass* stream, long baud, USARTClass::USARTModes)
-{
-    stream->begin(baud);
-}
-#endif
-
-template<class T>
-static void serial_stream_begin(Stream* obj, long baud, uint8_t format)
-{
-    T* stream = static_cast<T*>(obj);
-    switch (format) {
-    case 000:
-        serial_stream_begin_config(stream, baud, SERIAL_5N1);
-        break;
-    case 001:
-        serial_stream_begin_config(stream, baud, SERIAL_6N1);
-        break;
-    case 002:
-        serial_stream_begin_config(stream, baud, SERIAL_7N1);
-        break;
-    case 003:
-        serial_stream_begin_config(stream, baud, SERIAL_8N1);
-        break;
-    case 004:
-        serial_stream_begin_config(stream, baud, SERIAL_5N2);
-        break;
-    case 005:
-        serial_stream_begin_config(stream, baud, SERIAL_6N2);
-        break;
-    case 006:
-        serial_stream_begin_config(stream, baud, SERIAL_7N2);
-        break;
-    case 007:
-        serial_stream_begin_config(stream, baud, SERIAL_8N2);
-        break;
-    case 010:
-        serial_stream_begin_config(stream, baud, SERIAL_5O1);
-        break;
-    case 011:
-        serial_stream_begin_config(stream, baud, SERIAL_6O1);
-        break;
-    case 012:
-        serial_stream_begin_config(stream, baud, SERIAL_7O1);
-        break;
-    case 013:
-        serial_stream_begin_config(stream, baud, SERIAL_8O1);
-        break;
-    case 014:
-        serial_stream_begin_config(stream, baud, SERIAL_5O2);
-        break;
-    case 015:
-        serial_stream_begin_config(stream, baud, SERIAL_6O2);
-        break;
-    case 016:
-        serial_stream_begin_config(stream, baud, SERIAL_7O2);
-        break;
-    case 017:
-        serial_stream_begin_config(stream, baud, SERIAL_8O2);
-        break;
-    case 020:
-        serial_stream_begin_config(stream, baud, SERIAL_5E1);
-        break;
-    case 021:
-        serial_stream_begin_config(stream, baud, SERIAL_6E1);
-        break;
-    case 022:
-        serial_stream_begin_config(stream, baud, SERIAL_7E1);
-        break;
-    case 023:
-        serial_stream_begin_config(stream, baud, SERIAL_8E1);
-        break;
-    case 024:
-        serial_stream_begin_config(stream, baud, SERIAL_5E2);
-        break;
-    case 025:
-        serial_stream_begin_config(stream, baud, SERIAL_6E2);
-        break;
-    case 026:
-        serial_stream_begin_config(stream, baud, SERIAL_7E2);
-        break;
-    case 027:
-        serial_stream_begin_config(stream, baud, SERIAL_8E2);
-        break;
-    default:
-        stream->begin(baud);
-    }
-    // wait for serial port to become ready
-    while (!*stream)
-        ;
-}
-
-template<class T>
-static void serial_stream_end(Stream* obj)
-{
-    static_cast<T*>(obj)->end();
-}
-
 template<class T>
 static void serial_init(serial_t* obj, T* stream)
 {
-    static const serial_stream_interface_t interface = {
-        &serial_stream_begin<T>,
-        &serial_stream_end<T>
-    };
-    obj->interface = &interface;
+    obj->interface = &serial_stream<T>::interface;
     obj->stream = stream;
     obj->baudrate = 9600;
-    obj->format = (8 - 5) | ((1 - 1) << 2) | (ParityNone << 3);
+    obj->cs = 8 - 5;
+    obj->pm = ParityNone;
+    obj->sb = 1 - 1;
     obj->initialized = false;
 }
 
@@ -164,7 +51,7 @@ static void serial_begin(serial_t* obj)
 {
     // serial API is not synchronized
     if (!obj->initialized) {
-        obj->interface->begin(obj->stream, obj->baudrate, obj->format);
+        obj->interface->begin(obj->stream, obj->baudrate, obj->cs, obj->pm, obj->sb);
         obj->initialized = true;
     }
 }
@@ -174,7 +61,14 @@ static void serial_reset(serial_t* obj)
     // serial API is not synchronized
     if (obj->initialized) {
         obj->stream->flush();
-        obj->interface->begin(obj->stream, obj->baudrate, obj->format);
+        obj->interface->begin(obj->stream, obj->baudrate, obj->cs, obj->pm, obj->sb);
+    }
+}
+
+static void serial_rx_event(uint8_t n)
+{
+    if (serial_t* obj = event_objects[n]) {
+        event_handler(obj->irq_id, RxIrq);
     }
 }
 
@@ -223,7 +117,9 @@ void serial_baud(serial_t* obj, long baudrate)
 
 void serial_format(serial_t* obj, int data_bits, SerialParity parity, int stop_bits)
 {
-    obj->format = (data_bits - 5) | ((stop_bits - 1) << 2) | (parity << 3);
+    obj->cs = data_bits - 5;
+    obj->pm = parity;
+    obj->sb = stop_bits - 1;
     serial_reset(obj);
 }
 
@@ -285,8 +181,8 @@ int serial_readable(serial_t* obj)
     return obj->stream->available() != 0;
 }
 
-// FIXME: Print::availableForWrite() not available on SAM?
-#ifdef ARDUINO_ARCH_AVR
+// Print::availableForWrite() not available on SAM?
+#ifndef ARDUINO_ARCH_SAM
 int serial_writable(serial_t* obj)
 {
     return obj->stream->availableForWrite() != 0;
@@ -312,7 +208,7 @@ void serial_break_set(serial_t *obj)
 void serial_break_clear(serial_t *obj)
 {
     if (obj->initialized) {
-        obj->interface->begin(obj->stream, obj->baudrate, obj->format);
+        obj->interface->begin(obj->stream, obj->baudrate, obj->cs, obj->pm, obj->sb);
     }
 }
 
