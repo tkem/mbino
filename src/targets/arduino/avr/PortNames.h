@@ -16,8 +16,6 @@
 #ifndef MBINO_PORT_NAMES_H
 #define MBINO_PORT_NAMES_H
 
-// TODO: board-specific?
-
 typedef enum {
     PortA = 1,
     PortB = 2,

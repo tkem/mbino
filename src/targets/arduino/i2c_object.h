@@ -13,83 +13,15 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_OBJECTS_H
-#define MBINO_OBJECTS_H
+#ifndef MBINO_I2C_OBJECT_H
+#define MBINO_I2C_OBJECT_H
 
 #include "PinNames.h"
-#include "tickers.h"
 
-#include <pins_arduino.h>
-
-#include <stdbool.h>
-
-#if defined(ARDUINO_ARCH_AVR)
-#include "avr/objects.h"
-#else
-#error “This library only supports boards with an AVR processor.”
-#endif
-
-#define DEVICE_ANALOGIN 1
-#define DEVICE_INTERRUPTIN 1
-
-#if defined(SERIAL_PORT_MONITOR) || defined(SERIAL_PORT_HARDWARE)
-#define DEVICE_SERIAL 1
-#endif
-
-#if defined(PIN_SPI_MISO) && defined(PIN_SPI_MOSI) && defined(PIN_SPI_SCK)
-#define DEVICE_SPI 1
-#endif
-
-#if defined(PIN_WIRE_SCL) && defined(PIN_WIRE_SDA)
-#define DEVICE_I2C 1
-#endif
-
-struct analogin_s {
-    PinName pin;
-};
-
-struct gpio_irq_s {
-    gpio_t gpio;
-    intptr_t id;
-    uint8_t irq;
-    uint8_t events;
-    bool enabled;
-};
-
-#if DEVICE_SERIAL
-struct Stream; // forward declaration of Arduino Stream class
-
-typedef struct {
-    void (*begin)(struct Stream *obj, long baud, uint8_t format);
-    void (*end)(struct Stream *obj);
-} serial_stream_interface_t;
-
-struct serial_s {
-    const serial_stream_interface_t *interface;
-    struct Stream *stream;
-    intptr_t irq_id;
-    long baudrate;
-    uint8_t format;
-    bool initialized;
-};
-#endif
-
-#if DEVICE_SPI
-struct spi_s {
-    uint32_t clock;
-    uint8_t bits;
-    uint8_t mode;
-    // cannot use SPISettings class in C interface
-    union {
-        int i;
-        char c[6];  // needed on SAM processors
-    } settings;
-};
-#endif
-
-#if DEVICE_I2C
 struct i2c_s {};
+
 // HACK to avoid pulling in the Wire library stuff...
+
 #if defined(WIRE_HAS_END) && defined(__cplusplus)
 // assume Wire.h was already included and the global Wire object is available
 extern "C" {
@@ -139,7 +71,6 @@ extern "C" {
     // TODO: other i2c functions
 }
 
-#endif
 #endif
 
 #endif

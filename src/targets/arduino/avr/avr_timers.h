@@ -13,8 +13,8 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_TIMERS_H
-#define MBINO_TIMERS_H
+#ifndef MBINO_AVR_TIMERS_H
+#define MBINO_AVR_TIMERS_H
 
 #include <Arduino.h>
 

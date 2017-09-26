@@ -17,7 +17,7 @@
 
 #include "hal/gpio_api.h"
 #include "hal/port_api.h"
-#include "timers.h"
+#include "avr_timers.h"
 
 #include <Arduino.h>
 

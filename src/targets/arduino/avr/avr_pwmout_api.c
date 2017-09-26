@@ -19,7 +19,7 @@
 
 #include <Arduino.h>
 
-#include "timers.h"
+#include "avr_timers.h"
 
 // prescale shift values for CSn2:0 (0: timer stopped; 6, 7: external clock)
 static const uint8_t pwmout16_cs_to_prescale[8] = {0xff, 0, 3, 6, 8, 10, 0, 0};

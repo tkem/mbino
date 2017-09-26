@@ -18,7 +18,7 @@
 
 #include <pins_arduino.h>
 
-// not defined for gemma?
+// not defined for gemma et al.
 #ifndef NUM_DIGITAL_PINS
 #define NUM_DIGITAL_PINS 6
 #endif
@@ -62,7 +62,7 @@ static const PinName D17 = 17;
 static const PinName D18 = 18;
 static const PinName D19 = 19;
 #endif
-#if NUM_DIGITAL_PINS > 20  /* leonardo */
+#if NUM_DIGITAL_PINS > 20  /* leonardo, due, mega */
 static const PinName D20 = 20;
 static const PinName D21 = 21;
 static const PinName D22 = 22;
@@ -75,7 +75,7 @@ static const PinName D28 = 28;
 static const PinName D29 = 29;
 static const PinName D30 = 30;
 #endif
-#if NUM_DIGITAL_PINS > 31  /* mega */
+#if NUM_DIGITAL_PINS > 31  /* due, mega */
 static const PinName D31 = 31;
 static const PinName D32 = 32;
 static const PinName D33 = 33;
@@ -112,6 +112,8 @@ static const PinName D63 = 63;
 static const PinName D64 = 64;
 static const PinName D65 = 65;
 static const PinName D66 = 66;
+#endif
+#if NUM_DIGITAL_PINS > 66  /* mega */
 static const PinName D67 = 67;
 static const PinName D68 = 68;
 static const PinName D69 = 69;

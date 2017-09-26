@@ -15,7 +15,7 @@
  */
 #ifdef ARDUINO_ARCH_AVR
 
-#include "timers.h"
+#include "avr_timers.h"
 
 volatile uint8_t *const PROGMEM timer_to_tccr_PGM[] = {
 #if defined(TCCR0)

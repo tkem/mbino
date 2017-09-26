@@ -42,82 +42,95 @@ static void serial_rx_event(uint8_t n)
     }
 }
 
+template<class T, typename U>
+static void serial_stream_begin_config(T* stream, long baud, U config)
+{
+    stream->begin(baud, config);
+}
+
+#ifdef ARDUINO_ARCH_SAM
+static void serial_stream_begin_config(UARTClass* stream, long baud, USARTClass::USARTModes)
+{
+    stream->begin(baud);
+}
+#endif
+
 template<class T>
 static void serial_stream_begin(Stream* obj, long baud, uint8_t format)
 {
     T* stream = static_cast<T*>(obj);
     switch (format) {
     case 000:
-        stream->begin(baud, SERIAL_5N1);
+        serial_stream_begin_config(stream, baud, SERIAL_5N1);
         break;
     case 001:
-        stream->begin(baud, SERIAL_6N1);
+        serial_stream_begin_config(stream, baud, SERIAL_6N1);
         break;
     case 002:
-        stream->begin(baud, SERIAL_7N1);
+        serial_stream_begin_config(stream, baud, SERIAL_7N1);
         break;
     case 003:
-        stream->begin(baud, SERIAL_8N1);
+        serial_stream_begin_config(stream, baud, SERIAL_8N1);
         break;
     case 004:
-        stream->begin(baud, SERIAL_5N2);
+        serial_stream_begin_config(stream, baud, SERIAL_5N2);
         break;
     case 005:
-        stream->begin(baud, SERIAL_6N2);
+        serial_stream_begin_config(stream, baud, SERIAL_6N2);
         break;
     case 006:
-        stream->begin(baud, SERIAL_7N2);
+        serial_stream_begin_config(stream, baud, SERIAL_7N2);
         break;
     case 007:
-        stream->begin(baud, SERIAL_8N2);
+        serial_stream_begin_config(stream, baud, SERIAL_8N2);
         break;
     case 010:
-        stream->begin(baud, SERIAL_5O1);
+        serial_stream_begin_config(stream, baud, SERIAL_5O1);
         break;
     case 011:
-        stream->begin(baud, SERIAL_6O1);
+        serial_stream_begin_config(stream, baud, SERIAL_6O1);
         break;
     case 012:
-        stream->begin(baud, SERIAL_7O1);
+        serial_stream_begin_config(stream, baud, SERIAL_7O1);
         break;
     case 013:
-        stream->begin(baud, SERIAL_8O1);
+        serial_stream_begin_config(stream, baud, SERIAL_8O1);
         break;
     case 014:
-        stream->begin(baud, SERIAL_5O2);
+        serial_stream_begin_config(stream, baud, SERIAL_5O2);
         break;
     case 015:
-        stream->begin(baud, SERIAL_6O2);
+        serial_stream_begin_config(stream, baud, SERIAL_6O2);
         break;
     case 016:
-        stream->begin(baud, SERIAL_7O2);
+        serial_stream_begin_config(stream, baud, SERIAL_7O2);
         break;
     case 017:
-        stream->begin(baud, SERIAL_8O2);
+        serial_stream_begin_config(stream, baud, SERIAL_8O2);
         break;
     case 020:
-        stream->begin(baud, SERIAL_5E1);
+        serial_stream_begin_config(stream, baud, SERIAL_5E1);
         break;
     case 021:
-        stream->begin(baud, SERIAL_6E1);
+        serial_stream_begin_config(stream, baud, SERIAL_6E1);
         break;
     case 022:
-        stream->begin(baud, SERIAL_7E1);
+        serial_stream_begin_config(stream, baud, SERIAL_7E1);
         break;
     case 023:
-        stream->begin(baud, SERIAL_8E1);
+        serial_stream_begin_config(stream, baud, SERIAL_8E1);
         break;
     case 024:
-        stream->begin(baud, SERIAL_5E2);
+        serial_stream_begin_config(stream, baud, SERIAL_5E2);
         break;
     case 025:
-        stream->begin(baud, SERIAL_6E2);
+        serial_stream_begin_config(stream, baud, SERIAL_6E2);
         break;
     case 026:
-        stream->begin(baud, SERIAL_7E2);
+        serial_stream_begin_config(stream, baud, SERIAL_7E2);
         break;
     case 027:
-        stream->begin(baud, SERIAL_8E2);
+        serial_stream_begin_config(stream, baud, SERIAL_8E2);
         break;
     default:
         stream->begin(baud);

@@ -13,18 +13,15 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_AVR_OBJECTS_H
-#define MBINO_AVR_OBJECTS_H
+#ifndef MBINO_OBJECTS_H
+#define MBINO_OBJECTS_H
 
+#include "../PinNames.h"
+#include "../common_objects.h"
 #include "PortNames.h"
 #include "gpio_object.h"
 
 #include <stdint.h>
-
-#define DEVICE_PORTIN 1
-#define DEVICE_PORTINOUT 1
-#define DEVICE_PORTOUT 1
-#define DEVICE_PWMOUT 1
 
 struct port_s {
     volatile uint8_t *reg;
