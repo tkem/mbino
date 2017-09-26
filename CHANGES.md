@@ -1,3 +1,12 @@
+## 0.9.2 (2017-09-27)
+
+- Refactor target headers.
+
+- Clean up serial API implementation.
+
+- Add internal `serial_stream` API.
+
+
 ## 0.9.1 (2017-09-25)
 
 - Extend `FileHandle` implementation.
