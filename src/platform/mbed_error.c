@@ -16,35 +16,39 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_RETARGET_H
-#define MBINO_MBED_RETARGET_H
+#include "mbed_error.h"
+#include "mbed_interface.h"
+#include "mbed_toolchain.h"
 
-#include <stdlib.h>
+#include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 
-#ifdef __AVR__
-typedef long off_t;
-typedef long ssize_t;
+static bool error_in_progress = false;
+
+MBED_WEAK void error(const char *format, ...)
+{
+    if (!error_in_progress) {
+        error_in_progress = true;
+#ifndef NDEBUG
+        va_list arg;
+        va_start(arg, format);
+        mbed_error_vfprintf(format, arg);
+        va_end(arg);
 #endif
-
-#ifdef getc
-#undef getc
-#endif
-
-#ifdef putc
-#undef putc
-#endif
-
-#ifdef __cplusplus
-namespace mbino {
-
-    class FileHandle;
-
-    FILE* mbed_fdopen(FileHandle* fh, const char* mode);
-
-    void mbed_set_unbuffered_stream(FILE* fp);
-
+        // call mbed_die() directly instead of exit(1)
+        mbed_die();
+    }
 }
-#endif
 
+MBED_WEAK void error1(const char *message)
+{
+    if (!error_in_progress) {
+        error_in_progress = true;
+#ifndef NDEBUG
+        mbed_error_puts(message);
 #endif
+        // call mbed_die() directly instead of exit(1)
+        mbed_die();
+    }
+}

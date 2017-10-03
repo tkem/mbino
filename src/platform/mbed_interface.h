@@ -16,34 +16,41 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_RETARGET_H
-#define MBINO_MBED_RETARGET_H
+#ifndef MBINO_MBED_INTERFACE_H
+#define MBINO_MBED_INTERFACE_H
 
-#include <stdlib.h>
-#include <stdio.h>
+// TODO: device.h forward in platform dir?
+#include "hal/device.h"
 
-#ifdef __AVR__
-typedef long off_t;
-typedef long ssize_t;
-#endif
-
-#ifdef getc
-#undef getc
-#endif
-
-#ifdef putc
-#undef putc
-#endif
+#include <stdarg.h>
 
 #ifdef __cplusplus
-namespace mbino {
+extern "C" {
+#endif
 
-    class FileHandle;
+#if DEVICE_SEMIHOST
+#error "Semihosting not supported"
+#endif
 
-    FILE* mbed_fdopen(FileHandle* fh, const char* mode);
+static inline void mbed_mac_address(char *mac) {
+    mac[0] = 0x00;
+    mac[1] = 0x02;
+    mac[2] = 0xF7;
+    mac[3] = 0xF0;
+    mac[4] = 0x00;
+    mac[5] = 0x00;
+}
 
-    void mbed_set_unbuffered_stream(FILE* fp);
+void mbed_die(void);
 
+// mbino extension
+void mbed_error_puts(const char *message);
+
+void mbed_error_printf(const char *format, ...);
+
+void mbed_error_vfprintf(const char *format, va_list arg);
+
+#ifdef __cplusplus
 }
 #endif
 

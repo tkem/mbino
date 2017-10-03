@@ -69,7 +69,7 @@ namespace mbino {
         */
 
 #if DEVICE_SPI_ASYNCH
-#error "SPI anynchronous operation is not suupported."
+#error "Anynchronous SPI operation is not supported."
 #endif
 
     protected:

@@ -18,6 +18,8 @@
 
 #include <Arduino.h>
 
+#if defined(SERIAL_PORT_MONITOR) || defined(SERIAL_PORT_HARDWARE)
+
 struct Stream; // forward declaration of Arduino C++ Stream class
 
 struct serial_stream_interface_s {
@@ -53,7 +55,7 @@ private:
 #elif defined(UCSZ10) && defined(UPM10) && defined(USBS1)
         return (cs << UCSZ10) | (((0x4 - pm) & 0x3) << UPM10) | (sb << USBS1);
 #else
-        return 0;  // FIXME: unknown UCSRC
+#error "Unknown UCSRC"
 #endif
     }
 
@@ -64,6 +66,8 @@ const struct serial_stream_interface_s serial_stream<T>::interface = {
     &serial_stream<T>::begin,
     &serial_stream<T>::end
 };
+
+#endif
 
 #endif
 

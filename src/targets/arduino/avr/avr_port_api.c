@@ -19,8 +19,6 @@
 
 #include <Arduino.h>
 
-// TODO: handle NOT_A_PORT/NC
-
 void port_init_in_ex(port_t *obj, PortName port, int mask, PinMode mode)
 {
     obj->port = port;

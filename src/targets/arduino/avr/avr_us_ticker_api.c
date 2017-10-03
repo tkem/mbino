@@ -33,7 +33,7 @@ void us_ticker_init(void)
 #elif defined(TIMSK0) && defined(TOIE0)
     TIMSK0 |= _BV(OCIE0A);
 #else
-#       error Cannot set Timer 0 compare interrupt
+#error Cannot set Timer 0 compare interrupt
 #endif
     SREG = sreg;
 }

@@ -86,7 +86,7 @@ namespace mbino {
         */
 
 #if DEVICE_I2C_ASYNCH
-#error "I2C anynchronous operation is not suupported."
+#error "Asynchronous I2C operation is not supported."
 #endif
 
     protected:

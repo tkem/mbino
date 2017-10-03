@@ -28,6 +28,7 @@ namespace mbino {
 
     InterruptIn::InterruptIn(PinName pin) : _rise(donothing), _fall(donothing)
     {
+        // mbed InterruptIn ctor does not check gpio_irq_init result
         gpio_irq_init(&gpio_irq, pin, &InterruptIn::_irq_handler, (intptr_t)this);
         gpio_init_in(&gpio, pin);
     }

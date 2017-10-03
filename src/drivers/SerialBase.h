@@ -83,7 +83,7 @@ namespace mbino {
 #endif
 
 #if DEVICE_SERIAL_ASYNCH
-#error "Serial anynchronous operation is not suupported."
+#error "Asynchronous serial operation is not suupported."
 #endif
 
     protected:

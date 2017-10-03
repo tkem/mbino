@@ -18,6 +18,8 @@
 #include "platform/FileHandle.h"
 #include "platform/mbed_retarget.h"
 
+#include <stdlib.h>
+
 namespace mbino {
 
     static int put(char c, FILE* fp)
@@ -42,7 +44,6 @@ namespace mbino {
 
     FILE* mbed_fdopen(FileHandle* fh, const char* mode)
     {
-        // TODO: append mode?
         bool rd = mode[0] == 'r' || mode[1] == '+';
         bool wr = mode[0] == 'w' || mode[1] == '+';
         FILE* fp = fdevopen(wr ? put : 0, rd ? get : 0);

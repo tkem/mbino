@@ -24,7 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "mbed_retarget.h"
+#include "platform/mbed_retarget.h"
+#include "platform/mbed_toolchain.h"
 
 #include "hal/device.h"
 

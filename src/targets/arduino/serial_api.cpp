@@ -17,6 +17,8 @@
 
 #ifdef DEVICE_SERIAL
 
+#include "platform/mbed_error.h"
+
 #include <Arduino.h>
 
 #if defined(SERIAL_PORT_HARDWARE3)
@@ -99,6 +101,8 @@ void serial_init(serial_t* obj, PinName tx, PinName rx)
     } else if (tx == UART3_TX && rx == UART3_RX) {
         serial_init(obj, &SERIAL_PORT_HARDWARE3);
 #endif
+    } else {
+        error1("Serial pin mapping failed");
     }
 }
 
@@ -153,9 +157,11 @@ void serial_irq_set(serial_t *obj, SerialIrq irq, int enable)
         } else if (obj->stream == &SERIAL_PORT_HARDWARE3) {
             event_objects[3] = enable ? obj : 0;
 #endif
+        } else {
+            error1("Serial IRQ mapping failed");
         }
     } else {
-        // TxIrq not supported
+        // TODO: TxIrq not supported - error?
     }
 }
 

@@ -31,6 +31,6 @@ uint16_t analogin_read_u16(analogin_t *obj)
 #ifdef ADC_RESOLUTION
     return (value << (16 - ADC_RESOLUTION)) | (value >> (2 * ADC_RESOLUTION - 16));
 #else
-    return (value << 6) | (value >> 4);
+    return (value << 6) | (value >> 4);  // default is 10 bits
 #endif
 }

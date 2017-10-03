@@ -24,15 +24,18 @@ struct i2c_s {};
 
 #if defined(WIRE_HAS_END) && defined(__cplusplus)
 // assume Wire.h was already included and the global Wire object is available
+
+#include "platform/mbed_error.h"
+
 extern "C" {
     typedef struct i2c_s i2c_t;
 
     inline void i2c_init(i2c_t* obj, PinName sda, PinName scl) {
         if (sda == I2C_SDA && scl == I2C_SCL) {
-            // FIXME: on first call? Prevent multiple initialization?
             Wire.begin();
+        } else {
+            error1("I2C pin mapping failed");
         }
-        // TODO: error handling?
     }
 
     inline void i2c_frequency(i2c_t* obj, long hz) {

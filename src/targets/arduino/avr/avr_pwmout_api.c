@@ -16,6 +16,7 @@
 #ifdef ARDUINO_ARCH_AVR
 
 #include "hal/pwmout_api.h"
+#include "platform/mbed_error.h"
 
 #include <Arduino.h>
 
@@ -152,13 +153,16 @@ static void pwmout8_write(pwmout_object_t *obj, uint16_t value)
     }
 }
 
-static void pwmout8_nop(pwmout_object_t *obj, uint32_t value) {}
+static void pwmout8_notavail(pwmout_object_t *obj, uint32_t value)
+{
+    // TODO: error?
+}
 
 static const pwmout_interface_t pwmout8_interface = {
     pwmout8_read,
     pwmout8_write,
-    pwmout8_nop,
-    pwmout8_nop
+    pwmout8_notavail,
+    pwmout8_notavail
 };
 
 static void pwmout8_init(pwmout_t *obj,
@@ -179,46 +183,47 @@ static void pwmout8_init(pwmout_t *obj,
 
 void pwmout_init(pwmout_t *obj, PinName pin)
 {
+    // TODO: can pin be NC?
+    uint8_t timer = digitalPinToTimer(pin);
+    if (timer == NOT_ON_TIMER) {
+        error1("Not a PWM-enabled pin");
+    }
+    volatile uint8_t *tccr = timerToControlRegister(timer);
+    volatile void *ocr = timerToOutputCompareRegister(timer);
+    uint8_t com = timerToCompareOutputModeMask(timer);
+
+    // set as output
     uint8_t port = digitalPinToPort(pin);
     uint8_t mask = digitalPinToBitMask(pin);
     volatile uint8_t *mode = portModeRegister(port);
     volatile uint8_t *output = portOutputRegister(port);
 
+    // TODO: after pwmX_init()?
     uint8_t sreg = SREG;
     cli();
     *output &= ~mask;
     *mode |= mask;
     SREG = sreg;
 
-    uint8_t timer = digitalPinToTimer(pin);
-    // TODO: NOT_ON_TIMER?
-    volatile uint8_t *tccr = timerToControlRegister(timer);
-    volatile void *ocr = timerToOutputCompareRegister(timer);
-    uint8_t com = timerToCompareOutputModeMask(timer);
-
-    // TODO: think of something better...
-    switch ((uint16_t)tccr) {
+    if (false) {
+        // keep the compiler happy
 #if defined(TCCR1A) && defined(TCCR1B) && defined(ICR1)
-    case (uint16_t)&TCCR1A:
+    } else if (tccr == &TCCR1A) {
         pwmout16_init(obj, (volatile uint16_t *)ocr, com, &TCCR1A, &TCCR1B, &ICR1);
-        break;
 #endif
 #if defined(TCCR3A) && defined(TCCR3B) && defined(ICR3)
-    case (uint16_t)&TCCR3A:
+    } else if (tccr == &TCCR3A) {
         pwmout16_init(obj, (volatile uint16_t *)ocr, com, &TCCR3A, &TCCR3B, &ICR3);
-        break;
 #endif
 #if defined(TCCR4A) && defined(TCCR4B) && defined(ICR4)
-    case (uint16_t)&TCCR4A:
+    } else if (tccr == &TCCR4A) {
         pwmout16_init(obj, (volatile uint16_t *)ocr, com, &TCCR4A, &TCCR4B, &ICR4);
-        break;
 #endif
 #if defined(TCCR5A) && defined(TCCR5B) && defined(ICR5)
-    case (uint16_t)&TCCR5A:
+    } else if (tccr == &TCCR5A) {
         pwmout16_init(obj, (volatile uint16_t *)ocr, com, &TCCR5A, &TCCR5B, &ICR5);
-        break;
 #endif
-    default:
+    } else {
         pwmout8_init(obj, (volatile uint8_t *)ocr, com, tccr, output, mask);
     }
 }

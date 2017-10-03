@@ -15,6 +15,7 @@
  */
 #include "hal/gpio_irq_api.h"
 #include "hal/gpio_api.h"
+#include "platform/mbed_error.h"
 
 #include <Arduino.h>
 // for EXTERNAL_NUM_INTERRUPTS
@@ -88,14 +89,17 @@ static void gpio_irq_update(gpio_irq_t* obj)
 
 int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr_t id)
 {
-    int irq = digitalPinToInterrupt(pin);
-    if (irq != NOT_AN_INTERRUPT) {
-        gpio_init_in(&obj->gpio, pin);
+    gpio_init_in(&obj->gpio, pin);
+    if (pin != NC) {
+        int irq = digitalPinToInterrupt(pin);
+        if (irq == NOT_AN_INTERRUPT) {
+            error1("Not an interrupt-enabled pin");
+        }
         obj->id = id;
         obj->irq = irq;
         obj->events = IRQ_NONE;
         obj->enabled = true;
-         // this *really* sets the global handler...
+        // this *really* sets the global handler...
         irq_handler = handler;
         irq_objects[irq] = obj;
         return 0;
