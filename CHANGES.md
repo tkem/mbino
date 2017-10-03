@@ -1,4 +1,11 @@
-## 0.9.2 (2017-09-27)
+0.9.3 (2017-10-03)
+------------------
+
+- Add basic runtime error handling.
+
+
+0.9.2 (2017-09-27)
+------------------
 
 - Refactor target headers.
 
@@ -7,7 +14,8 @@
 - Add internal `serial_stream` API.
 
 
-## 0.9.1 (2017-09-25)
+0.9.1 (2017-09-25)
+------------------
 
 - Extend `FileHandle` implementation.
 
@@ -16,7 +24,8 @@
 - Remove custom `serial_puts()`.
 
 
-## 0.9.0 (2017-09-22)
+0.9.0 (2017-09-22)
+------------------
 
 - Add serial event handling.
 
@@ -25,7 +34,8 @@
 - Refactor `gpio_irq_api`.
 
 
-## 0.8.3 (2017-09-20)
+0.8.3 (2017-09-20)
+------------------
 
 - Refactor `us_ticker_read()`.
 
@@ -36,7 +46,8 @@
 - General interface cleanup.
 
 
-## 0.8.2 (2017-09-19)
+0.8.2 (2017-09-19)
+------------------
 
 - Move `PortNames.h` to architecture directory.
 
@@ -45,7 +56,8 @@
 - Add `gpio_object.h`.
 
 
-## 0.8.1 (2017-09-19)
+0.8.1 (2017-09-19)
+------------------
 
 - Refactor HAL layer:
 
@@ -54,14 +66,16 @@
   * prepare for multiple architectures.
 
 
-## 0.8.0 (2017-09-13)
+0.8.0 (2017-09-13)
+------------------
 
 - Add multi-parameter callbacks.
 
 - Use `pgm_read_ptr()` for accessing timer registers.
 
 
-## 0.7.1 (2017-09-11)
+0.7.1 (2017-09-11)
+------------------
 
 - Re-enable `PwmOut`.
 
@@ -70,7 +84,8 @@
 - Code cleanup.
 
 
-## 0.7.0 (2017-09-09)
+0.7.0 (2017-09-09)
+------------------
 
 - Remove `SoftwareSerial` support (breaking change).
 
@@ -80,14 +95,16 @@
 - Fix I2C LM75 temperature sensor example.
 
 
-## 0.6.4 (2017-09-07)
+0.6.4 (2017-09-07)
+------------------
 
 - Fix template parameter deduction error in `SerialBase` constructor.
 
 - Fix timer control register table.
 
 
-## 0.6.3 (2017-09-06)
+0.6.3 (2017-09-06)
+------------------
 
 - Remove `PwmOut` destructor.
 
@@ -96,12 +113,14 @@
 - Update license headers.
 
 
-## 0.6.2 (2017-09-05)
+0.6.2 (2017-09-05)
+------------------
 
 - Refactor (and fix) `PwmOut` API.
 
 
-## 0.6.1 (2017-09-01)
+0.6.1 (2017-09-01)
+------------------
 
 - Fix `SPI::write()`.
 
@@ -110,19 +129,22 @@
 - Add SPI EEPROM 25LC040 example.
 
 
-## 0.6.0 (2017-08-24)
+0.6.0 (2017-08-24)
+------------------
 
 - Add optional `I2C` API.
 
 - Add `SPI` API.
 
 
-## 0.5.0 (2017-08-23)
+0.5.0 (2017-08-23)
+------------------
 
 - Add `PwmOut` period and pulsewidth control.
 
 
-## 0.4.0 (2017-08-21)
+0.4.0 (2017-08-21)
+------------------
 
 - Add `Serial` API.
 
@@ -131,24 +153,28 @@
 - Temporarily remove `I2C` support (breaking change).
 
 
-## 0.3.2 (2017-08-20)
+0.3.2 (2017-08-20)
+------------------
 
 - Add missing `va_end()` in `RawSerial::printf()`.
 
 - Remove leftover header file.
 
 
-## 0.3.1 (2017-08-18)
+0.3.1 (2017-08-18)
+------------------
 
 - Add device capability macros.
 
 
-## 0.3.0 (2017-08-17)
+0.3.0 (2017-08-17)
+------------------
 
 - Add initial `I2C` API implementation.
 
 
-## 0.2.2 (2017-08-16)
+0.2.2 (2017-08-16)
+------------------
 
 - Remove unnecessary member from `PortOut`.
 
@@ -159,12 +185,14 @@
 - Refactor inline methods.
 
 
-## 0.2.1 (2017-08-15)
+0.2.1 (2017-08-15)
+------------------
 
 - Clean up timer/ticker implementation.
 
 
-## 0.2.0 (2017-08-14)
+0.2.0 (2017-08-14)
+------------------
 
 - Assume a minimum of six digital pins for all platforms.
 
@@ -173,6 +201,7 @@
 - Check for known hardware pin names in `serial_init()`.
 
 
-## 0.1.0 (2017-08-12)
+0.1.0 (2017-08-12)
+------------------
 
 - Initial release.
