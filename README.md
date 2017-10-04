@@ -10,6 +10,7 @@ Currently, the following APIs are - at least partially - supported:
 - [DigitalIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/DigitalIn/)
 - [DigitalOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/DigitalOut/)
 - [DigitalInOut](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/DigitalInOut/)
+- [Error](https://os.mbed.com/docs/latest/reference/error.html)
 - [InterruptIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/InterruptIn/)
 - [I2C](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/I2C/)
 - [PortIn](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/io/PortIn/)
@@ -20,6 +21,7 @@ Currently, the following APIs are - at least partially - supported:
 - [Serial](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/Serial/)
 - [SPI](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/interfaces/digital/SPI/)
 - [Ticker](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Ticker/)
+- [Time](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Time/)
 - [Timeout](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/TimeOut/)
 - [Timer](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/Timer/)
 - [Wait](https://docs.mbed.com/docs/mbed-os-api-reference/en/latest/APIs/tasks/wait/)
@@ -59,6 +61,13 @@ tracker](https://github.com/tkem/mbino/issues/).
 - Since the default AVR Libc `printf()` family of functions does not
   support floating point conversions, floating point values cannot be
   used with `Serial::printf()` or `RawSerial::printf()`.
+
+- To save on code size and RAM usage, `stdin`, `stdout` and `stderr`
+  are not connected to the USB debug port by default.  For `printf()`
+  and `error()` messages to be displayed in the Arduino IDE's serial
+  monitor, you have to define `MBED_CONF_PLATFORM_STDIO_INIT` *before*
+  including `mbed.h`. See the
+  [examples](examples/mbino-example-serial-stdio) for details.
 
 - For portability (and so `millis()` and PWM outputs still work), the
   `Ticker` API uses the Timer0 comparison register for generating

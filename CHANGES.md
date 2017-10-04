@@ -1,3 +1,13 @@
+0.10.0 (2017-10-04)
+-------------------
+
+- Improve `stdio` and runtime error messages support.
+
+- Add `Time` and `RTC` APIs.
+
+- Add mbed assert macros.
+
+
 0.9.3 (2017-10-03)
 ------------------
 
