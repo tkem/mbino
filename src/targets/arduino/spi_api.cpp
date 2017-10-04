@@ -17,24 +17,23 @@
 
 #ifdef DEVICE_SPI
 
+#include "platform/mbed_assert.h"
 #include "platform/mbed_error.h"
 
 #include <SPI.h>
 
 #include <string.h>
 
-#ifdef ARDUINO_ARCH_AVR
-inline void* operator new(size_t, void* p) { return p; }
-#else
-#include <new>
-#endif
+inline void* operator new(size_t, decltype(spi_t::settings)* p) {
+    MBED_STATIC_ASSERT(sizeof(SPISettings) <= sizeof *p,
+                       "Insufficient space for SPISettings object");
+    return p;
+}
 
 static void spi_init_settings(spi_t* obj)
 {
     // Arduino does not support bits, while mbed does not have bit order...
     static const uint8_t mode[] = {SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3};
-    static_assert(sizeof(SPISettings) <= sizeof(spi_t::settings),
-                  "Insufficient space for SPISettings object");
     new(&obj->settings) SPISettings(obj->clock, MSBFIRST, mode[obj->mode & 0x3]);
 }
 
