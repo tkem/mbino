@@ -73,4 +73,6 @@
 #include "platform/mbed_toolchain.h"
 #include "platform/mbed_wait_api.h"
 
+#include "platform/mbed_stdio.h"
+
 #endif

@@ -22,7 +22,6 @@
 
 #include <stdarg.h>
 #include <stdbool.h>
-#include <stdio.h>
 
 static bool error_in_progress = false;
 
@@ -36,19 +35,7 @@ MBED_WEAK void error(const char *format, ...)
         mbed_error_vfprintf(format, arg);
         va_end(arg);
 #endif
-        // call mbed_die() directly instead of exit(1)
-        mbed_die();
-    }
-}
-
-MBED_WEAK void error1(const char *message)
-{
-    if (!error_in_progress) {
-        error_in_progress = true;
-#ifndef NDEBUG
-        mbed_error_puts(message);
-#endif
-        // call mbed_die() directly instead of exit(1)
+        // mbino extension: call mbed_die() directly instead of exit(1)
         mbed_die();
     }
 }

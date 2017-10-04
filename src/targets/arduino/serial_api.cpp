@@ -33,6 +33,11 @@
 #define NUM_HARDWARE_SERIAL_PORTS 0
 #endif
 
+#if DEVICE_STDIO_MESSAGES
+static bool stdio_uart_initialized = false;
+serial_t stdio_uart;
+#endif
+
 static uart_irq_handler event_handler = 0;
 
 static serial_t* event_objects[NUM_HARDWARE_SERIAL_PORTS];
@@ -47,6 +52,16 @@ static void serial_init(serial_t* obj, T* stream)
     obj->pm = ParityNone;
     obj->sb = 1 - 1;
     obj->initialized = false;
+
+    // TODO: check type of stream vs. decltype(SERIAL_PORT_MONITOR)
+#if DEVICE_STDIO_MESSAGES
+    if (obj->stream == &SERIAL_PORT_MONITOR) {
+        stdio_uart_initialized = true;
+        if (obj != &stdio_uart) {
+            stdio_uart = *obj;
+        }
+    }
+#endif
 }
 
 static void serial_begin(serial_t* obj)
@@ -102,12 +117,17 @@ void serial_init(serial_t* obj, PinName tx, PinName rx)
         serial_init(obj, &SERIAL_PORT_HARDWARE3);
 #endif
     } else {
-        error1("Serial pin mapping failed");
+        error("Serial pin mapping failed");
     }
 }
 
 void serial_free(serial_t* obj)
 {
+#if DEVICE_STDIO_MESSAGES
+    if (obj->stream == &SERIAL_PORT_MONITOR) {
+        stdio_uart_initialized = 0;
+    }
+#endif
     serial_irq_set(obj, RxIrq, 0);
     serial_irq_set(obj, TxIrq, 0);
     obj->interface->end(obj->stream);
@@ -158,7 +178,7 @@ void serial_irq_set(serial_t *obj, SerialIrq irq, int enable)
             event_objects[3] = enable ? obj : 0;
 #endif
         } else {
-            error1("Serial IRQ mapping failed");
+            error("Serial IRQ mapping failed");
         }
     } else {
         // TODO: TxIrq not supported - error?
@@ -246,6 +266,15 @@ void serialEvent2()
 void serialEvent3()
 {
     serial_rx_event(3);
+}
+#endif
+
+#if DEVICE_STDIO_MESSAGES
+void stdio_uart_init()
+{
+    if (!stdio_uart_initialized) {
+        serial_init(&stdio_uart, &SERIAL_PORT_MONITOR);
+    }
 }
 #endif
 

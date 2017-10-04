@@ -18,7 +18,12 @@
 #include "platform/FileHandle.h"
 #include "platform/mbed_retarget.h"
 
-#include <stdlib.h>
+#if DEVICE_STDIO_MESSAGES
+#include "platform/mbed_stdio.h"
+#include "hal/serial_api.h"
+#endif
+
+#include <stdio.h>
 
 namespace mbino {
 
@@ -57,5 +62,40 @@ namespace mbino {
     }
 
 }
+
+#if DEVICE_STDIO_MESSAGES
+
+extern int (*mbed_error_vprintf)(const char* format, va_list arg);
+
+static FILE stdio_stream;
+
+static int stdio_put(char c, FILE*)
+{
+    serial_putc(&stdio_uart, c);
+    return 0;
+}
+
+static int stdio_get(FILE*)
+{
+    return serial_getc(&stdio_uart);
+}
+
+void mbed_stdio_init(long baudrate)
+{
+    stdio_uart_init();
+    if (baudrate) {
+        serial_baud(&stdio_uart, baudrate);
+    }
+    fdev_setup_stream(&stdio_stream, stdio_put, stdio_get, _FDEV_SETUP_RW);
+    stdin = stdout = stderr = &stdio_stream;
+    mbed_error_vprintf = vprintf;
+}
+
+void mbed_stdio_flush()
+{
+    // TODO: flush?
+}
+
+#endif
 
 #endif

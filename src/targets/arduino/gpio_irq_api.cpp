@@ -93,7 +93,7 @@ int gpio_irq_init(gpio_irq_t* obj, PinName pin, gpio_irq_handler handler, intptr
     if (pin != NC) {
         int irq = digitalPinToInterrupt(pin);
         if (irq == NOT_AN_INTERRUPT) {
-            error1("Not an interrupt-enabled pin");
+            error("Not an interrupt-enabled pin");
         }
         obj->id = id;
         obj->irq = irq;

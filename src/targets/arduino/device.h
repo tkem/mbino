@@ -38,6 +38,10 @@
 #define DEVICE_I2C 1
 #endif
 
+#if DEVICE_SERIAL
+#define DEVICE_STDIO_MESSAGES 1
+#endif
+
 #if defined(ARDUINO_ARCH_AVR)
 #include "avr/objects.h"
 #else

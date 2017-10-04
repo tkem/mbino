@@ -97,6 +97,13 @@ void serial_set_flow_control(serial_t *obj, FlowControl type, PinName rxflow, Pi
 #error "Serial asynchronous operation not supported."
 #endif
 
+#if DEVICE_STDIO_MESSAGES
+// mbino extension: mbed does not make these public; we also provide
+// an explicit init function instead of an "inited" flag
+extern serial_t stdio_uart;
+void stdio_uart_init(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

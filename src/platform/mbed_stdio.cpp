@@ -1,9 +1,6 @@
 /* mbino - basic mbed APIs for the Arduino platform
  * Copyright (c) 2017 Thomas Kemmer
  *
- * mbed Microcontroller Library
- * Copyright (c) 2006-2013 ARM Limited
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You
  * may obtain a copy of the License at
@@ -16,29 +13,14 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_INTERFACE_H
-#define MBINO_MBED_INTERFACE_H
+#include "mbed_stdio.h"
 
-#include <stdarg.h>
+#if DEVICE_STDIO_MESSAGES
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace mbino {
 
-#if DEVICE_SEMIHOST
-#error "Semihosting not supported"
-#endif
+    unsigned PlatformStdioInit::counter = 0;
 
-void mbed_mac_address(char *mac);
-
-void mbed_die(void);
-
-void mbed_error_printf(const char* format, ...);
-
-void mbed_error_vfprintf(const char *format, va_list arg);
-
-#ifdef __cplusplus
 }
-#endif
 
 #endif

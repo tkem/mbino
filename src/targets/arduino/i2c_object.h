@@ -34,7 +34,7 @@ extern "C" {
         if (sda == I2C_SDA && scl == I2C_SCL) {
             Wire.begin();
         } else {
-            error1("I2C pin mapping failed");
+            error("I2C pin mapping failed");
         }
     }
 

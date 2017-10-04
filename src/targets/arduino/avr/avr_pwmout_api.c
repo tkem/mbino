@@ -186,7 +186,7 @@ void pwmout_init(pwmout_t *obj, PinName pin)
     // TODO: can pin be NC?
     uint8_t timer = digitalPinToTimer(pin);
     if (timer == NOT_ON_TIMER) {
-        error1("Not a PWM-enabled pin");
+        error("Not a PWM-enabled pin");
     }
     volatile uint8_t *tccr = timerToControlRegister(timer);
     volatile void *ocr = timerToOutputCompareRegister(timer);

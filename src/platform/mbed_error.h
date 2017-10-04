@@ -25,9 +25,6 @@ extern "C" {
 
 void error(const char *format, ...);
 
-// mbino extension
-void error1(const char *message);
-
 #ifdef __cplusplus
 }
 

@@ -45,7 +45,7 @@ static const SPISettings& spi_get_settings(spi_t* obj)
 void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk, PinName ssel)
 {
     if (ssel != NC) {
-        error1("Hardware SSEL not supported");
+        error("Hardware SSEL not supported");
     }
     if (mosi == PIN_SPI_MOSI && miso == PIN_SPI_MISO && sclk == PIN_SPI_SCK) {
         SPI.begin();  // Arduino SPI has its own init counter
@@ -54,7 +54,7 @@ void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
         obj->mode = 0;
         spi_init_settings(obj);
     } else {
-        error1("SPI pin mapping failed");
+        error("SPI pin mapping failed");
     }
 }
 
@@ -66,7 +66,7 @@ void spi_free(spi_t* obj)
 void spi_format(spi_t* obj, int bits, int mode, int slave)
 {
     if (slave) {
-        error1("SPI slave mode not supported");
+        error("SPI slave mode not supported");
     }
     obj->bits = bits;
     obj->mode = mode;
