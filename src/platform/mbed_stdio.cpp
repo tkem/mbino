@@ -13,7 +13,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "mbed_stdio.h"
+#include "platform/mbed_stdio.h"
 
 #if DEVICE_STDIO_MESSAGES
 

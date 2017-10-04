@@ -16,7 +16,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "RawSerial.h"
+#include "drivers/RawSerial.h"
 
 #ifdef DEVICE_SERIAL
 

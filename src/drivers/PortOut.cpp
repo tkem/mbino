@@ -16,7 +16,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "PortOut.h"
+#include "drivers/PortOut.h"
 
 #ifdef DEVICE_PORTOUT
 

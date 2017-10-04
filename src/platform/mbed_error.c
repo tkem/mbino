@@ -16,9 +16,9 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "mbed_error.h"
-#include "mbed_interface.h"
-#include "mbed_toolchain.h"
+#include "platform/mbed_error.h"
+#include "platform/mbed_interface.h"
+#include "platform/mbed_toolchain.h"
 
 #include <stdarg.h>
 #include <stdbool.h>

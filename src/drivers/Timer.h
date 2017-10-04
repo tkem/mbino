@@ -20,9 +20,8 @@
 #define MBINO_TIMER_H
 
 #include "platform/platform.h"
-
-#include "hal/ticker_api.h"
 #include "platform/NonCopyable.h"
+#include "hal/ticker_api.h"
 
 namespace mbino {
     class Timer : private NonCopyable<Timer> {

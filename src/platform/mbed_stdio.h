@@ -16,8 +16,8 @@
 #ifndef MBINO_MBED_STDIO_H
 #define MBINO_MBED_STDIO_H
 
-#include "platform.h"
-#include "NonCopyable.h"
+#include "platform/platform.h"
+#include "platform/NonCopyable.h"
 
 #if DEVICE_STDIO_MESSAGES
 

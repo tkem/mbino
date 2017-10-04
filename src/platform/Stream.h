@@ -19,9 +19,9 @@
 #ifndef MBINO_STREAM_H
 #define MBINO_STREAM_H
 
-#include "platform.h"
-#include "FileHandle.h"
-#include "NonCopyable.h"
+#include "platform/platform.h"
+#include "platform/FileHandle.h"
+#include "platform/NonCopyable.h"
 
 #include <stdarg.h>
 

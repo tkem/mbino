@@ -19,8 +19,7 @@
 #ifndef MBINO_TIMEOUT_H
 #define MBINO_TIMEOUT_H
 
-#include "Ticker.h"
-
+#include "drivers/Ticker.h"
 #include "platform/NonCopyable.h"
 
 namespace mbino {

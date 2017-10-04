@@ -16,8 +16,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "Ticker.h"
-
+#include "drivers/Ticker.h"
 #include "platform/mbed_critical.h"
 
 namespace mbino {

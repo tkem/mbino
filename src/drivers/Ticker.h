@@ -19,8 +19,7 @@
 #ifndef MBINO_TICKER_H
 #define MBINO_TICKER_H
 
-#include "TimerEvent.h"
-
+#include "drivers/TimerEvent.h"
 #include "platform/Callback.h"
 #include "platform/NonCopyable.h"
 

@@ -23,8 +23,7 @@
 
 #if defined(DEVICE_SERIAL) || defined(DOXYGEN_ONLY)
 
-#include "SerialBase.h"
-
+#include "drivers/SerialBase.h"
 #include "platform/NonCopyable.h"
 #include "platform/Stream.h"
 

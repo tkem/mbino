@@ -16,8 +16,8 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "FileHandle.h"
-#include "mbed_retarget.h"
+#include "platform/FileHandle.h"
+#include "platform/mbed_retarget.h"
 
 namespace mbino {
 

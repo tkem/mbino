@@ -16,10 +16,9 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "Timer.h"
-
-#include "hal/us_ticker_api.h"
+#include "drivers/Timer.h"
 #include "platform/mbed_critical.h"
+#include "hal/us_ticker_api.h"
 
 namespace mbino {
 

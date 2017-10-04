@@ -20,7 +20,6 @@
 #define MBINO_DIGITAL_IN_OUT_H
 
 #include "platform/platform.h"
-
 #include "hal/gpio_api.h"
 
 namespace mbino {

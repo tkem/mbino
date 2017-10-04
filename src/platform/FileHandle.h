@@ -19,8 +19,8 @@
 #ifndef MBINO_FILE_HANDLE_H
 #define MBINO_FILE_HANDLE_H
 
-#include "platform.h"
-#include "NonCopyable.h"
+#include "platform/platform.h"
+#include "platform/NonCopyable.h"
 
 namespace mbino {
 
