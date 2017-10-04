@@ -32,6 +32,9 @@
 #include <SPI.h>
 #endif
 
+#include <math.h>
+#include <time.h>
+
 #include "drivers/AnalogIn.h"
 #include "drivers/DigitalIn.h"
 #include "drivers/DigitalInOut.h"
@@ -65,7 +68,7 @@
 #include "platform/mbed_error.h"
 #include "platform/mbed_interface.h"
 //#include "platform/mbed_poll.h"
-//#include "platform/mbed_rtc_time.h"
+#include "platform/mbed_rtc_time.h"
 //#include "platform/mbed_sleep.h"
 #include "platform/mbed_toolchain.h"
 #include "platform/mbed_wait_api.h"
