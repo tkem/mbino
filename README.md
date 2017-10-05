@@ -62,12 +62,12 @@ tracker](https://github.com/tkem/mbino/issues/).
   support floating point conversions, floating point values cannot be
   used with `Serial::printf()` or `RawSerial::printf()`.
 
-- To save on code size and RAM usage, `stdin`, `stdout` and `stderr`
+- To save on code size and SRAM usage, `stdin`, `stdout` and `stderr`
   are not connected to the USB debug port by default.  For `printf()`
-  and `error()` messages to be displayed in the Arduino IDE's serial
-  monitor, you have to define `MBED_CONF_PLATFORM_STDIO_INIT` *before*
-  including `mbed.h`. See the
-  [examples](examples/mbino-example-serial-stdio) for details.
+  messages to be displayed in the Arduino IDE's serial monitor, you
+  have to define `DEVICE_STDIO_MESSAGES` *before* including
+  `mbed.h`. See an [example](examples/mbino-example-serial-stdio) for
+  details.
 
 - For portability (and so `millis()` and PWM outputs still work), the
   `Ticker` API uses the Timer0 comparison register for generating
@@ -81,7 +81,7 @@ tracker](https://github.com/tkem/mbino/issues/).
 
 - The `I2C` API is based on the Arduino [Wire
   library](https://www.arduino.cc/en/Reference/Wire).  Since this
-  library can substantially increase code size and RAM usage, I2C
+  library can substantially increase code size and SRAM usage, I2C
   support is optional and disabled by default.  To enable I2C support,
   you have to `#include <Wire.h>` *before* `#include <mbed.h>`.  See
   the I2C [examples](examples/) for details.  Also note that the Wire

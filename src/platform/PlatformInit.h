@@ -20,7 +20,7 @@
 #include "platform/NonCopyable.h"
 
 #ifndef MBED_CONF_PLATFORM_STDIO_BAUD_RATE
-#define MBED_CONF_PLATFORM_STDIO_BAUD_RATE 0
+#define MBED_CONF_PLATFORM_STDIO_BAUD_RATE
 #endif
 
 namespace mbino {
@@ -32,30 +32,24 @@ namespace mbino {
     public:
         PlatformInit() {
             if (counter++ == 0) {
-#if DEVICE_STDIO_MESSAGES && MBED_CONF_PLATFORM_STDIO_INIT
                 stdio_init(MBED_CONF_PLATFORM_STDIO_BAUD_RATE);
-#endif
             }
         }
 
         ~PlatformInit() {
             if (--counter == 0) {
-#if DEVICE_STDIO_MESSAGES && MBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT
                 stdio_flush();
-#endif
             }
         }
 
     private:
-#if DEVICE_STDIO_MESSAGES
         static void stdio_init(long baudrate = 0);
         static void stdio_flush();
-#endif
     };
 
 }
 
-#if MBED_CONF_PLATFORM_STDIO_INIT || MBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT
+#if DEVICE_STDIO_MESSAGES
 static mbino::PlatformInit _mbed_platform_init;
 #endif
 

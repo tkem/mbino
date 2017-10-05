@@ -24,14 +24,15 @@ namespace mbino {
 
     unsigned PlatformInit::counter = 0;
 
-#if DEVICE_STDIO_MESSAGES
     void PlatformInit::stdio_init(long baudrate)
     {
+#if DEVICE_SERIAL
         static Serial stdio(STDIO_UART_TX, STDIO_UART_RX);
         if (baudrate != 0) {
             stdio.baud(baudrate);
         }
         stdin = stdout = stderr = stdio;
+#endif
     }
 
     void PlatformInit::stdio_flush()
@@ -39,6 +40,5 @@ namespace mbino {
         fflush(stdout);
         fflush(stderr);
     }
-#endif
 
 }

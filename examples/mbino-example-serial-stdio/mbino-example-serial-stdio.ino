@@ -1,4 +1,4 @@
-#define MBED_CONF_PLATFORM_STDIO_INIT 1
+#define DEVICE_STDIO_MESSAGES 1
 
 #include "mbed.h"
 
