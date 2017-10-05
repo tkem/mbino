@@ -23,8 +23,8 @@
 #include <stdio.h>
 
 #ifdef __AVR__
+typedef int ssize_t;
 typedef long off_t;
-typedef long ssize_t;
 #endif
 
 #ifdef getc

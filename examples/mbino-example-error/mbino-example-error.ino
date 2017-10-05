@@ -1,5 +1,3 @@
-#define MBED_CONF_PLATFORM_STDIO_INIT 1
-
 #include "mbed.h"
 
 // deliberately swap RX and TX pins - comment out to see other use cases

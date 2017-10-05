@@ -20,13 +20,15 @@
 #define MBINO_MBED_ERROR_H
 
 #ifdef __cplusplus
-extern "C" {
-#endif
+
+// mbino extension: single-argument overload
+template<typename T> void error(const T*, ...);
+template<> void error(const char* format, ...);
+void error(const char* message);
+
+#else
 
 void error(const char *format, ...);
-
-#ifdef __cplusplus
-}
 
 #endif
 

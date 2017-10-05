@@ -13,14 +13,32 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#include "platform/mbed_stdio.h"
+#include "platform/PlatformInit.h"
 
-#if DEVICE_STDIO_MESSAGES
+// TODO: alternative implementation based on serial_api/retarget alone
+#include "drivers/Serial.h"
+
+#include <stdio.h>
 
 namespace mbino {
 
-    unsigned PlatformStdioInit::counter = 0;
+    unsigned PlatformInit::counter = 0;
+
+#if DEVICE_STDIO_MESSAGES
+    void PlatformInit::stdio_init(long baudrate)
+    {
+        static Serial stdio(STDIO_UART_TX, STDIO_UART_RX);
+        if (baudrate != 0) {
+            stdio.baud(baudrate);
+        }
+        stdin = stdout = stderr = stdio;
+    }
+
+    void PlatformInit::stdio_flush()
+    {
+        fflush(stdout);
+        fflush(stderr);
+    }
+#endif
 
 }
-
-#endif

@@ -13,60 +13,50 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_MBED_STDIO_H
-#define MBINO_MBED_STDIO_H
+#ifndef MBINO_PLATFORM_INIT_H
+#define MBINO_PLATFORM_INIT_H
 
 #include "platform/platform.h"
 #include "platform/NonCopyable.h"
 
-#if DEVICE_STDIO_MESSAGES
-
-#ifdef __cplusplus
-extern "C"{
+#ifndef MBED_CONF_PLATFORM_STDIO_BAUD_RATE
+#define MBED_CONF_PLATFORM_STDIO_BAUD_RATE 0
 #endif
-
-// mbino extension: initialize stdio streams
-void mbed_stdio_init(long baudrate);
-
-// mbino extension: flush stdio streams
-void mbed_stdio_flush(void);
-
-#ifdef __cplusplus
-}
 
 namespace mbino {
 
-    class PlatformStdioInit : private NonCopyable<PlatformStdioInit> {
+    // mbino extension to retarget stdio before main()
+    class PlatformInit : private NonCopyable<PlatformInit> {
         static unsigned counter;
 
     public:
-        PlatformStdioInit() {
+        PlatformInit() {
             if (counter++ == 0) {
-#if MBED_CONF_PLATFORM_STDIO_BAUD_RATE
-                mbed_stdio_init(MBED_CONF_PLATFORM_STDIO_BAUD_RATE);
-#else
-                mbed_stdio_init(0);
+#if DEVICE_STDIO_MESSAGES && MBED_CONF_PLATFORM_STDIO_INIT
+                stdio_init(MBED_CONF_PLATFORM_STDIO_BAUD_RATE);
 #endif
             }
         }
 
-        ~PlatformStdioInit() {
+        ~PlatformInit() {
             if (--counter == 0) {
-#if MBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT
-                mbed_stdio_flush();
+#if DEVICE_STDIO_MESSAGES && MBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT
+                stdio_flush();
 #endif
             }
         }
+
+    private:
+#if DEVICE_STDIO_MESSAGES
+        static void stdio_init(long baudrate = 0);
+        static void stdio_flush();
+#endif
     };
 
 }
 
-#if MBED_CONF_PLATFORM_STDIO_INIT
-static mbino::PlatformStdioInit _mbed_stdio_init;
-#endif
-
-#endif
-
+#if MBED_CONF_PLATFORM_STDIO_INIT || MBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT
+static mbino::PlatformInit _mbed_platform_init;
 #endif
 
 #endif

@@ -23,19 +23,48 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+extern "C" {
+    void error(const char *format, ...);
+}
+
 static bool error_in_progress = false;
 
-MBED_WEAK void error(const char *format, ...)
+static void verror(const char* format, va_list arg)
 {
     if (!error_in_progress) {
         error_in_progress = true;
 #ifndef NDEBUG
-        va_list arg;
-        va_start(arg, format);
         mbed_error_vfprintf(format, arg);
-        va_end(arg);
 #endif
         // mbino extension: call mbed_die() directly instead of exit(1)
         mbed_die();
     }
+}
+
+MBED_WEAK void error(const char* format, ...)
+{
+    va_list arg;
+    va_start(arg, format);
+    verror(format, arg);
+    va_end(arg);
+}
+
+void error(const char* message)
+{
+    if (!error_in_progress) {
+        error_in_progress = true;
+#ifndef NDEBUG
+        mbed_error_puts(message);
+#endif
+        // mbino extension: call mbed_die() directly instead of exit(1)
+        mbed_die();
+    }
+}
+
+template<> void error(const char* format, ...)
+{
+    va_list arg;
+    va_start(arg, format);
+    verror(format, arg);
+    va_end(arg);
 }

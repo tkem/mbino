@@ -33,10 +33,8 @@
 #define NUM_HARDWARE_SERIAL_PORTS 0
 #endif
 
-#if DEVICE_STDIO_MESSAGES
-static bool stdio_uart_initialized = false;
-serial_t stdio_uart;
-#endif
+// for mbed_board implementation
+bool serial_port_monitor_initialized = false;
 
 static uart_irq_handler event_handler = 0;
 
@@ -52,16 +50,6 @@ static void serial_init(serial_t* obj, T* stream)
     obj->pm = ParityNone;
     obj->sb = 1 - 1;
     obj->initialized = false;
-
-    // TODO: check type of stream vs. decltype(SERIAL_PORT_MONITOR)
-#if DEVICE_STDIO_MESSAGES
-    if (obj->stream == &SERIAL_PORT_MONITOR) {
-        stdio_uart_initialized = true;
-        if (obj != &stdio_uart) {
-            stdio_uart = *obj;
-        }
-    }
-#endif
 }
 
 static void serial_begin(serial_t* obj)
@@ -69,6 +57,9 @@ static void serial_begin(serial_t* obj)
     // serial API is not synchronized
     if (!obj->initialized) {
         obj->interface->begin(obj->stream, obj->baudrate, obj->cs, obj->pm, obj->sb);
+        if (obj->stream == &SERIAL_PORT_MONITOR) {
+            serial_port_monitor_initialized = true;
+        }
         obj->initialized = true;
     }
 }
@@ -123,13 +114,11 @@ void serial_init(serial_t* obj, PinName tx, PinName rx)
 
 void serial_free(serial_t* obj)
 {
-#if DEVICE_STDIO_MESSAGES
-    if (obj->stream == &SERIAL_PORT_MONITOR) {
-        stdio_uart_initialized = 0;
-    }
-#endif
     serial_irq_set(obj, RxIrq, 0);
     serial_irq_set(obj, TxIrq, 0);
+    if (obj->stream == &SERIAL_PORT_MONITOR) {
+        serial_port_monitor_initialized = false;
+    }
     obj->interface->end(obj->stream);
 }
 
@@ -266,15 +255,6 @@ void serialEvent2()
 void serialEvent3()
 {
     serial_rx_event(3);
-}
-#endif
-
-#if DEVICE_STDIO_MESSAGES
-void stdio_uart_init()
-{
-    if (!stdio_uart_initialized) {
-        serial_init(&stdio_uart, &SERIAL_PORT_MONITOR);
-    }
 }
 #endif
 

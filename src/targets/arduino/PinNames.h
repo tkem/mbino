@@ -184,4 +184,8 @@ static const PinName USBTX = 1;
 static const PinName USBRX = 0;
 #endif
 
+// TODO: only with STDIO_MESSAGES?
+#define STDIO_UART_TX USBTX
+#define STDIO_UART_RX USBRX
+
 #endif

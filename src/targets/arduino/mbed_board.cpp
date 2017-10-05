@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 #include "hal/gpio_api.h"
+#include "hal/serial_api.h"
 #include "platform/mbed_critical.h"
 #include "platform/mbed_interface.h"
 #include "platform/mbed_toolchain.h"
@@ -23,8 +24,13 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define ERROR_BUF_SIZE 128
+
+#if DEVICE_SERIAL
+extern bool serial_port_monitor_initialized;
+#endif
 
 static void delay_ms(int ms)
 {
@@ -33,9 +39,6 @@ static void delay_ms(int ms)
         delayMicroseconds(1000);
     }
 }
-
-// to be initialized by stdio retargetting
-int (*mbed_error_vprintf)(const char* format, va_list arg) = 0;
 
 void mbed_mac_address(char *mac)
 {
@@ -49,7 +52,9 @@ void mbed_mac_address(char *mac)
 
 MBED_WEAK void mbed_die(void)
 {
-    interrupts();  // FIXME: flush stderr?
+    // FIXME!!!
+    // USBCON?
+    interrupts();
 #ifdef LED_BUILTIN
     gpio_t led;
     gpio_init_out(&led, LED_BUILTIN);
@@ -68,22 +73,46 @@ MBED_WEAK void mbed_die(void)
 #endif
 }
 
-void mbed_error_printf(const char* format, ...) {
-#if DEVICE_STDIO_MESSAGES
-    if (mbed_error_vprintf) {
-        va_list arg;
-        va_start(arg, format);
-        mbed_error_vprintf(format, arg);
-        va_end(arg);
+void mbed_error_puts(const char* message)
+{
+#ifdef SERIAL_PORT_MONITOR
+    // TODO: check if necessary/wanted
+    core_util_critical_section_exit();
+    // TODO: check!
+#if defined(USBCON)
+    if (!USBDevice.configured()) {
+        // TODO: anything else? wait?
+        USBDevice.attach();
     }
+#endif
+    if (!serial_port_monitor_initialized) {
+        SERIAL_PORT_MONITOR.begin(9600);
+    }
+    // TODO: wait w/timeout?
+    //while (!SERIAL_PORT_MONITOR)
+    //    ;
+    SERIAL_PORT_MONITOR.write(message);
+    SERIAL_PORT_MONITOR.flush();  // interrupts?
+    core_util_critical_section_exit();
+#endif
+}
+
+void mbed_error_printf(const char* format, ...)
+{
+#ifdef SERIAL_PORT_MONITOR
+    va_list arg;
+    va_start(arg, format);
+    mbed_error_vfprintf(format, arg);
+    va_end(arg);
 #endif
 }
 
 void mbed_error_vfprintf(const char* format, va_list arg)
 {
-#if DEVICE_STDIO_MESSAGES
-    if (mbed_error_vprintf) {
-        mbed_error_vprintf(format, arg);
+#ifdef SERIAL_PORT_MONITOR
+    char buffer[ERROR_BUF_SIZE];
+    if (vsnprintf(buffer, ERROR_BUF_SIZE, format, arg) >= 0) {
+        mbed_error_puts(buffer);
     }
 #endif
 }

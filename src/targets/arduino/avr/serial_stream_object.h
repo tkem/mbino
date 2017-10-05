@@ -38,11 +38,8 @@ public:
 private:
 
     static void begin(Stream* obj, long baud, uint8_t cs, uint8_t pm, uint8_t sb) {
-        T* stream = static_cast<T*>(obj);
-        stream->begin(baud, config(cs, pm, sb));
-        // wait for serial port to become ready
-        while (!*stream)
-            ;
+        static_cast<T*>(obj)->begin(baud, config(cs, pm, sb));
+        // TODO: wait (with timeout!) for serial to become ready (Leonardo et al.)?
     }
 
     static void end(Stream* obj) {

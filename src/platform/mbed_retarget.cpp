@@ -13,20 +13,14 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifdef ARDUINO_ARCH_AVR
-
-#include "platform/FileHandle.h"
 #include "platform/mbed_retarget.h"
-
-#if DEVICE_STDIO_MESSAGES
-#include "platform/mbed_stdio.h"
-#include "hal/serial_api.h"
-#endif
+#include "platform/FileHandle.h"
 
 #include <stdio.h>
 
 namespace mbino {
 
+#ifdef __AVR__
     static int put(char c, FILE* fp)
     {
         FileHandle* fh = static_cast<FileHandle*>(fdev_get_udata(fp));
@@ -60,42 +54,37 @@ namespace mbino {
     {
         // unbuffered by default
     }
-
-}
-
-#if DEVICE_STDIO_MESSAGES
-
-extern int (*mbed_error_vprintf)(const char* format, va_list arg);
-
-static FILE stdio_stream;
-
-static int stdio_put(char c, FILE*)
-{
-    serial_putc(&stdio_uart, c);
-    return 0;
-}
-
-static int stdio_get(FILE*)
-{
-    return serial_getc(&stdio_uart);
-}
-
-void mbed_stdio_init(long baudrate)
-{
-    stdio_uart_init();
-    if (baudrate) {
-        serial_baud(&stdio_uart, baudrate);
+#else
+    static int read(void* obj, char* s, int n)
+    {
+        return static_cast<FileHandle*>(obj)->read(s, n);
     }
-    fdev_setup_stream(&stdio_stream, stdio_put, stdio_get, _FDEV_SETUP_RW);
-    stdin = stdout = stderr = &stdio_stream;
-    mbed_error_vprintf = vprintf;
-}
 
-void mbed_stdio_flush()
-{
-    // TODO: flush?
-}
+    static int write(void* obj, const char* s, int n)
+    {
+        return static_cast<FileHandle*>(obj)->write(s, n);
+    }
 
+    static fpos_t seek(void* obj, fpos_t offset, int whence)
+    {
+        return static_cast<FileHandle*>(obj)->seek(offset, whence);
+    }
+
+    static int close(void* obj)
+    {
+        return static_cast<FileHandle*>(obj)->close();
+    }
+
+    FILE* mbed_fdopen(FileHandle* fh, const char* mode)
+    {
+        bool rd = mode[0] == 'r' || mode[1] == '+';
+        bool wr = mode[0] == 'w' || mode[1] == '+';
+        return funopen(fh, rd ? read : 0, wr ? write : 0, seek, close);
+    }
+
+    void mbed_set_unbuffered_stream(FILE* fp)
+    {
+        setbuf(fp, 0);
+    }
 #endif
-
-#endif
+}
