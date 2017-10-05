@@ -13,6 +13,8 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
+#ifdef ARDUINO_ARCH_AVR
+
 #include "hal/gpio_api.h"
 #include "hal/serial_api.h"
 #include "platform/mbed_critical.h"
@@ -52,9 +54,12 @@ void mbed_mac_address(char *mac)
 
 MBED_WEAK void mbed_die(void)
 {
-    // FIXME!!!
-    // USBCON?
+    // Leonardo et al. need interrupts enabled
+#ifdef USBCON
     interrupts();
+#else
+    noInterrupts();
+#endif
 #ifdef LED_BUILTIN
     gpio_t led;
     gpio_init_out(&led, LED_BUILTIN);
@@ -76,23 +81,29 @@ MBED_WEAK void mbed_die(void)
 void mbed_error_puts(const char* message)
 {
 #ifdef SERIAL_PORT_MONITOR
-    // TODO: check if necessary/wanted
-    core_util_critical_section_exit();
-    // TODO: check!
-#if defined(USBCON)
-    if (!USBDevice.configured()) {
-        // TODO: anything else? wait?
-        USBDevice.attach();
-    }
-#endif
+    core_util_critical_section_enter();
     if (!serial_port_monitor_initialized) {
+#ifdef USBCON
+        // called from global constructor before main()?
+        if (!USBDevice.configured()) {
+            init();
+            initVariant();
+            USBDevice.attach();
+        }
+        interrupts();
+#endif
         SERIAL_PORT_MONITOR.begin(9600);
+#ifdef USBCON
+        // poll stream every 10ms for max. 3 seconds
+        for (int n = 300; !SERIAL_PORT_MONITOR && n != 0; --n) {
+            delay_ms(10);
+        }
+        noInterrupts();
+#endif
+        serial_port_monitor_initialized = true;
     }
-    // TODO: wait w/timeout?
-    //while (!SERIAL_PORT_MONITOR)
-    //    ;
     SERIAL_PORT_MONITOR.write(message);
-    SERIAL_PORT_MONITOR.flush();  // interrupts?
+    SERIAL_PORT_MONITOR.flush();
     core_util_critical_section_exit();
 #endif
 }
@@ -116,3 +127,5 @@ void mbed_error_vfprintf(const char* format, va_list arg)
     }
 #endif
 }
+
+#endif

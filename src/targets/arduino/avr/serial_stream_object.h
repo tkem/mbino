@@ -30,16 +30,21 @@ struct serial_stream_interface_s {
 #ifdef __cplusplus
 
 template<class T>
-class serial_stream {
-public:
-
+struct serial_stream_interface {
     static const struct serial_stream_interface_s interface;
+};
 
-private:
+template<class T>
+const struct serial_stream_interface_s serial_stream_interface<T>::interface = {
+    &T::begin,
+    &T::end
+};
+
+template<class T>
+struct serial_stream : public serial_stream_interface<serial_stream<T>> {
 
     static void begin(Stream* obj, long baud, uint8_t cs, uint8_t pm, uint8_t sb) {
         static_cast<T*>(obj)->begin(baud, config(cs, pm, sb));
-        // TODO: wait (with timeout!) for serial to become ready (Leonardo et al.)?
     }
 
     static void end(Stream* obj) {
@@ -58,11 +63,29 @@ private:
 
 };
 
-template<class T>
-const struct serial_stream_interface_s serial_stream<T>::interface = {
-    &serial_stream<T>::begin,
-    &serial_stream<T>::end
+#ifdef SERIAL_PORT_USBVIRTUAL
+
+template<>
+struct serial_stream<decltype(SERIAL_PORT_USBVIRTUAL)> :
+    public serial_stream_interface<serial_stream<decltype(SERIAL_PORT_USBVIRTUAL)>>
+{
+
+    static void begin(Stream* obj, long baud, uint8_t, uint8_t, uint8_t) {
+        auto stream = static_cast<decltype(SERIAL_PORT_USBVIRTUAL)*>(obj);
+        stream->begin(baud);
+        // poll stream every 10ms for max. 1 second
+        for (int n = 100; !*stream && n != 0; --n) {
+            delayMicroseconds(10000);  // works even before main()/init()
+        }
+    }
+
+    static void end(Stream* obj) {
+        static_cast<decltype(SERIAL_PORT_USBVIRTUAL)*>(obj)->end();
+    }
+
 };
+
+#endif
 
 #endif
 
