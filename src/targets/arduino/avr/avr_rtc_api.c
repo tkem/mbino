@@ -13,6 +13,8 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
+#ifdef ARDUINO_ARCH_AVR
+
 #include "hal/rtc_api.h"
 #include "hal/ticker_api.h"
 #include "hal/us_ticker_api.h"
@@ -53,3 +55,5 @@ void rtc_write(time_t t)
     // AVR Libc uses a time offset from Midnight Jan 1 2000.
     rtc_offset = t - UNIX_OFFSET - rtc_ticker_read();
 }
+
+#endif
