@@ -1,3 +1,13 @@
+0.10.1 (2017-10-06)
+-------------------
+
+- Improve error handling for ATmega32U based boards.
+
+- Use `DEVICE_STDIO_MESSAGES` as intended.
+
+- Refactor retargetting and `stdio` handling.
+
+
 0.10.0 (2017-10-04)
 -------------------
 
