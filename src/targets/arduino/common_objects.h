@@ -23,7 +23,6 @@
 #error “This library only supports boards with an AVR processor.”
 #endif
 
-#include "i2c_object.h"
 #include "tickers.h"
 
 #include <stdbool.h>

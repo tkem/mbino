@@ -32,13 +32,6 @@ namespace mbino {
         serial_irq_handler(&_serial, SerialBase::_irq_handler, (intptr_t)this);
     }
 
-    SerialBase::SerialBase(PinNameUSBTX, PinNameUSBRX, long baud) : _baud(baud)
-    {
-        serial_usb_init(&_serial);
-        serial_baud(&_serial, _baud);
-        serial_irq_handler(&_serial, SerialBase::_irq_handler, (intptr_t)this);
-    }
-
     void SerialBase::attach(const Callback<void()>& func, IrqType type)
     {
         core_util_critical_section_enter();

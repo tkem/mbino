@@ -155,7 +155,7 @@ static void pwmout8_write(pwmout_object_t *obj, uint16_t value)
 
 static void pwmout8_notavail(pwmout_object_t *obj, uint32_t value)
 {
-    // TODO: error?
+    // TBD: error or ignore?
 }
 
 static const pwmout_interface_t pwmout8_interface = {
@@ -183,7 +183,7 @@ static void pwmout8_init(pwmout_t *obj,
 
 void pwmout_init(pwmout_t *obj, PinName pin)
 {
-    // TODO: can pin be NC?
+    // TODO: handle NC?
     uint8_t timer = digitalPinToTimer(pin);
     if (timer == NOT_ON_TIMER) {
         error("Not a PWM-enabled pin");

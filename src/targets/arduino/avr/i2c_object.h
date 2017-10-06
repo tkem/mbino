@@ -20,10 +20,12 @@
 
 struct i2c_s {};
 
-// HACK to avoid pulling in the Wire library stuff...
+// HACK to avoid pulling in the whole Wire library stuff...
 
-#if defined(WIRE_HAS_END) && defined(__cplusplus)
-// assume Wire.h was already included and the global Wire object is available
+#if defined(WIRE_HAS_END)
+
+// assume Wire.h was already included, the global Wire object is
+// available, and this is all C++ from now on...
 
 #include "platform/mbed_error.h"
 

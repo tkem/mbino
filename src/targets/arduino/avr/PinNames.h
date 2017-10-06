@@ -16,9 +16,9 @@
 #ifndef MBINO_PIN_NAMES_H
 #define MBINO_PIN_NAMES_H
 
-#include <pins_arduino.h>
+#include <Arduino.h>
 
-// not defined for gemma et al.
+// ATtiny has 6 digital pins
 #ifndef NUM_DIGITAL_PINS
 #define NUM_DIGITAL_PINS 6
 #endif
@@ -46,7 +46,7 @@ static const PinName D2 = 2;
 static const PinName D3 = 3;
 static const PinName D4 = 4;
 static const PinName D5 = 5;
-#if NUM_DIGITAL_PINS > 6  /* standard */
+#if NUM_DIGITAL_PINS > 6  /* standard, leonardo, mega, ethernet */
 static const PinName D6 = 6;
 static const PinName D7 = 7;
 static const PinName D8 = 8;
@@ -62,7 +62,7 @@ static const PinName D17 = 17;
 static const PinName D18 = 18;
 static const PinName D19 = 19;
 #endif
-#if NUM_DIGITAL_PINS > 20  /* leonardo, due, mega */
+#if NUM_DIGITAL_PINS > 20  /* leonardo, mega */
 static const PinName D20 = 20;
 static const PinName D21 = 21;
 static const PinName D22 = 22;
@@ -75,7 +75,7 @@ static const PinName D28 = 28;
 static const PinName D29 = 29;
 static const PinName D30 = 30;
 #endif
-#if NUM_DIGITAL_PINS > 31  /* due, mega */
+#if NUM_DIGITAL_PINS > 31  /* mega */
 static const PinName D31 = 31;
 static const PinName D32 = 32;
 static const PinName D33 = 33;
@@ -112,24 +112,32 @@ static const PinName D63 = 63;
 static const PinName D64 = 64;
 static const PinName D65 = 65;
 static const PinName D66 = 66;
-#endif
-#if NUM_DIGITAL_PINS > 66  /* mega */
 static const PinName D67 = 67;
 static const PinName D68 = 68;
 static const PinName D69 = 69;
 #endif
 #if NUM_DIGITAL_PINS > 70
-#warning There are more than 70 digital pins. Some pin names may not be defined.
+#warning There are more than 70 digital pins on your board. Some pin names may not be defined.
 #endif
 
 #ifdef LED_BUILTIN
 static const PinName LED1 = LED_BUILTIN;
+#ifdef LED_BUILTIN_RX
+static const PinName LED2 = LED_BUILTIN_RX;
+#else
+static const PinName LED2 = LED_BUILTIN;
+#endif
+#ifdef LED_BUILTIN_TX
+static const PinName LED3 = LED_BUILTIN_TX;
+#else
+static const PinName LED3 = LED_BUILTIN;
+#endif
+static const PinName LED4 = LED_BUILTIN;
 #endif
 
 #ifdef PIN_WIRE_SCL
 static const PinName I2C_SCL = PIN_WIRE_SCL;
 #endif
-
 #ifdef PIN_WIRE_SDA
 static const PinName I2C_SDA = PIN_WIRE_SDA;
 #endif
@@ -137,11 +145,9 @@ static const PinName I2C_SDA = PIN_WIRE_SDA;
 #ifdef PIN_SPI_MISO
 static const PinName SPI_MOSI = PIN_SPI_MOSI;
 #endif
-
 #ifdef PIN_SPI_MOSI
 static const PinName SPI_MISO = PIN_SPI_MISO;
 #endif
-
 #ifdef PIN_SPI_SCK
 static const PinName SPI_SCK = PIN_SPI_SCK;
 #endif
@@ -155,31 +161,25 @@ static const PinName UART0_RX = 0;
 static const PinName SERIAL_TX = 1;
 static const PinName SERIAL_RX = 0;
 #endif
-
 #ifdef SERIAL_PORT_HARDWARE1
 static const PinName UART1_TX = 18;
 static const PinName UART1_RX = 19;
 #endif
-
 #ifdef SERIAL_PORT_HARDWARE2
 static const PinName UART2_TX = 16;
 static const PinName UART2_RX = 17;
 #endif
-
 #ifdef SERIAL_PORT_HARDWARE3
 static const PinName UART3_TX = 14;
 static const PinName UART3_RX = 15;
 #endif
 
-// mbino extension: "virtual" serial USB pins
-struct PinNameUSBTX {};
-struct PinNameUSBRX {};
-
-#if defined(SERIAL_PORT_USBVIRTUAL)
-static const struct PinNameUSBTX USBTX;
-static const struct PinNameUSBRX USBRX;
-#elif defined(SERIAL_PORT_MONITOR)
-// correct for all known boards...
+#if defined (SERIAL_PORT_USBVIRTUAL)
+// TODO: think of something better that also handles DigitalOut(USBTX)...
+static const PinName USBTX = -1;
+static const PinName USBRX = -1;
+#elif defined (SERIAL_PORT_MONITOR) && defined(SERIAL_PORT_HARDWARE)
+// make an educated guess...
 static const PinName USBTX = 1;
 static const PinName USBRX = 0;
 #endif

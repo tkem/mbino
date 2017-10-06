@@ -18,18 +18,15 @@
 
 #include "platform/platform.h"
 
-// include here so Arduino IDE sets correct include and library paths
+#ifdef ARDUINO
+// include here so the Arduino IDE sets correct include and library paths
 #include <Arduino.h>
-
-#ifdef DEVICE_I2C
-// do *not* include Wire.h when using the Arduino IDE
-#ifndef ARDUINO
+#if defined(DEVICE_I2C) && !defined(ARDUINO_ARCH_AVR)
 #include <Wire.h>
 #endif
-#endif
-
-#ifdef DEVICE_SPI
+#if defined(DEVICE_SPI)
 #include <SPI.h>
+#endif
 #endif
 
 #include <math.h>
@@ -53,23 +50,12 @@
 #include "drivers/Timer.h"
 #include "drivers/TimerEvent.h"
 
-//#include "platform/ATCmdParser.h"
 #include "platform/Callback.h"
-//#include "platform/CriticalSectionLock.h"
-//#include "platform/DeepSleepLock.h"
-//#include "platform/DirHandle.h"
 #include "platform/FileHandle.h"
-//#include "platform/FileSystemHandle.h"
-//#include "platform/FunctionPointer.h"
-//#include "platform/LocalFileSystem.h"
-//#include "platform/mbed_application.h"
 #include "platform/mbed_assert.h"
-//#include "platform/mbed_debug.h"
 #include "platform/mbed_error.h"
 #include "platform/mbed_interface.h"
-//#include "platform/mbed_poll.h"
 #include "platform/mbed_rtc_time.h"
-//#include "platform/mbed_sleep.h"
 #include "platform/mbed_toolchain.h"
 #include "platform/mbed_wait_api.h"
 

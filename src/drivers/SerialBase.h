@@ -91,9 +91,6 @@ namespace mbino {
         // mbino extension: change baudrate type to long
         SerialBase(PinName tx, PinName rx, long baud);
 
-        // mbino extension: Arduino "virtual" serial USB port
-        SerialBase(PinNameUSBTX tx, PinNameUSBRX rx, long baud);
-
         ~SerialBase() {
             // mbino extension: serial_free() not called in mbed, but
             // need to detach IRQ handlers...

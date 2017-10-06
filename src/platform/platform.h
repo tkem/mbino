@@ -27,6 +27,6 @@
 #include "platform/mbed_retarget.h"
 #include "platform/mbed_toolchain.h"
 
-#include "hal/device.h"
+#include "device.h"
 
 #endif

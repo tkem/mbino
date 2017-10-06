@@ -33,6 +33,11 @@ static inline int gpio_read(gpio_t *obj)
     return (*obj->reg & obj->mask) ? 1 : 0;
 }
 
+static inline int gpio_is_connected(const gpio_t *obj)
+{
+    return obj->port != 0;
+}
+
 #ifdef __cplusplus
 }
 #endif

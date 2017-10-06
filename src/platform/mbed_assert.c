@@ -23,7 +23,7 @@
 
 void mbed_assert_internal(const char *expr, const char *file, int line)
 {
-    core_util_critical_section_enter();  // TODO: check with serial output
+    core_util_critical_section_enter();
     mbed_error_printf("mbed assertation failed: %s, file: %s, line %d\r\n", expr, file, line);
     mbed_die();
 }

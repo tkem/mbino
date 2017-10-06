@@ -33,9 +33,6 @@ namespace mbino {
         // mbino extension: change baud type to long
         RawSerial(PinName tx, PinName rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
 
-        // mbino extension: Arduino "virtual" serial USB port
-        RawSerial(PinNameUSBTX tx, PinNameUSBRX rx, long baud = 9600) : SerialBase(tx, rx, baud) {}
-
         int getc() {
             return _base_getc();
         }

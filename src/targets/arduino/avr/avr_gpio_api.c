@@ -38,7 +38,7 @@ static void gpio_init_nc(gpio_t *obj)
 {
     static uint8_t ncreg = 0;
     obj->reg = &ncreg;
-    obj->port = NOT_A_PORT;
+    obj->port = 0;
     obj->mask = 0;
 }
 
@@ -68,7 +68,7 @@ void gpio_init_out_ex(gpio_t *obj, PinName pin, int value)
 
 void gpio_dir_in(gpio_t *obj, PinMode pull)
 {
-    if (obj->port != NOT_A_PORT) {
+    if (obj->port) {
         volatile uint8_t *mode = portModeRegister(obj->port);
         volatile uint8_t *input = portInputRegister(obj->port);
         volatile uint8_t *output = portOutputRegister(obj->port);
@@ -88,7 +88,7 @@ void gpio_dir_in(gpio_t *obj, PinMode pull)
 
 void gpio_dir_out(gpio_t *obj, int value)
 {
-    if (obj->port != NOT_A_PORT) {
+    if (obj->port) {
         volatile uint8_t *mode = portModeRegister(obj->port);
         volatile uint8_t *output = portOutputRegister(obj->port);
 
@@ -119,7 +119,7 @@ void gpio_write(gpio_t *obj, int value)
 
 void gpio_mode(gpio_t *obj, PinMode mode)
 {
-    if (obj->port != NOT_A_PORT) {
+    if (obj->port) {
         volatile uint8_t *output = portOutputRegister(obj->port);
 
         uint8_t sreg = SREG;
@@ -131,11 +131,6 @@ void gpio_mode(gpio_t *obj, PinMode mode)
         }
         SREG = sreg;
     }
-}
-
-int gpio_is_connected(const gpio_t *obj)
-{
-    return obj->port != NOT_A_PORT;
 }
 
 #endif

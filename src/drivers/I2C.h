@@ -33,7 +33,7 @@ namespace mbino {
 
     public:
 
-        /* TODO: what's this for?
+        /* TODO: Use RxStatus/Acknowledge?
         enum RxStatus {
             NoData,
             MasterGeneralCall,

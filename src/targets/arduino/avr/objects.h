@@ -16,11 +16,12 @@
 #ifndef MBINO_OBJECTS_H
 #define MBINO_OBJECTS_H
 
-#include "../PinNames.h"
-#include "../common_objects.h"
+#include "PinNames.h"
 #include "PortNames.h"
 #include "gpio_object.h"
+#include "i2c_object.h"
 #include "serial_stream_object.h"
+#include "../common_objects.h"
 
 #include <stdint.h>
 

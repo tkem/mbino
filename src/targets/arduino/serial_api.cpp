@@ -80,17 +80,14 @@ static void serial_rx_event(uint8_t n)
     }
 }
 
-#ifdef SERIAL_PORT_USBVIRTUAL
-void serial_usb_init(serial_t* obj)
-{
-    serial_init(obj, &SERIAL_PORT_USBVIRTUAL);
-}
-#endif
-
 void serial_init(serial_t* obj, PinName tx, PinName rx)
 {
     if (false) {
         // keep the compiler happy
+#ifdef SERIAL_PORT_USBVIRTUAL
+    } else if (tx == USBTX && rx == USBRX) {
+        serial_init(obj, &SERIAL_PORT_USBVIRTUAL);
+#endif
 #ifdef SERIAL_PORT_HARDWARE
     } else if (tx == UART0_TX && rx == UART0_RX) {
         serial_init(obj, &SERIAL_PORT_HARDWARE);
@@ -170,7 +167,7 @@ void serial_irq_set(serial_t *obj, SerialIrq irq, int enable)
             error("Serial IRQ mapping failed");
         }
     } else {
-        // TODO: TxIrq not supported - error?
+        error("Serial TxIrq not supported");
     }
 }
 
@@ -226,9 +223,6 @@ void serial_break_clear(serial_t *obj)
         obj->interface->begin(obj->stream, obj->baudrate, obj->cs, obj->pm, obj->sb);
     }
 }
-
-// FIXME: what is this?
-void serial_pinout_tx(PinName tx);
 
 #ifdef SERIAL_PORT_HARDWARE
 void serialEvent()
