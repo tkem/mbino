@@ -22,24 +22,36 @@
 #include "platform/mbed_toolchain.h"
 #include "platform/mbed_wait_api.h"
 
+#include "avr_timers.h"
+
 #include <Arduino.h>
 
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef ERROR_BUF_SIZE
 #define ERROR_BUF_SIZE 128
+#endif
 
 #if DEVICE_SERIAL
 extern bool serial_port_monitor_initialized;
 #endif
 
-static void delay_ms(int ms)
+template<int N>
+static void delay_ms()
 {
-    // delayMicroseconds() is usable before setup()
-    for (int i = 0; i != ms ; ++i) {
-        delayMicroseconds(1000);
+    // FIXME: enable only interrupts necessary for Leonardo USB port?
+#ifdef USBCON
+    interrupts();
+#endif
+    // "Currently, the largest value that will produce an accurate delay is 16383."
+    for (int i = max((N * 1000L) / 16383L, 1); i != 0; --i) {
+        delayMicroseconds(16383);
     }
+#ifdef USBCON
+    noInterrupts();
+#endif
 }
 
 void mbed_mac_address(char *mac)
@@ -54,25 +66,29 @@ void mbed_mac_address(char *mac)
 
 MBED_WEAK void mbed_die(void)
 {
-    // Leonardo et al. need interrupts enabled
-#ifdef USBCON
-    interrupts();
-#else
     noInterrupts();
-#endif
 #ifdef LED_BUILTIN
-    gpio_t led;
-    gpio_init_out(&led, LED_BUILTIN);
+    uint8_t port = digitalPinToPort(LED_BUILTIN);
+    uint8_t mask = digitalPinToBitMask(LED_BUILTIN);
+    volatile uint8_t *output = portOutputRegister(port);
+    if (digitalPinHasPWM(LED_BUILTIN)) {
+        uint8_t timer = digitalPinToTimer(LED_BUILTIN);
+        *timerToControlRegister(timer) &= ~timerToCompareOutputModeMask(timer);
+    }
+    *portModeRegister(port) |= mask;
+
     for (;;) {
-        for (int i = 0; i != 8; ++i) {
-            int value = gpio_read(&led);
-            gpio_write(&led, !value);
-            delay_ms(150);
+        for (int i = 0; i != 4; ++i) {
+            *output |= mask;
+            delay_ms<150>();
+            *output &= ~mask;
+            delay_ms<150>();
         }
-        for (int i = 0; i != 8; ++i) {
-            int value = gpio_read(&led);
-            gpio_write(&led, !value);
-            delay_ms(400);
+        for (int i = 0; i != 4; ++i) {
+            *output |= mask;
+            delay_ms<400>();
+            *output &= ~mask;
+            delay_ms<400>();
         }
     }
 #endif
@@ -84,7 +100,7 @@ void mbed_error_puts(const char* message)
     core_util_critical_section_enter();
     if (!serial_port_monitor_initialized) {
 #ifdef USBCON
-        // called from global constructor before main()?
+        // FIXME: initialize Leonardo USBDevice properly...
         if (!USBDevice.configured()) {
             init();
             initVariant();
@@ -94,9 +110,9 @@ void mbed_error_puts(const char* message)
 #endif
         SERIAL_PORT_MONITOR.begin(9600);
 #ifdef USBCON
-        // poll stream every 10ms for max. 3 seconds
-        for (int n = 300; !SERIAL_PORT_MONITOR && n != 0; --n) {
-            delay_ms(10);
+        // FIXME: poll stream every ~100ms for max. 3 seconds
+        for (int n = 30; !SERIAL_PORT_MONITOR && n != 0; --n) {
+            delay_ms<100>();
         }
         noInterrupts();
 #endif
