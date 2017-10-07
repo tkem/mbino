@@ -71,10 +71,17 @@ MBED_WEAK void mbed_die(void)
     uint8_t port = digitalPinToPort(LED_BUILTIN);
     uint8_t mask = digitalPinToBitMask(LED_BUILTIN);
     volatile uint8_t *output = portOutputRegister(port);
+#ifdef digitalPinHasPWM
     if (digitalPinHasPWM(LED_BUILTIN)) {
         uint8_t timer = digitalPinToTimer(LED_BUILTIN);
         *timerToControlRegister(timer) &= ~timerToCompareOutputModeMask(timer);
     }
+#else
+    uint8_t timer = digitalPinToTimer(LED_BUILTIN);
+    if (timer != NOT_ON_TIMER) {
+        *timerToControlRegister(timer) &= ~timerToCompareOutputModeMask(timer);
+    }
+#endif
     *portModeRegister(port) |= mask;
 
     for (;;) {
