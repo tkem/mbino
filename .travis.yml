@@ -8,22 +8,27 @@ install:
 - pip install -U platformio
 
 env:
-- BOARD=uno
-- BOARD=leonardo
-- BOARD=megaatmega2560
-- BOARD=gemma OPTION="lib_ignore=Wire, SPI" EXAMPLES="examples/mbino-example-blinky"
-- BOARD=nucleo_f446re
+- PLATFORMIO_CI_SRC=examples/mbino-example-analogin
+- PLATFORMIO_CI_SRC=examples/mbino-example-analogin-pwmout
+- PLATFORMIO_CI_SRC=examples/mbino-example-blinky PROJECT_CONF="platformio-tiny.ini"
+- PLATFORMIO_CI_SRC=examples/mbino-example-error
+- PLATFORMIO_CI_SRC=examples/mbino-example-i2c-lm75a
+- PLATFORMIO_CI_SRC=examples/mbino-example-i2c-scanner
+- PLATFORMIO_CI_SRC=examples/mbino-example-interruptin PROJECT_CONF="platformio-tiny.ini"
+- PLATFORMIO_CI_SRC=examples/mbino-example-portin PROJECT_CONF="platformio-tiny.ini"
+- PLATFORMIO_CI_SRC=examples/mbino-example-portout PROJECT_CONF="platformio-tiny.ini"
+- PLATFORMIO_CI_SRC=examples/mbino-example-pwmout
+- PLATFORMIO_CI_SRC=examples/mbino-example-rawserial
+- PLATFORMIO_CI_SRC=examples/mbino-example-serial-hello
+- PLATFORMIO_CI_SRC=examples/mbino-example-serial-rxirq
+- PLATFORMIO_CI_SRC=examples/mbino-example-serial-stdio
+- PLATFORMIO_CI_SRC=examples/mbino-example-spi-25lc040
+- PLATFORMIO_CI_SRC=examples/mbino-example-spi-whoami
+- PLATFORMIO_CI_SRC=examples/mbino-example-ticker PROJECT_CONF="platformio-tiny.ini"
+- PLATFORMIO_CI_SRC=examples/mbino-example-time
+- PLATFORMIO_CI_SRC=examples/mbino-example-timer
 
 script:
-- set -eo pipefail;
-  for e in ${EXAMPLES:=examples/*}; do
-    case "$BOARD" in
-        nucleo*)
-            mv "$e/"*.ino "$e"/$(basename "$e"/*.ino .ino).cpp;
-            platformio ci --board=$BOARD "$e";
-            ;;
-        *)
-            platformio ci --board=$BOARD --lib=. ${OPTION:+--project-option="$OPTION"} "$e";
-            ;;
-    esac
-  done
+- platformio ci --lib="." --project-conf="${PROJECT_CONF:-platformio.ini}"
+- cp $PLATFORMIO_CI_SRC/*.ino $PLATFORMIO_CI_SRC/$(basename $PLATFORMIO_CI_SRC/*.ino .ino).cpp
+- platformio ci --lib="." --board=nucleo_f446re
