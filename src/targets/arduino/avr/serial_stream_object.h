@@ -16,26 +16,21 @@
 #ifndef MBINO_SERIAL_STREAM_OBJECT_H
 #define MBINO_SERIAL_STREAM_OBJECT_H
 
-#include <Arduino.h>
-
 #if defined(SERIAL_PORT_MONITOR) || defined(SERIAL_PORT_HARDWARE)
-
-struct Stream; // forward declaration of Arduino C++ Stream class
-
-struct serial_stream_interface_s {
-    void (*begin)(struct Stream *obj, long baud, uint8_t cs, uint8_t pm, uint8_t sb);
-    void (*end)(struct Stream *obj);
-};
 
 #ifdef __cplusplus
 
+#include "../common_objects.h"
+
+#include <Arduino.h>
+
 template<class T>
 struct serial_stream_interface {
-    static const struct serial_stream_interface_s interface;
+    static const serial_stream_interface_t interface;
 };
 
 template<class T>
-const struct serial_stream_interface_s serial_stream_interface<T>::interface = {
+const serial_stream_interface_t serial_stream_interface<T>::interface = {
     &T::begin,
     &T::end
 };
@@ -72,11 +67,21 @@ struct serial_stream<decltype(SERIAL_PORT_USBVIRTUAL)> :
 
     static void begin(Stream* obj, long baud, uint8_t, uint8_t, uint8_t) {
         auto stream = static_cast<decltype(SERIAL_PORT_USBVIRTUAL)*>(obj);
+        // FIXME: need interrupts enabled for USB to work?
+        uint8_t sreg = SREG;
+        sei();
+        // FIXME: initialize Leonardo USBDevice properly...
+        if (!USBDevice.configured()) {
+            init();
+            initVariant();
+            USBDevice.attach();
+        }
         stream->begin(baud);
-        // poll stream every 10ms for max. 1 second
+        // FIXME: detect if USB connected (poll stream every 10ms for now)
         for (int n = 100; !*stream && n != 0; --n) {
             delayMicroseconds(10000);  // works even before main()/init()
         }
+        SREG = sreg;
     }
 
     static void end(Stream* obj) {

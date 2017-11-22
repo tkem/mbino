@@ -2,7 +2,7 @@
 
 InterruptIn button(D2);
 DigitalOut led(LED1);
-DigitalOut flash(D3);
+DigitalOut flash(LED2);
 
 void flip() {
     led = !led;

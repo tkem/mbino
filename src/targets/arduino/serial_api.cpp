@@ -33,8 +33,9 @@
 #define NUM_HARDWARE_SERIAL_PORTS 0
 #endif
 
-// for mbed_board implementation
-bool serial_port_monitor_initialized = false;
+extern "C" {
+    extern serial_t *mbed_stdio_uart;
+}
 
 static uart_irq_handler event_handler = 0;
 
@@ -57,9 +58,6 @@ static void serial_begin(serial_t* obj)
     // serial API is not synchronized
     if (!obj->initialized) {
         obj->interface->begin(obj->stream, obj->baudrate, obj->cs, obj->pm, obj->sb);
-        if (obj->stream == &SERIAL_PORT_MONITOR) {
-            serial_port_monitor_initialized = true;
-        }
         obj->initialized = true;
     }
 }
@@ -107,15 +105,18 @@ void serial_init(serial_t* obj, PinName tx, PinName rx)
     } else {
         error("Serial pin mapping failed");
     }
+    if (obj->stream == &SERIAL_PORT_MONITOR) {
+        mbed_stdio_uart = obj;
+    }
 }
 
 void serial_free(serial_t* obj)
 {
+    if (obj == mbed_stdio_uart) {
+        mbed_stdio_uart = NULL;
+    }
     serial_irq_set(obj, RxIrq, 0);
     serial_irq_set(obj, TxIrq, 0);
-    if (obj->stream == &SERIAL_PORT_MONITOR) {
-        serial_port_monitor_initialized = false;
-    }
     obj->interface->end(obj->stream);
 }
 
@@ -193,8 +194,8 @@ int serial_readable(serial_t* obj)
     return obj->stream->available() != 0;
 }
 
-// Print::availableForWrite() not available on SAM?
-#ifndef ARDUINO_ARCH_SAM
+// FIXME: Print::availableForWrite() not available on SAM and Trinket M0?
+#ifdef ARDUINO_ARCH_AVR
 int serial_writable(serial_t* obj)
 {
     return obj->stream->availableForWrite() != 0;

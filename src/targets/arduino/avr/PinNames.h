@@ -135,31 +135,25 @@ static const PinName LED3 = LED_BUILTIN;
 static const PinName LED4 = LED_BUILTIN;
 #endif
 
-#ifdef PIN_WIRE_SCL
+#if (defined PIN_WIRE_SCL) && (defined PIN_WIRE_SDA)
 static const PinName I2C_SCL = PIN_WIRE_SCL;
-#endif
-#ifdef PIN_WIRE_SDA
 static const PinName I2C_SDA = PIN_WIRE_SDA;
 #endif
 
-#ifdef PIN_SPI_MISO
+#if (defined PIN_SPI_MISO) && (defined PIN_SPI_MOSI) && (defined PIN_SPI_SCK)
 static const PinName SPI_MOSI = PIN_SPI_MOSI;
-#endif
-#ifdef PIN_SPI_MOSI
 static const PinName SPI_MISO = PIN_SPI_MISO;
-#endif
-#ifdef PIN_SPI_SCK
 static const PinName SPI_SCK = PIN_SPI_SCK;
 #endif
 
 // see https://www.arduino.cc/en/Reference/Serial
 #ifdef SERIAL_PORT_HARDWARE
+static const PinName SERIAL_TX = 1;
+static const PinName SERIAL_RX = 0;
 static const PinName UART_TX = 1;
 static const PinName UART_RX = 0;
 static const PinName UART0_TX = 1;
 static const PinName UART0_RX = 0;
-static const PinName SERIAL_TX = 1;
-static const PinName SERIAL_RX = 0;
 #endif
 #ifdef SERIAL_PORT_HARDWARE1
 static const PinName UART1_TX = 18;
@@ -179,12 +173,11 @@ static const PinName UART3_RX = 15;
 static const PinName USBTX = -1;
 static const PinName USBRX = -1;
 #elif defined (SERIAL_PORT_MONITOR) && defined(SERIAL_PORT_HARDWARE)
-// make an educated guess...
+// TODO: Pro Mini e.g. doesn't have USB
 static const PinName USBTX = 1;
 static const PinName USBRX = 0;
 #endif
 
-// TODO: only with STDIO_MESSAGES?
 #define STDIO_UART_TX USBTX
 #define STDIO_UART_RX USBRX
 

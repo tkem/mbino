@@ -13,6 +13,8 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
+#ifdef ARDUINO_ARCH_AVR
+
 #include "hal/gpio_irq_api.h"
 #include "hal/gpio_api.h"
 #include "platform/mbed_error.h"
@@ -137,3 +139,5 @@ void gpio_irq_disable(gpio_irq_t* obj)
     obj->enabled = false;
     gpio_irq_update(obj);
 }
+
+#endif

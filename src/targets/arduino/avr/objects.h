@@ -25,6 +25,14 @@
 
 #include <stdint.h>
 
+struct gpio_irq_s {
+    gpio_t gpio;
+    intptr_t id;
+    uint8_t irq;
+    uint8_t events;
+    bool enabled;
+};
+
 struct port_s {
     volatile uint8_t *reg;
     uint8_t port;

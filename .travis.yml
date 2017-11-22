@@ -10,6 +10,7 @@ install:
 env:
 - PLATFORMIO_CI_SRC=examples/mbino-example-analogin
 - PLATFORMIO_CI_SRC=examples/mbino-example-analogin-pwmout
+- PLATFORMIO_CI_SRC=examples/mbino-example-assert
 - PLATFORMIO_CI_SRC=examples/mbino-example-blinky PROJECT_CONF="platformio-tiny.ini"
 - PLATFORMIO_CI_SRC=examples/mbino-example-error
 - PLATFORMIO_CI_SRC=examples/mbino-example-i2c-lm75a

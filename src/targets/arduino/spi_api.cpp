@@ -48,19 +48,40 @@ void spi_init(spi_t* obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
         error("Hardware SSEL not supported");
     }
     if (mosi == PIN_SPI_MOSI && miso == PIN_SPI_MISO && sclk == PIN_SPI_SCK) {
-        SPI.begin();  // Arduino SPI has its own init counter
-        obj->clock = 1000000;
-        obj->bits = 8;
-        obj->mode = 0;
-        spi_init_settings(obj);
+        obj->spi = &SPI;
+#if SPI_INTERFACES_COUNT > 1
+    } else if (mosi == PIN_SPI1_MOSI && miso == PIN_SPI1_MISO && sclk == PIN_SPI1_SCK) {
+        obj->spi = &SPI1;
+#endif
+#if SPI_INTERFACES_COUNT > 2
+    } else if (mosi == PIN_SPI2_MOSI && miso == PIN_SPI2_MISO && sclk == PIN_SPI2_SCK) {
+        obj->spi = &SPI2;
+#endif
+#if SPI_INTERFACES_COUNT > 3
+    } else if (mosi == PIN_SPI3_MOSI && miso == PIN_SPI3_MISO && sclk == PIN_SPI3_SCK) {
+        obj->spi = &SPI3;
+#endif
+#if SPI_INTERFACES_COUNT > 4
+    } else if (mosi == PIN_SPI4_MOSI && miso == PIN_SPI4_MISO && sclk == PIN_SPI4_SCK) {
+        obj->spi = &SPI4;
+#endif
+#if SPI_INTERFACES_COUNT > 5
+    } else if (mosi == PIN_SPI5_MOSI && miso == PIN_SPI5_MISO && sclk == PIN_SPI5_SCK) {
+        obj->spi = &SPI5;
+#endif
     } else {
         error("SPI pin mapping failed");
     }
+    obj->clock = 1000000;
+    obj->bits = 8;
+    obj->mode = 0;
+    spi_init_settings(obj);
+    obj->spi->begin();  // Arduino SPI has its own init counter
 }
 
 void spi_free(spi_t* obj)
 {
-    SPI.end();
+    obj->spi->end();
 }
 
 void spi_format(spi_t* obj, int bits, int mode, int slave)
@@ -82,13 +103,13 @@ void spi_frequency(spi_t* obj, long hz)
 int spi_master_write(spi_t* obj, int value)
 {
     int data;
-    SPI.beginTransaction(spi_get_settings(obj));
+    obj->spi->beginTransaction(spi_get_settings(obj));
     if (obj->bits > 8) {
-        data = SPI.transfer16(value);
+        data = obj->spi->transfer16(value);
     } else {
-        data = SPI.transfer(value);
+        data = obj->spi->transfer(value);
     }
-    SPI.endTransaction();
+    obj->spi->endTransaction();
     return data;
 }
 
@@ -102,23 +123,23 @@ int spi_master_block_write(
     memcpy(rx_buffer, tx_buffer, n);
     memset(rx_buffer + n, write_fill, rx_length - n);
 
-    SPI.beginTransaction(spi_get_settings(obj));
+    obj->spi->beginTransaction(spi_get_settings(obj));
     if (obj->bits > 8) {
         for (int i = 0; i < rx_length; ++i) {
-            rx_buffer[i] = SPI.transfer16(rx_buffer[i]);
+            rx_buffer[i] = obj->spi->transfer16(rx_buffer[i]);
         }
         while (tx_length > n) {
-            SPI.transfer16(tx_buffer[n++]);
+            obj->spi->transfer16(tx_buffer[n++]);
         }
     } else {
         if (rx_length > 0) {
-            SPI.transfer(rx_buffer, rx_length);
+            obj->spi->transfer(rx_buffer, rx_length);
         }
         while (tx_length > n) {
-            SPI.transfer(tx_buffer[n++]);
+            obj->spi->transfer(tx_buffer[n++]);
         }
     }
-    SPI.endTransaction();
+    obj->spi->endTransaction();
     return tx_length > rx_length ? tx_length : rx_length;
 }
 

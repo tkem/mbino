@@ -16,34 +16,29 @@
 #ifndef MBINO_COMMON_OBJECTS_H
 #define MBINO_COMMON_OBJECTS_H
 
-#if defined(ARDUINO_ARCH_AVR)
-#include "avr/gpio_object.h"
-#include "avr/serial_stream_object.h"
-#else
-#error “This library only supports boards with an AVR processor.”
-#endif
-
 #include "tickers.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 
+// forward declarations of Arduino C++ classes
+struct Stream;
+struct SPIClass;
+struct TwoWire;
+
 struct analogin_s {
     uint8_t pin;
 };
 
-struct gpio_irq_s {
-    gpio_t gpio;
-    intptr_t id;
-    uint8_t irq;
-    uint8_t events;
-    bool enabled;
+struct serial_stream_interface_s {
+    void (*begin)(struct Stream *obj, long baud, uint8_t cs, uint8_t pm, uint8_t sb);
+    void (*end)(struct Stream *obj);
 };
 
 typedef struct serial_stream_interface_s serial_stream_interface_t;
 
 struct serial_s {
-    const serial_stream_interface_t *interface;
+    const struct serial_stream_interface_s *interface;
     struct Stream *stream;
     intptr_t irq_id;
     long baudrate;
@@ -54,6 +49,7 @@ struct serial_s {
 };
 
 struct spi_s {
+    struct SPIClass *spi;
     uint32_t clock;
     uint8_t bits;
     uint8_t mode;
@@ -64,5 +60,11 @@ struct spi_s {
         char c[6];  // sizeof(SPISettings) on SAM processors
     } settings;
 };
+
+#ifndef ARDUINO_ARCH_AVR
+struct i2c_s {
+    struct TwoWire* wire;
+};
+#endif
 
 #endif

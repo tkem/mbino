@@ -15,45 +15,39 @@
  */
 #ifdef ARDUINO_ARCH_AVR
 
-#include "hal/rtc_api.h"
-#include "hal/ticker_api.h"
-#include "hal/us_ticker_api.h"
+#include "hal/gpio_api.h"
+#include "platform/mbed_interface.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#include <Arduino.h>
 
-static ticker_data_t const* rtc_ticker = NULL;
-static time_t rtc_offset = 0;
-
-static time_t rtc_ticker_read(void)
+static void delay_ms(unsigned ms)
 {
-    return ticker_read_us(rtc_ticker) / 1000000;
+    while (ms--) {
+        delayMicroseconds(1000);
+    }
 }
 
-void rtc_init(void)
+void mbed_die(void)
 {
-    rtc_ticker = get_us_ticker_data();
-}
+    gpio_t led;
+    gpio_init_out(&led, LED1);
 
-void rtc_free(void)
-{
-    rtc_ticker = NULL;
-}
+    interrupts();
 
-int rtc_isenabled(void)
-{
-    return rtc_ticker != NULL;
-}
-
-time_t rtc_read(void)
-{
-    return rtc_ticker_read() + rtc_offset;
-}
-
-void rtc_write(time_t t)
-{
-    // AVR Libc uses a time offset from Midnight Jan 1 2000.
-    rtc_offset = t - UNIX_OFFSET - rtc_ticker_read();
+    for (;;) {
+        for (int i = 0; i != 4; ++i) {
+            gpio_write(&led, 1);
+            delay_ms(150);
+            gpio_write(&led, 0);
+            delay_ms(150);
+        }
+        for (int i = 0; i != 4; ++i) {
+            gpio_write(&led, 1);
+            delay_ms(400);
+            gpio_write(&led, 0);
+            delay_ms(400);
+        }
+    }
 }
 
 #endif

@@ -16,9 +16,11 @@
 #ifndef MBINO_TARGETS_H
 #define MBINO_TARGETS_H
 
-// this intentionally mimics mbed's targets/targets.json
+// this file intentionally mimics mbed's targets/targets.json
 
-#if defined(ARDUINO)
+#ifndef ARDUINO
+#error “This library only supports Arduino devices.”
+#endif
 
 #include <Arduino.h>
 
@@ -46,10 +48,6 @@
 #include "arduino/avr/objects.h"
 #else
 #error “This library only supports boards with an AVR processor.”
-#endif
-
-#else
-#error “This library only supports Arduino devices.”
 #endif
 
 #endif
