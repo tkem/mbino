@@ -47,7 +47,7 @@ So, why would you want to use this?
 ## Known Bugs and Limitations
 
 - Only AVR 8-bit microcontroller boards are supported.  This means no
-  support for Arduino Due or Zero, for example.
+  support for Arduino Due, Zero or M0, for example.
 
 - To avoid ambiguities with Arduino's own global `Serial` and `SPI`
   objects, you have to use the fully qualified class names

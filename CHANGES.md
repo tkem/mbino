@@ -1,3 +1,13 @@
+1.0.2 (2017-11-24)
+------------------
+
+- Make `serial_putc()` blocking.
+
+- Refactor target support and error handling.
+
+- Various Travis CI build improvements.
+
+
 1.0.1 (2017-10-07)
 ------------------
 
