@@ -29,10 +29,13 @@ static void delay_ms(unsigned ms)
 
 void mbed_die(void)
 {
+#ifdef USBCON
+    sei();
+#else
+    cli();
+#endif
     gpio_t led;
     gpio_init_out(&led, LED1);
-
-    interrupts();
 
     for (;;) {
         for (int i = 0; i != 4; ++i) {

@@ -67,10 +67,6 @@ struct serial_stream<decltype(SERIAL_PORT_USBVIRTUAL)> :
 
     static void begin(Stream* obj, long baud, uint8_t, uint8_t, uint8_t) {
         auto stream = static_cast<decltype(SERIAL_PORT_USBVIRTUAL)*>(obj);
-        // FIXME: need interrupts enabled for USB to work?
-        uint8_t sreg = SREG;
-        sei();
-        // FIXME: initialize Leonardo USBDevice properly...
         if (!USBDevice.configured()) {
             init();
             initVariant();
@@ -78,6 +74,8 @@ struct serial_stream<decltype(SERIAL_PORT_USBVIRTUAL)> :
         }
         stream->begin(baud);
         // FIXME: detect if USB connected (poll stream every 10ms for now)
+        uint8_t sreg = SREG;
+        sei();
         for (int n = 100; !*stream && n != 0; --n) {
             delayMicroseconds(10000);  // works even before main()/init()
         }
