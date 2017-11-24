@@ -36,6 +36,8 @@ serial_t *mbed_stdio_uart = NULL;  // set if already initialized
 #define ERROR_BUF_SIZE 128
 #endif
 
+// mbino extension: mbed_die() is target/board specific
+
 MBED_WEAK void mbed_mac_address(char *mac)
 {
     mac[0] = 0x00;
@@ -44,46 +46,6 @@ MBED_WEAK void mbed_mac_address(char *mac)
     mac[3] = 0xF0;
     mac[4] = 0x00;
     mac[5] = 0x00;
-}
-
-MBED_WEAK void mbed_die(void)
-{
-    // FIXME: disable interrupts if possible
-    //core_util_critical_section_enter();
-
-    gpio_t led;
-    gpio_init_out(&led, LED1);
-
-    for (;;) {
-        for (int i = 0; i != 4; ++i) {
-            gpio_write(&led, 1);
-            wait_ms(150);
-            gpio_write(&led, 0);
-            wait_ms(150);
-        }
-        for (int i = 0; i != 4; ++i) {
-            gpio_write(&led, 1);
-            wait_ms(400);
-            gpio_write(&led, 0);
-            wait_ms(400);
-        }
-    }
-}
-
-MBED_WEAK void mbed_error_puts(const char* message)
-{
-#if DEVICE_SERIAL
-    static serial_t stdio_uart;
-    core_util_critical_section_enter();
-    if (!mbed_stdio_uart) {
-        serial_init(&stdio_uart, STDIO_UART_TX, STDIO_UART_RX);
-        mbed_stdio_uart = &stdio_uart;
-    }
-    while (*message) {
-        serial_putc(mbed_stdio_uart, *message++);
-    }
-    core_util_critical_section_exit();
-#endif
 }
 
 void mbed_error_printf(const char *format, ...)
@@ -103,5 +65,21 @@ void mbed_error_vfprintf(const char *format, va_list arg)
     if (vsnprintf(buffer, ERROR_BUF_SIZE, format, arg) >= 0) {
         mbed_error_puts(buffer);
     }
+#endif
+}
+
+void mbed_error_puts(const char* message)
+{
+#if DEVICE_SERIAL
+    static serial_t stdio_uart;
+    core_util_critical_section_enter();
+    if (!mbed_stdio_uart) {
+        serial_init(&stdio_uart, STDIO_UART_TX, STDIO_UART_RX);
+        mbed_stdio_uart = &stdio_uart;
+    }
+    while (*message) {
+        serial_putc(mbed_stdio_uart, *message++);
+    }
+    core_util_critical_section_exit();
 #endif
 }

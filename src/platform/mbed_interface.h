@@ -33,12 +33,12 @@ void mbed_mac_address(char *mac);
 
 void mbed_die(void);
 
-// mbino extension
-void mbed_error_puts(const char* message);
-
 void mbed_error_printf(const char* format, ...);
 
 void mbed_error_vfprintf(const char *format, va_list arg);
+
+// mbino extension
+void mbed_error_puts(const char* message);
 
 #ifdef __cplusplus
 }

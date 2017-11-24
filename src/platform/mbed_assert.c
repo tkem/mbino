@@ -18,13 +18,11 @@
  */
 #include "platform/mbed_assert.h"
 #include "platform/mbed_critical.h"
-#include "platform/mbed_error.h"
 #include "platform/mbed_interface.h"
 
 void mbed_assert_internal(const char *expr, const char *file, int line)
 {
-    // FIXME: disable interrupts if possible
-    //core_util_critical_section_enter();
+    core_util_critical_section_enter();
     mbed_error_printf("mbed assertation failed: %s, file: %s, line %d\r\n", expr, file, line);
     mbed_die();
 }

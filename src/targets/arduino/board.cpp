@@ -13,8 +13,6 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifdef ARDUINO_ARCH_AVR
-
 #include "hal/gpio_api.h"
 #include "platform/mbed_interface.h"
 
@@ -30,9 +28,9 @@ static void delay_ms(unsigned ms)
 void mbed_die(void)
 {
 #ifdef USBCON
-    sei();
+    interrupts();
 #else
-    cli();
+    noInterrupts();
 #endif
     gpio_t led;
     gpio_init_out(&led, LED1);
@@ -52,5 +50,3 @@ void mbed_die(void)
         }
     }
 }
-
-#endif
