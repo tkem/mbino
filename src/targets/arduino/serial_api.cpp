@@ -185,7 +185,7 @@ int serial_getc(serial_t* obj)
 
 void serial_putc(serial_t* obj, int c)
 {
-    // TODO: mbed putc() also blocking (needs to work w/o interrupts)?
+    // mbed putc() is unbuffered (needs to work w/o interrupts)
     serial_begin(obj);
     obj->stream->write(c);
     obj->stream->flush();

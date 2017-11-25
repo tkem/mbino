@@ -1,7 +1,7 @@
 1.0.2 (2017-11-24)
 ------------------
 
-- Make `serial_putc()` blocking.
+- Make `serial_putc()` unbuffered.
 
 - Refactor target support and error handling.
 
