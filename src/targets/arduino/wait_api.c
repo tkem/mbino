@@ -1,9 +1,6 @@
 /* mbino - basic mbed APIs for the Arduino platform
  * Copyright (c) 2017 Thomas Kemmer
  *
- * mbed Microcontroller Library
- * Copyright (c) 2006-2013 ARM Limited
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You
  * may obtain a copy of the License at
@@ -17,11 +14,16 @@
  * permissions and limitations under the License.
  */
 #include "platform/mbed_wait_api.h"
-#include "hal/us_ticker_api.h"
+
+#include <Arduino.h>
 
 void wait_us(long us)
 {
-    uint32_t start = us_ticker_read();
-    while ((us_ticker_read() - start) < (uint32_t)us)
-        ;
+    // "Currently, the largest value that will produce an accurate delay is 16383."
+    // https://www.arduino.cc/reference/en/language/functions/time/delaymicroseconds/
+    if (us <= 16383) {
+        delayMicroseconds(us);
+    } else {
+        delay((us + 999) / 1000);  // wait for *minimum* us microseconds
+    }
 }
