@@ -16,8 +16,6 @@
 #ifndef MBINO_COMMON_OBJECTS_H
 #define MBINO_COMMON_OBJECTS_H
 
-#include "tickers.h"
-
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -61,10 +59,8 @@ struct spi_s {
     } settings;
 };
 
-#ifndef ARDUINO_ARCH_AVR
 struct i2c_s {
     struct TwoWire* wire;
 };
-#endif
 
 #endif

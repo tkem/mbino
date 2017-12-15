@@ -13,23 +13,12 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-#ifndef MBINO_TICKERS_H
-#define MBINO_TICKERS_H
+#include "hal/us_ticker_api.h"
 
-#include <stdint.h>
+#include <Arduino.h>
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
-static inline uint32_t us_ticker_read(void)
+// TODO: static inline?
+uint32_t us_ticker_read(void)
 {
-    extern unsigned long micros(void);
     return micros();
 }
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif

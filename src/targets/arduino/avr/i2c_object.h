@@ -16,10 +16,6 @@
 #ifndef MBINO_I2C_OBJECT_H
 #define MBINO_I2C_OBJECT_H
 
-#include "PinNames.h"
-
-struct i2c_s {};
-
 // HACK to avoid pulling in the whole Wire library stuff...
 
 #if defined(WIRE_HAS_END)
@@ -27,39 +23,40 @@ struct i2c_s {};
 // assume Wire.h was already included, the global Wire object is
 // available, and this is all C++ from now on...
 
+#include "hal/i2c_api.h"
 #include "platform/mbed_error.h"
+#include "../common_objects.h"
 
 extern "C" {
-    typedef struct i2c_s i2c_t;
-
     inline void i2c_init(i2c_t* obj, PinName sda, PinName scl) {
         if (sda == I2C_SDA && scl == I2C_SCL) {
-            Wire.begin();
+            obj->wire = &Wire;
         } else {
             error("I2C pin mapping failed");
         }
+        obj->wire->begin();
     }
 
     inline void i2c_frequency(i2c_t* obj, long hz) {
-        Wire.setClock(hz);
+        obj->wire->setClock(hz);
     }
 
     inline int i2c_read(i2c_t* obj, int address, char* data, int length, int stop) {
         // FIXME: nread > length?
-        uint8_t nread = Wire.requestFrom(address >> 1, length, stop);
+        uint8_t nread = obj->wire->requestFrom(address >> 1, length, stop);
         int n = 0;
         // FIXME: available() < nread?
-        while (n != nread && Wire.available()) {
-            data[n++] = Wire.read();
+        while (n != nread && obj->wire->available()) {
+            data[n++] = obj->wire->read();
         }
         return n;
     }
 
     inline int i2c_write(i2c_t* obj, int address, const char* data, int length, int stop) {
-        Wire.beginTransmission(address >> 1);
-        int n = Wire.write(data, length);
+        obj->wire->beginTransmission(address >> 1);
+        int n = obj->wire->write(data, length);
         // FIXME: error mapping?
-        switch (Wire.endTransmission(stop)) {
+        switch (obj->wire->endTransmission(stop)) {
         case 0:
             return n;
         case 1:
