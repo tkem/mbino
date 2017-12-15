@@ -1,3 +1,11 @@
+1.0.3 (2017-12-15)
+------------------
+
+- Move `wait_us()` implementation to targets.
+
+- Clean up Arduino common objects.
+
+
 1.0.2 (2017-11-24)
 ------------------
 
