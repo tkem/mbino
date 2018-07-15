@@ -13,17 +13,17 @@ DigitalInOut	KEYWORD1
 DigitalOut	KEYWORD1
 InterruptIn	KEYWORD1
 NonCopyable	KEYWORD1
-PinName		KEYWORD1
-PortIn		KEYWORD1
+PinName	KEYWORD1
+PortIn	KEYWORD1
 PortInOut	KEYWORD1
 PortName	KEYWORD1
-PortOut		KEYWORD1
-PwmOut		KEYWORD1
+PortOut	KEYWORD1
+PwmOut	KEYWORD1
 RawSerial	KEYWORD1
 SerialBase	KEYWORD1
-Ticker		KEYWORD1
-Timeout		KEYWORD1
-Timer		KEYWORD1
+Ticker	KEYWORD1
+Timeout	KEYWORD1
+Timer	KEYWORD1
 TimerEvent	KEYWORD1
 
 #######################################
@@ -31,9 +31,9 @@ TimerEvent	KEYWORD1
 #######################################
 
 callback	KEYWORD2
-wait		KEYWORD2
-wait_ms		KEYWORD2
-wait_us         KEYWORD2
+wait	KEYWORD2
+wait_ms	KEYWORD2
+wait_us	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
@@ -43,20 +43,20 @@ wait_us         KEYWORD2
 # Constants (LITERAL1)
 #######################################
 
-NC		LITERAL1
+NC	LITERAL1
 PIN_INPUT	LITERAL1
 PIN_OUTPUT	LITERAL1
-PortA		LITERAL1
-PortB		LITERAL1
-PortC		LITERAL1
-PortD		LITERAL1
-PortE		LITERAL1
-PortF		LITERAL1
-PortG		LITERAL1
-PortH		LITERAL1
-PortJ		LITERAL1
-PortK		LITERAL1
-PortL		LITERAL1
+PortA	LITERAL1
+PortB	LITERAL1
+PortC	LITERAL1
+PortD	LITERAL1
+PortE	LITERAL1
+PortF	LITERAL1
+PortG	LITERAL1
+PortH	LITERAL1
+PortJ	LITERAL1
+PortK	LITERAL1
+PortL	LITERAL1
 PullDefault	LITERAL1
 PullNone	LITERAL1
-PullUp		LITERAL1
+PullUp	LITERAL1
