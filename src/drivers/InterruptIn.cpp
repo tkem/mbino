@@ -1,7 +1,4 @@
-/* mbino - basic mbed APIs for the Arduino platform
- * Copyright (c) 2017 Thomas Kemmer
- *
- * mbed Microcontroller Library
+/* mbed Microcontroller Library
  * Copyright (c) 2006-2013 ARM Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,67 +9,130 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include "drivers/InterruptIn.h"
 
-#ifdef DEVICE_INTERRUPTIN
+#if DEVICE_INTERRUPTIN
 
-#include "platform/mbed_critical.h"
+namespace mbed {
 
-namespace mbino {
+// Note: This single-parameter constructor exists to maintain binary
+//       compatibility.
+//       If not for that, we could simplify by having only the 2-param
+//       constructor, with a default value for the PinMode.
+InterruptIn::InterruptIn(PinName pin) : gpio(),
+    gpio_irq(),
+    _rise(NULL),
+    _fall(NULL)
+{
+    // No lock needed in the constructor
+    irq_init(pin);
+    gpio_init_in(&gpio, pin);
+}
 
-    static void donothing() {}
+InterruptIn::InterruptIn(PinName pin, PinMode mode) :
+    gpio(),
+    gpio_irq(),
+    _rise(NULL),
+    _fall(NULL)
+{
+    // No lock needed in the constructor
+    irq_init(pin);
+    gpio_init_in_ex(&gpio, pin, mode);
+}
 
-    InterruptIn::InterruptIn(PinName pin) : _rise(donothing), _fall(donothing)
-    {
-        // mbed InterruptIn ctor does not check gpio_irq_init result
-        gpio_irq_init(&gpio_irq, pin, &InterruptIn::_irq_handler, (intptr_t)this);
-        gpio_init_in(&gpio, pin);
+void InterruptIn::irq_init(PinName pin)
+{
+    gpio_irq_init(&gpio_irq, pin, (&InterruptIn::_irq_handler), (uint32_t)this);
+}
+
+InterruptIn::~InterruptIn()
+{
+    // No lock needed in the destructor
+    gpio_irq_free(&gpio_irq);
+}
+
+int InterruptIn::read()
+{
+    // Read only
+    return gpio_read(&gpio);
+}
+
+void InterruptIn::mode(PinMode pull)
+{
+    core_util_critical_section_enter();
+    gpio_mode(&gpio, pull);
+    core_util_critical_section_exit();
+}
+
+void InterruptIn::rise(Callback<void()> func)
+{
+    core_util_critical_section_enter();
+    if (func) {
+        _rise = func;
+        gpio_irq_set(&gpio_irq, IRQ_RISE, 1);
+    } else {
+        _rise = NULL;
+        gpio_irq_set(&gpio_irq, IRQ_RISE, 0);
     }
+    core_util_critical_section_exit();
+}
 
-    void InterruptIn::rise(const Callback<void()>& func)
-    {
-        core_util_critical_section_enter();
-        if (func) {
-            _rise = func;
-            gpio_irq_set(&gpio_irq, IRQ_RISE, true);
-        } else {
-            _rise = donothing;
-            gpio_irq_set(&gpio_irq, IRQ_RISE, false);
-        }
-        core_util_critical_section_exit();
+void InterruptIn::fall(Callback<void()> func)
+{
+    core_util_critical_section_enter();
+    if (func) {
+        _fall = func;
+        gpio_irq_set(&gpio_irq, IRQ_FALL, 1);
+    } else {
+        _fall = NULL;
+        gpio_irq_set(&gpio_irq, IRQ_FALL, 0);
     }
+    core_util_critical_section_exit();
+}
 
-    void InterruptIn::fall(const Callback<void()>& func) {
-        core_util_critical_section_enter();
-        if (func) {
-            _fall = func;
-            gpio_irq_set(&gpio_irq, IRQ_FALL, true);
-        } else {
-            _fall = donothing;
-            gpio_irq_set(&gpio_irq, IRQ_FALL, false);
-        }
-        core_util_critical_section_exit();
-    }
-
-    void InterruptIn::_irq_handler(intptr_t id, gpio_irq_event event)
-    {
-        InterruptIn* obj = reinterpret_cast<InterruptIn*>(id);
-        switch (event) {
+void InterruptIn::_irq_handler(uint32_t id, gpio_irq_event event)
+{
+    InterruptIn *handler = (InterruptIn *)id;
+    switch (event) {
         case IRQ_RISE:
-            obj->_rise();
+            if (handler->_rise) {
+                handler->_rise();
+            }
             break;
         case IRQ_FALL:
-            obj->_fall();
+            if (handler->_fall) {
+                handler->_fall();
+            }
             break;
         case IRQ_NONE:
             break;
-        }
     }
-
 }
+
+void InterruptIn::enable_irq()
+{
+    core_util_critical_section_enter();
+    gpio_irq_enable(&gpio_irq);
+    core_util_critical_section_exit();
+}
+
+void InterruptIn::disable_irq()
+{
+    core_util_critical_section_enter();
+    gpio_irq_disable(&gpio_irq);
+    core_util_critical_section_exit();
+}
+
+InterruptIn::operator int()
+{
+    // Underlying call is atomic
+    return read();
+}
+
+} // namespace mbed
 
 #endif

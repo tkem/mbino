@@ -1,85 +1,130 @@
-/* mbino - basic mbed APIs for the Arduino platform
- * Copyright (c) 2017 Thomas Kemmer
- *
- * mbed Microcontroller Library
+/* mbed Microcontroller Library
  * Copyright (c) 2006-2013 ARM Limited
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you
- * may not use this file except in compliance with the License.  You
- * may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include "drivers/Timer.h"
-#include "platform/mbed_critical.h"
+#include "hal/ticker_api.h"
 #include "hal/us_ticker_api.h"
+#include "platform/mbed_critical.h"
+#include "hal/lp_ticker_api.h"
 
-namespace mbino {
+namespace mbed {
 
-    Timer::Timer() : _ticker_data(get_us_ticker_data())
-    {
-        _time = 0;
-        _running = false;
-    }
-
-    Timer::Timer(const ticker_data_t* data) : _ticker_data(data)
-    {
-        _time = 0;
-        _running = false;
-    }
-
-    void Timer::start()
-    {
-        core_util_critical_section_enter();
-        if (!_running) {
-            _start = ticker_read_us(_ticker_data);
-            _running = true;
-        }
-        core_util_critical_section_exit();
-    }
-
-    void Timer::stop() {
-        core_util_critical_section_enter();
-        _time = ticker_read_us(_ticker_data) - _start;
-        _running = false;
-        core_util_critical_section_exit();
-    }
-
-    void Timer::reset() {
-        core_util_critical_section_enter();
-        _start = ticker_read_us(_ticker_data);
-        core_util_critical_section_exit();
-    }
-
-    long Timer::read_us() {
-        // mbino enhancement: only 32 bits needed for read_us()
-        timestamp_t time;
-        core_util_critical_section_enter();
-        if (_running) {
-            time = ticker_read(_ticker_data) - static_cast<timestamp_t>(_start);
-        } else {
-            time = static_cast<timestamp_t>(_time);
-        }
-        core_util_critical_section_exit();
-        return time;
-    }
-
-    us_timestamp_t Timer::read_high_resolution_us() {
-        us_timestamp_t time;
-        core_util_critical_section_enter();
-        if (_running) {
-            time = ticker_read_us(_ticker_data) - _start;
-        } else {
-            time = _time;
-        }
-        core_util_critical_section_exit();
-        return time;
-    }
-
+Timer::Timer() : _running(), _start(), _time(), _ticker_data(get_us_ticker_data()), _lock_deepsleep(true)
+{
+    reset();
 }
+
+Timer::Timer(const ticker_data_t *data) : _running(), _start(), _time(), _ticker_data(data), _lock_deepsleep(true)
+{
+    reset();
+#if DEVICE_LPTICKER
+    _lock_deepsleep = (data != get_lp_ticker_data());
+#endif
+}
+
+Timer::~Timer()
+{
+    core_util_critical_section_enter();
+    if (_running) {
+        if (_lock_deepsleep) {
+            sleep_manager_unlock_deep_sleep();
+        }
+    }
+    _running = 0;
+    core_util_critical_section_exit();
+}
+
+void Timer::start()
+{
+    core_util_critical_section_enter();
+    if (!_running) {
+        if (_lock_deepsleep) {
+            sleep_manager_lock_deep_sleep();
+        }
+        _start = ticker_read_us(_ticker_data);
+        _running = 1;
+    }
+    core_util_critical_section_exit();
+}
+
+void Timer::stop()
+{
+    core_util_critical_section_enter();
+    _time += slicetime();
+    if (_running) {
+        if (_lock_deepsleep) {
+            sleep_manager_unlock_deep_sleep();
+        }
+    }
+    _running = 0;
+    core_util_critical_section_exit();
+}
+
+#ifdef ARDUINO_ARCH_AVR
+long Timer::read_us()
+#else
+int Timer::read_us()
+#endif
+{
+    return read_high_resolution_us();
+}
+
+float Timer::read()
+{
+    return (float)read_high_resolution_us() / 1000000.0f;
+}
+
+#ifdef ARDUINO_ARCH_AVR
+long Timer::read_ms()
+#else
+int Timer::read_ms()
+#endif
+{
+    return read_high_resolution_us() / 1000;
+}
+
+us_timestamp_t Timer::read_high_resolution_us()
+{
+    core_util_critical_section_enter();
+    us_timestamp_t time = _time + slicetime();
+    core_util_critical_section_exit();
+    return time;
+}
+
+us_timestamp_t Timer::slicetime()
+{
+    us_timestamp_t ret = 0;
+    core_util_critical_section_enter();
+    if (_running) {
+        ret = ticker_read_us(_ticker_data) - _start;
+    }
+    core_util_critical_section_exit();
+    return ret;
+}
+
+void Timer::reset()
+{
+    core_util_critical_section_enter();
+    _start = ticker_read_us(_ticker_data);
+    _time = 0;
+    core_util_critical_section_exit();
+}
+
+Timer::operator float()
+{
+    return read();
+}
+
+} // namespace mbed
