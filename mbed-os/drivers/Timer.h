@@ -79,13 +79,21 @@ public:
      *
      *  @returns    Time passed in milli seconds
      */
+#ifdef ARDUINO_ARCH_AVR
+    long read_ms();
+#else
     int read_ms();
+#endif
 
     /** Get the time passed in micro-seconds
      *
      *  @returns    Time passed in micro seconds
      */
+#ifdef ARDUINO_ARCH_AVR
+    long read_us();
+#else
     int read_us();
+#endif
 
     /** An operator shorthand for read()
      */

@@ -21,7 +21,7 @@
 #define MINUTES_BY_HOUR 60
 #define SECONDS_BY_HOUR (SECONDS_BY_MINUTES * MINUTES_BY_HOUR)
 #define HOURS_BY_DAY 24
-#define SECONDS_BY_DAY (SECONDS_BY_HOUR * HOURS_BY_DAY)
+#define SECONDS_BY_DAY ((uint32_t)SECONDS_BY_HOUR * HOURS_BY_DAY)
 #define LAST_VALID_YEAR 206
 
 /* Macros which will be used to determine if we are within valid range. */

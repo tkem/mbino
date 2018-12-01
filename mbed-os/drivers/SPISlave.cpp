@@ -37,7 +37,11 @@ void SPISlave::format(int bits, int mode)
     spi_format(&_spi, _bits, _mode, 1);
 }
 
+#ifdef ARDUINO_ARCH_AVR
+void SPISlave::frequency(long hz)
+#else
 void SPISlave::frequency(int hz)
+#endif
 {
     _hz = hz;
     spi_frequency(&_spi, _hz);

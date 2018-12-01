@@ -21,12 +21,12 @@
 
 #if (DEVICE_SERIAL && DEVICE_INTERRUPTIN) || defined(DOXYGEN_ONLY)
 
-#include "FileHandle.h"
+#include "platform/FileHandle.h"
 #include "SerialBase.h"
 #include "InterruptIn.h"
-#include "PlatformMutex.h"
-#include "serial_api.h"
-#include "CircularBuffer.h"
+#include "platform/PlatformMutex.h"
+#include "hal/serial_api.h"
+#include "platform/CircularBuffer.h"
 #include "platform/NonCopyable.h"
 
 #ifndef MBED_CONF_DRIVERS_UART_SERIAL_RXBUF_SIZE
@@ -55,7 +55,11 @@ public:
      *  @param rx Receive pin
      *  @param baud The baud rate of the serial port (optional, defaults to MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE)
      */
+#ifdef ARDUINO_ARCH_AVR
+    UARTSerial(PinName tx, PinName rx, long baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#else
     UARTSerial(PinName tx, PinName rx, int baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#endif
     virtual ~UARTSerial();
 
     /** Equivalent to POSIX poll(). Derived from FileHandle.
@@ -184,7 +188,11 @@ public:
      *
      *  @param baud   The baud rate
      */
+#ifdef ARDUINO_ARCH_AVR
+    void set_baud(long baud);
+#else
     void set_baud(int baud);
+#endif
 
     // Expose private SerialBase::Parity as UARTSerial::Parity
     using SerialBase::Parity;

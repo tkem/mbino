@@ -88,7 +88,11 @@ public:
      *
      *  @param hz SCLK frequency in hz (default = 1MHz)
      */
+#ifdef ARDUINO_ARCH_AVR
+    void frequency(long hz = 1000000);
+#else
     void frequency(int hz = 1000000);
+#endif
 
     /** Polls the SPI to see if data has been received
      *
@@ -117,7 +121,11 @@ protected:
 
     int _bits;
     int _mode;
+#ifdef ARDUINO_ARCH_AVR
+    long _hz;
+#else
     int _hz;
+#endif
 };
 
 } // namespace mbed

@@ -23,7 +23,7 @@
 #ifndef MBED_POWER_MGMT_H
 #define MBED_POWER_MGMT_H
 
-#include "sleep_api.h"
+#include "hal/sleep_api.h"
 #include "mbed_toolchain.h"
 #include "hal/ticker_api.h"
 #include <stdbool.h>
@@ -204,7 +204,9 @@ static inline void deepsleep(void)
  */
 static inline void system_reset(void)
 {
+#ifndef __AVR__
     NVIC_SystemReset();
+#endif
 }
 
 /** Provides the time spent in sleep mode since boot.

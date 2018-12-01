@@ -20,8 +20,21 @@
 #include "platform/FileLike.h"
 #include "platform/FileHandle.h"
 #include "platform/NonCopyable.h"
+
+#ifdef ARDUINO
+#include <stdio.h>
+#include <stdarg.h>
+#ifdef __cplusplus
+namespace std {
+    using ::va_list;
+    using ::fputc;
+    using ::fputs;
+}
+#endif
+#else
 #include <cstdio>
 #include <cstdarg>
+#endif
 
 namespace mbed {
 /** \addtogroup platform */
@@ -95,4 +108,3 @@ protected:
 } // namespace mbed
 
 #endif
-

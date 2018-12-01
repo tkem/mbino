@@ -72,17 +72,25 @@ void Timer::stop()
     core_util_critical_section_exit();
 }
 
+#ifdef ARDUINO_ARCH_AVR
+long Timer::read_us()
+#else
 int Timer::read_us()
+#endif
 {
     return read_high_resolution_us();
 }
 
 float Timer::read()
 {
-    return (float)read_us() / 1000000.0f;
+    return (float)read_high_resolution_us() / 1000000.0f;
 }
 
+#ifdef ARDUINO_ARCH_AVR
+long Timer::read_ms()
+#else
 int Timer::read_ms()
+#endif
 {
     return read_high_resolution_us() / 1000;
 }

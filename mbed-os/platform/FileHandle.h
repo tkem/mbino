@@ -18,7 +18,12 @@
 
 typedef int FILEHANDLE;
 
+#ifdef ARDUINO
+#include <stdio.h>
+#else
 #include <cstdio>
+#endif
+
 #include "Callback.h"
 #include "platform/mbed_poll.h"
 #include "platform/platform.h"

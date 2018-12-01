@@ -130,7 +130,11 @@ void serial_free(serial_t *obj);
  * @param obj      The serial object
  * @param baudrate The baud rate to be configured
  */
+#ifdef ARDUINO_ARCH_AVR
+void serial_baud(serial_t *obj, long baudrate);
+#else
 void serial_baud(serial_t *obj, int baudrate);
+#endif
 
 /** Configure the format. Set the number of bits, parity and the number of stop bits
  *

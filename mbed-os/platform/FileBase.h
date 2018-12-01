@@ -18,8 +18,13 @@
 
 typedef int FILEHANDLE;
 
+#ifdef ARDUINO
+#include <stdio.h>
+#include <string.h>
+#else
 #include <cstdio>
 #include <cstring>
+#endif
 
 #include "platform/platform.h"
 #include "platform/SingletonPtr.h"
@@ -72,4 +77,3 @@ private:
 } // namespace mbed
 
 #endif
-

@@ -62,7 +62,11 @@ void SPI::format(int bits, int mode)
     unlock();
 }
 
+#ifdef ARDUINO_ARCH_AVR
+void SPI::frequency(long hz)
+#else
 void SPI::frequency(int hz)
+#endif
 {
     lock();
     _hz = hz;

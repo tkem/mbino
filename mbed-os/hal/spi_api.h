@@ -101,7 +101,11 @@ void spi_format(spi_t *obj, int bits, int mode, int slave);
  * @param[in,out] obj The SPI object to configure
  * @param[in]     hz  The baud rate in Hz
  */
+#ifdef ARDUINO_ARCH_AVR
+void spi_frequency(spi_t *obj, long hz);
+#else
 void spi_frequency(spi_t *obj, int hz);
+#endif
 
 /**@}*/
 /**

@@ -24,7 +24,12 @@
 #define SINGLETONPTR_H
 
 #include <stdint.h>
+#ifdef ARDUINO
+// no placement new in Arduino <new.h>
+inline void* operator new (size_t, void* p) { return p; }
+#else
 #include <new>
+#endif
 #include "platform/mbed_assert.h"
 #ifdef MBED_CONF_RTOS_PRESENT
 #include "cmsis_os2.h"

@@ -80,7 +80,11 @@ public:
      *
      *  @param hz The bus frequency in hertz
      */
+#ifdef ARDUINO_ARCH_AVR
+    void frequency(long hz);
+#else
     void frequency(int hz);
+#endif
 
     /** Read from an I2C slave
      *
@@ -197,7 +201,12 @@ protected:
 
     i2c_t _i2c;
     static I2C  *_owner;
+#ifdef ARDUINO_ARCH_AVR
+    long        _hz;
+#else
     int         _hz;
+#endif
+
     static SingletonPtr<PlatformMutex> _mutex;
 };
 

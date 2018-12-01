@@ -131,7 +131,11 @@ public:
       * @param td the td pin
       * @param hz the bus frequency in hertz
       */
+#ifdef ARDUINO_ARCH_AVR
+    CAN(PinName rd, PinName td, long hz);
+#else
     CAN(PinName rd, PinName td, int hz);
+#endif
 
     virtual ~CAN();
 
@@ -143,7 +147,11 @@ public:
      *    1 if successful,
      *    0 otherwise
      */
+#ifdef ARDUINO_ARCH_AVR
+    int frequency(long hz);
+#else
     int frequency(int hz);
+#endif
 
     /** Write a CANMessage to the bus.
      *

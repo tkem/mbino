@@ -85,7 +85,11 @@ void i2c_init(i2c_t *obj, PinName sda, PinName scl);
  *  @param obj The I2C object
  *  @param hz  Frequency in Hz
  */
+#ifdef ARDUINO_ARCH_AVR
+void i2c_frequency(i2c_t *obj, long hz);
+#else
 void i2c_frequency(i2c_t *obj, int hz);
+#endif
 
 /** Send START command
  *
