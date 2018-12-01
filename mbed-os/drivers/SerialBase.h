@@ -46,7 +46,11 @@ public:
      *
      *  @param baudrate The baudrate of the serial port (default = 9600).
      */
+#ifdef ARDUINO_ARCH_AVR
+    void baud(long baudrate);
+#else
     void baud(int baudrate);
+#endif
 
     enum Parity {
         None = 0,
@@ -242,7 +246,11 @@ protected:
 #endif
 
 protected:
+#ifdef ARDUINO_ARCH_AVR
+    SerialBase(PinName tx, PinName rx, long baud);
+#else
     SerialBase(PinName tx, PinName rx, int baud);
+#endif
     virtual ~SerialBase();
 
     int _base_getc();
@@ -258,7 +266,11 @@ protected:
 
     serial_t         _serial;
     Callback<void()> _irq[IrqCnt];
+#ifdef ARDUINO_ARCH_AVR
+    long             _baud;
+#else
     int              _baud;
+#endif
 
 };
 

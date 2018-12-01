@@ -21,7 +21,11 @@
 #define MBED_ATCMDPARSER_H
 
 #include "mbed.h"
+#ifdef ARDUINO
+#include <stdarg.h>
+#else
 #include <cstdarg>
+#endif
 #include "Callback.h"
 
 namespace mbed {

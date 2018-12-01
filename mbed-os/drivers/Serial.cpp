@@ -20,11 +20,19 @@
 
 namespace mbed {
 
+#ifdef ARDUINO_ARCH_AVR
+Serial::Serial(PinName tx, PinName rx, const char *name, long baud) : SerialBase(tx, rx, baud), Stream(name)
+#else
 Serial::Serial(PinName tx, PinName rx, const char *name, int baud) : SerialBase(tx, rx, baud), Stream(name)
+#endif
 {
 }
 
+#ifdef ARDUINO_ARCH_AVR
+Serial::Serial(PinName tx, PinName rx, long baud): SerialBase(tx, rx, baud), Stream(NULL)
+#else
 Serial::Serial(PinName tx, PinName rx, int baud): SerialBase(tx, rx, baud), Stream(NULL)
+#endif
 {
 }
 

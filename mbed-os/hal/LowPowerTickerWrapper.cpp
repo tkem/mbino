@@ -15,6 +15,7 @@
  */
 #include "hal/LowPowerTickerWrapper.h"
 #include "platform/Callback.h"
+#include "platform/mbed_assert.h"
 
 LowPowerTickerWrapper::LowPowerTickerWrapper(const ticker_data_t *data, const ticker_interface_t *interface, uint32_t min_cycles_between_writes, uint32_t min_cycles_until_match)
     : _intf(data->interface), _min_count_between_writes(min_cycles_between_writes + 1), _min_count_until_match(min_cycles_until_match + 1), _suspended(false)
@@ -214,7 +215,7 @@ void LowPowerTickerWrapper::_timeout_handler()
 
     timestamp_t current = _intf->read();
     /* Add extra check for '_last_set_interrupt == _cur_match_time'
-     * 
+     *
      * When '_last_set_interrupt == _cur_match_time', _ticker_match_interval_passed sees it as
      * one-round interval rather than just-pass, so add extra check for it. In rare cases, we
      * may trap in _timeout_handler/_schedule_match loop. This check can break it.

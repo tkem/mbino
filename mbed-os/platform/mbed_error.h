@@ -66,9 +66,9 @@ extern "C" {
 
 #define MAKE_MBED_ERROR(type, module, error_code)   (mbed_error_status_t)                                                                   \
                                                     ((0x80000000) |                                                                     \
-                                                    (MBED_ERROR_STATUS_CODE_MASK & (error_code << MBED_ERROR_STATUS_CODE_POS)) |        \
-                                                    (MBED_ERROR_STATUS_MODULE_MASK & (module << MBED_ERROR_STATUS_MODULE_POS)) |        \
-                                                    (MBED_ERROR_STATUS_TYPE_MASK & (type << MBED_ERROR_STATUS_TYPE_POS)))
+                                                    (MBED_ERROR_STATUS_CODE_MASK & ((mbed_error_status_t)error_code << MBED_ERROR_STATUS_CODE_POS)) |        \
+                                                    (MBED_ERROR_STATUS_MODULE_MASK & ((mbed_error_status_t)module << MBED_ERROR_STATUS_MODULE_POS)) |        \
+                                                    (MBED_ERROR_STATUS_TYPE_MASK & ((mbed_error_status_t)type << MBED_ERROR_STATUS_TYPE_POS)))
 
 #define MBED_GET_ERROR_TYPE( error_status )         ((error_status & MBED_ERROR_STATUS_TYPE_MASK) >> MBED_ERROR_STATUS_TYPE_POS)
 #define MBED_GET_ERROR_MODULE( error_status )       ((error_status & MBED_ERROR_STATUS_MODULE_MASK) >> MBED_ERROR_STATUS_MODULE_POS)
@@ -100,7 +100,11 @@ extern "C" {
  *       This is to enable easy injection of Posix error codes into MbedOS error handling system without altering the actual Posix error values.\n
  *       Accordingly, Posix error codes are represented as -1 to -255 under MbedOS error status representation.
  */
+#ifdef ARDUINO_ARCH_AVR
+typedef long mbed_error_status_t;
+#else
 typedef int mbed_error_status_t;
+#endif
 
 /**
  * Macro for defining a Posix error status. This macro is mainly used to define Posix error values in mbed_error_code_t enumeration.
@@ -1089,5 +1093,3 @@ mbed_error_status_t mbed_save_error_hist(const char *path);
 
 /** @}*/
 /** @}*/
-
-

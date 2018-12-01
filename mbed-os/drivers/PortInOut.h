@@ -39,7 +39,7 @@ public:
      *  @param port Port to connect to (Port0-Port5)
      *  @param mask A bitmask to identify which bits in the port should be included (0 - ignore)
      */
-    PortInOut(PortName port, int mask = 0xFFFFFFFF)
+    PortInOut(PortName port, int mask = ~0)
     {
         core_util_critical_section_enter();
         port_init(&_port, port, mask, PIN_INPUT);

@@ -59,7 +59,7 @@ public:
      *  @param port Port to connect to (as defined in target's PortNames.h)
      *  @param mask Bitmask defines which port pins are an output (0 - ignore, 1 - include)
      */
-    PortOut(PortName port, int mask = 0xFFFFFFFF)
+    PortOut(PortName port, int mask = ~0)
     {
         core_util_critical_section_enter();
         port_init(&_port, port, mask, PIN_OUTPUT);

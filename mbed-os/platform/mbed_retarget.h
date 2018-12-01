@@ -20,7 +20,12 @@
 #define RETARGET_H
 
 #if __cplusplus
+#ifdef ARDUINO
+#include <stdio.h>
+namespace std { using ::FILE; }
+#else
 #include <cstdio>
+#endif
 #else
 #include <stdio.h>
 #endif //__cplusplus
@@ -46,7 +51,7 @@ typedef signed   int  ssize_t;  ///< Signed size type, usually encodes negative 
 typedef signed   long off_t;    ///< Offset in a data stream
 typedef unsigned int  nfds_t;   ///< Number of file descriptors
 typedef unsigned long long fsblkcnt_t;  ///< Count of file system blocks
-#if defined(__ARMCC_VERSION) || !defined(__GNUC__)
+#if defined(__ARMCC_VERSION) || !defined(__GNUC__) || defined(__WITH_AVRLIBC__)
 typedef unsigned int  mode_t;   ///< Mode for opening files
 typedef unsigned int  dev_t;    ///< Device ID type
 typedef unsigned long ino_t;    ///< File serial number

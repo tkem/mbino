@@ -41,7 +41,11 @@ I2C::I2C(PinName sda, PinName scl) :
     _owner = this;
 }
 
+#ifdef ARDUINO_ARCH_AVR
+void I2C::frequency(long hz)
+#else
 void I2C::frequency(int hz)
+#endif
 {
     lock();
     _hz = hz;

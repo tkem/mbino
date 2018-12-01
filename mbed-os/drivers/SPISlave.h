@@ -87,7 +87,11 @@ public:
      *
      *  @param hz Clock frequency in hz (default = 1MHz).
      */
+#ifdef ARDUINO_ARCH_AVR
+    void frequency(long hz = 1000000);
+#else
     void frequency(int hz = 1000000);
+#endif
 
     /** Polls the SPI to see if data has been received.
      *
@@ -121,7 +125,11 @@ protected:
     /* Clock phase and polarity */
     int _mode;
     /* Clock frequency */
+#ifdef ARDUINO_ARCH_AVR
+    long _hz;
+#else
     int _hz;
+#endif
 
 #endif //!defined(DOXYGEN_ONLY)
 };

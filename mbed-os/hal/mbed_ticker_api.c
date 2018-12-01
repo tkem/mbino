@@ -58,7 +58,7 @@ static void initialize(const ticker_data_t *ticker)
         MBED_ASSERT(0);
         bits = 32;
     }
-    uint32_t max_delta = 0x7 << (bits - 4); // 7/16th
+    uint32_t max_delta = (uint32_t)0x7 << (bits - 4); // 7/16th
     uint64_t max_delta_us =
         ((uint64_t)max_delta * 1000000 + frequency - 1) / frequency;
 
@@ -410,18 +410,33 @@ void ticker_remove_event(const ticker_data_t *const ticker, ticker_event_t *obj)
 
 timestamp_t ticker_read(const ticker_data_t *const ticker)
 {
+#ifdef ARDUINO_ARCH_AVR
+    // performance improvement avoiding 64-bit arithmetic for the common case
+    ticker_event_queue_t *queue = ticker->queue;
+    if (queue->initialized && queue->frequency == 1000000 /*&& queue->bitmask == ~0*/) {
+        timestamp_t present, elapsed;
+        core_util_critical_section_enter();
+        present = queue->present_time;
+        elapsed = ticker->interface->read() - queue->tick_last_read;
+        core_util_critical_section_exit();
+        return present + elapsed;
+    }
+#endif
     return ticker_read_us(ticker);
 }
 
 us_timestamp_t ticker_read_us(const ticker_data_t *const ticker)
 {
+    us_timestamp_t ret;
+
     initialize(ticker);
 
     core_util_critical_section_enter();
     update_present_time(ticker);
+    ret = ticker->queue->present_time;
     core_util_critical_section_exit();
 
-    return ticker->queue->present_time;
+    return ret;
 }
 
 int ticker_get_next_timestamp(const ticker_data_t *const data, timestamp_t *timestamp)

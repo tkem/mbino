@@ -60,7 +60,7 @@ public:
      *  @param port Port to connect to (as defined in target's PortNames.h)
      *  @param mask Bitmask defines which port pins should be an input (0 - ignore, 1 - include)
         */
-    PortIn(PortName port, int mask = 0xFFFFFFFF)
+    PortIn(PortName port, int mask = ~0)
     {
         core_util_critical_section_enter();
         port_init(&_port, port, mask, PIN_INPUT);

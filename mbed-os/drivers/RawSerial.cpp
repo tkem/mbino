@@ -16,8 +16,13 @@
 #include "drivers/RawSerial.h"
 #include "platform/mbed_wait_api.h"
 #include <stdio.h>
-#include <cstdarg>
 
+#ifdef ARDUINO
+#include <stdarg.h>
+namespace std { typedef ::va_list va_list; }
+#else
+#include <cstdarg>
+#endif
 
 #if DEVICE_SERIAL
 
@@ -25,7 +30,11 @@
 
 namespace mbed {
 
+#ifdef ARDUINO_ARCH_AVR
+RawSerial::RawSerial(PinName tx, PinName rx, long baud) : SerialBase(tx, rx, baud)
+#else
 RawSerial::RawSerial(PinName tx, PinName rx, int baud) : SerialBase(tx, rx, baud)
+#endif
 {
     // No lock needed in the constructor
 }

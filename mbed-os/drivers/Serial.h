@@ -68,7 +68,11 @@ public:
      *  @note
      *    Either tx or rx may be specified as NC (Not Connected) if unused
      */
+#ifdef ARDUINO_ARCH_AVR
+    Serial(PinName tx, PinName rx, const char *name=NULL, long baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#else
     Serial(PinName tx, PinName rx, const char *name = NULL, int baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#endif
 
 
     /** Create a Serial port, connected to the specified transmit and receive pins, with the specified baud
@@ -80,7 +84,11 @@ public:
      *  @note
      *    Either tx or rx may be specified as NC (Not Connected) if unused
      */
+#ifdef ARDUINO_ARCH_AVR
+    Serial(PinName tx, PinName rx, long baud);
+#else
     Serial(PinName tx, PinName rx, int baud);
+#endif
 
     /* Stream gives us a FileHandle with non-functional poll()/readable()/writable. Pass through
      * the calls from the SerialBase instead for backwards compatibility. This problem is

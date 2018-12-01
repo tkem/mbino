@@ -82,6 +82,20 @@ public:
     }
 };
 
+#ifdef ARDUINO
+
+#include "SingletonPtr.h"
+
+template <>
+struct SingletonPtr<PlatformMutex> {
+    SingletonPtr<PlatformMutex>* get() { return this; }
+    SingletonPtr<PlatformMutex>* operator->() { return this; }
+    void lock() {}
+    void unlock() {}
+};
+
+#endif
+
 #endif
 
 #endif

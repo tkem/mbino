@@ -33,7 +33,11 @@ CAN::CAN(PinName rd, PinName td) : _can(), _irq()
     can_irq_init(&_can, (&CAN::_irq_handler), (uint32_t)this);
 }
 
+#ifdef ARDUINO_ARCH_AVR
+CAN::CAN(PinName rd, PinName td, long hz) : _can(), _irq()
+#else
 CAN::CAN(PinName rd, PinName td, int hz) : _can(), _irq()
+#endif
 {
     // No lock needed in constructor
 
@@ -57,7 +61,11 @@ CAN::~CAN()
     can_free(&_can);
 }
 
+#ifdef ARDUINO_ARCH_AVR
+int CAN::frequency(long f)
+#else
 int CAN::frequency(int f)
+#endif
 {
     lock();
     int ret = can_frequency(&_can, f);

@@ -263,7 +263,9 @@ us_timestamp_t mbed_uptime(void);
  */
 static inline void system_reset(void)
 {
+#ifndef ARDUINO_ARCH_AVR
     NVIC_SystemReset();
+#endif
 }
 
 #ifdef __cplusplus

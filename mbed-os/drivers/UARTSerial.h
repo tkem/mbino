@@ -55,7 +55,11 @@ public:
      *  @param rx Receive pin
      *  @param baud The baud rate of the serial port (optional, defaults to MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE)
      */
+#ifdef ARDUINO_ARCH_AVR
+    UARTSerial(PinName tx, PinName rx, long baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#else
     UARTSerial(PinName tx, PinName rx, int baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#endif
     virtual ~UARTSerial();
 
     /** Equivalent to POSIX poll(). Derived from FileHandle.
@@ -184,7 +188,11 @@ public:
      *
      *  @param baud   The baud rate
      */
+#ifdef ARDUINO_ARCH_AVR
+    void set_baud(long baud);
+#else
     void set_baud(int baud);
+#endif
 
     // Expose private SerialBase::Parity as UARTSerial::Parity
     using SerialBase::Parity;

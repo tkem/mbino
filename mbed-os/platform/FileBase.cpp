@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef ARDUINO
 #include <cstring>
+#endif
 
 #include "platform/FileBase.h"
 #include "platform/FileLike.h"
@@ -126,4 +128,3 @@ PathType FileBase::getPathType(void)
 }
 
 } // namespace mbed
-

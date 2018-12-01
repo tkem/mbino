@@ -62,7 +62,11 @@ public:
      *  @note
      *    Either tx or rx may be specified as NC if unused
      */
+#ifdef ARDUINO_ARCH_AVR
+    RawSerial(PinName tx, PinName rx, long baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#else
     RawSerial(PinName tx, PinName rx, int baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
+#endif
 
     /** Write a char to the serial port
      *

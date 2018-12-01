@@ -22,7 +22,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifndef ARDUINO
 #include <algorithm>
+#endif
 #include "FlashIAP.h"
 #include "platform/mbed_assert.h"
 

@@ -27,7 +27,11 @@
 
 namespace mbed {
 
+#ifdef ARDUINO_ARCH_AVR
+UARTSerial::UARTSerial(PinName tx, PinName rx, long baud) :
+#else
 UARTSerial::UARTSerial(PinName tx, PinName rx, int baud) :
+#endif
     SerialBase(tx, rx, baud),
     _blocking(true),
     _tx_irq_enabled(false),
@@ -48,7 +52,11 @@ void UARTSerial::dcd_irq()
     wake();
 }
 
+#ifdef ARDUINO_ARCH_AVR
+void UARTSerial::set_baud(long baud)
+#else
 void UARTSerial::set_baud(int baud)
+#endif
 {
     SerialBase::baud(baud);
 }

@@ -22,7 +22,11 @@
 
 namespace mbed {
 
+#ifdef ARDUINO_ARCH_AVR
+SerialBase::SerialBase(PinName tx, PinName rx, long baud) :
+#else
 SerialBase::SerialBase(PinName tx, PinName rx, int baud) :
+#endif
 #if DEVICE_SERIAL_ASYNCH
     _thunk_irq(this), _tx_usage(DMA_USAGE_NEVER),
     _rx_usage(DMA_USAGE_NEVER), _tx_callback(NULL),
@@ -41,7 +45,11 @@ SerialBase::SerialBase(PinName tx, PinName rx, int baud) :
     serial_irq_handler(&_serial, SerialBase::_irq_handler, (uint32_t)this);
 }
 
+#ifdef ARDUINO_ARCH_AVR
+void SerialBase::baud(long baudrate)
+#else
 void SerialBase::baud(int baudrate)
+#endif
 {
     lock();
     serial_baud(&_serial, baudrate);
