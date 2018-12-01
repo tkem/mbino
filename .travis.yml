@@ -8,6 +8,8 @@ install:
 - pip install -U platformio
 
 env:
+- PLATFORMIO_CI_SRC=examples/ADXL345_I2C_HelloWorld DEVICE="i2c"
+- PLATFORMIO_CI_SRC=examples/ADXL345_SPI_HelloWorld DEVICE="spi"
 - PLATFORMIO_CI_SRC=examples/AnalogIn_HelloWorld
 - PLATFORMIO_CI_SRC=examples/Arduino_HelloWorld
 - PLATFORMIO_CI_SRC=examples/HelloWorld
