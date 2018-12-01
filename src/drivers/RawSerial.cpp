@@ -1,7 +1,4 @@
-/* mbino - basic mbed APIs for the Arduino platform
- * Copyright (c) 2017 Thomas Kemmer
- *
- * mbed Microcontroller Library
+/* mbed Microcontroller Library
  * Copyright (c) 2006-2013 ARM Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,51 +9,104 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 #include "drivers/RawSerial.h"
+#include "platform/mbed_wait_api.h"
+#include <stdio.h>
 
-#ifdef DEVICE_SERIAL
-
-#include <alloca.h>
+#ifdef ARDUINO
 #include <stdarg.h>
+namespace std { typedef ::va_list va_list; }
+#else
+#include <cstdarg>
+#endif
 
-#define STRING_STACK_LIMIT 80
+#if DEVICE_SERIAL
 
-namespace mbino {
+#define STRING_STACK_LIMIT    120
 
-    static int rsnprintf(RawSerial* obj, size_t n, const char* format, va_list arg)
-    {
-        char* buf = static_cast<char*>(alloca(n));
-        int len = vsnprintf(buf, n, format, arg);
-        if (len >= 0 && size_t(len) < n) {
-            obj->puts(buf);
-        }
-        return len;
-    }
+namespace mbed {
 
-    int RawSerial::puts(const char* str)
-    {
-        while (*str) {
-            _base_putc(*str++);
-        }
-        return 0;
-    }
-
-    int RawSerial::printf(const char* format, ...)
-    {
-        va_list arg;
-        va_start(arg, format);
-        int n = rsnprintf(this, STRING_STACK_LIMIT, format, arg);
-        if (n >= STRING_STACK_LIMIT) {
-            n = rsnprintf(this, n + 1, format, arg);
-        }
-        va_end(arg);
-        return n;
-    }
-
+#ifdef ARDUINO_ARCH_AVR
+RawSerial::RawSerial(PinName tx, PinName rx, long baud) : SerialBase(tx, rx, baud)
+#else
+RawSerial::RawSerial(PinName tx, PinName rx, int baud) : SerialBase(tx, rx, baud)
+#endif
+{
+    // No lock needed in the constructor
 }
+
+int RawSerial::getc()
+{
+    lock();
+    int ret = _base_getc();
+    unlock();
+    return ret;
+}
+
+int RawSerial::putc(int c)
+{
+    lock();
+    int ret = _base_putc(c);
+    unlock();
+    return ret;
+}
+
+int RawSerial::puts(const char *str)
+{
+    lock();
+    while (*str) {
+        putc(*str ++);
+    }
+    unlock();
+    return 0;
+}
+
+// Experimental support for printf in RawSerial. No Stream inheritance
+// means we can't call printf() directly, so we use sprintf() instead.
+// We only call malloc() for the sprintf() buffer if the buffer
+// length is above a certain threshold, otherwise we use just the stack.
+int RawSerial::printf(const char *format, ...)
+{
+    lock();
+    std::va_list arg;
+    va_start(arg, format);
+    // ARMCC microlib does not properly handle a size of 0.
+    // As a workaround supply a dummy buffer with a size of 1.
+    char dummy_buf[1];
+    int len = vsnprintf(dummy_buf, sizeof(dummy_buf), format, arg);
+    if (len < STRING_STACK_LIMIT) {
+        char temp[STRING_STACK_LIMIT];
+        vsprintf(temp, format, arg);
+        puts(temp);
+    } else {
+        char *temp = new char[len + 1];
+        vsprintf(temp, format, arg);
+        puts(temp);
+        delete[] temp;
+    }
+    va_end(arg);
+    unlock();
+    return len;
+}
+
+/** Acquire exclusive access to this serial port
+ */
+void RawSerial::lock()
+{
+    // No lock used - external synchronization required
+}
+
+/** Release exclusive access to this serial port
+ */
+void RawSerial::unlock()
+{
+    // No lock used - external synchronization required
+}
+
+} // namespace mbed
 
 #endif

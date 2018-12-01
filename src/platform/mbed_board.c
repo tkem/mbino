@@ -1,84 +1,89 @@
-/* mbino - basic mbed APIs for the Arduino platform
- * Copyright (c) 2017 Thomas Kemmer
- *
- * mbed Microcontroller Library
+/* mbed Microcontroller Library
  * Copyright (c) 2006-2013 ARM Limited
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you
- * may not use this file except in compliance with the License.  You
- * may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-#include "hal/gpio_api.h"
-#include "hal/serial_api.h"
-#include "platform/mbed_critical.h"
-#include "platform/mbed_interface.h"
-#include "platform/mbed_toolchain.h"
-#include "platform/mbed_wait_api.h"
-
-#include <stdarg.h>
-#include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include "hal/gpio_api.h"
+#include "platform/mbed_wait_api.h"
+#include "platform/mbed_toolchain.h"
+#include "platform/mbed_interface.h"
+#include "platform/mbed_critical.h"
+#include "hal/serial_api.h"
 
 #if DEVICE_SERIAL
-serial_t *mbed_stdio_uart = NULL;  // set if already initialized
+extern int stdio_uart_inited;
+extern serial_t stdio_uart;
 #endif
 
-#ifndef ERROR_BUF_SIZE
-#define ERROR_BUF_SIZE 128
-#endif
-
-// mbino extension: mbed_die() is target/board specific
-
-MBED_WEAK void mbed_mac_address(char *mac)
+WEAK void mbed_die(void)
 {
-    mac[0] = 0x00;
-    mac[1] = 0x02;
-    mac[2] = 0xF7;
-    mac[3] = 0xF0;
-    mac[4] = 0x00;
-    mac[5] = 0x00;
+#if !defined (NRF51_H) && !defined(TARGET_EFM32)
+    core_util_critical_section_enter();
+#endif
+    gpio_t led_err;
+    gpio_init_out(&led_err, LED1);
+
+    while (1) {
+        for (int i = 0; i < 4; ++i) {
+            gpio_write(&led_err, 1);
+            wait_ms(150);
+            gpio_write(&led_err, 0);
+            wait_ms(150);
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            gpio_write(&led_err, 1);
+            wait_ms(400);
+            gpio_write(&led_err, 0);
+            wait_ms(400);
+        }
+    }
 }
 
 void mbed_error_printf(const char *format, ...)
 {
-#if DEVICE_SERIAL
     va_list arg;
     va_start(arg, format);
     mbed_error_vfprintf(format, arg);
     va_end(arg);
-#endif
 }
 
 void mbed_error_vfprintf(const char *format, va_list arg)
 {
 #if DEVICE_SERIAL
-    char buffer[ERROR_BUF_SIZE];
-    if (vsnprintf(buffer, ERROR_BUF_SIZE, format, arg) >= 0) {
-        mbed_error_puts(buffer);
-    }
-#endif
-}
-
-void mbed_error_puts(const char* message)
-{
-#if DEVICE_SERIAL
-    static serial_t stdio_uart;
+#define ERROR_BUF_SIZE      (128)
     core_util_critical_section_enter();
-    if (!mbed_stdio_uart) {
-        serial_init(&stdio_uart, STDIO_UART_TX, STDIO_UART_RX);
-        mbed_stdio_uart = &stdio_uart;
-    }
-    while (*message) {
-        serial_putc(mbed_stdio_uart, *message++);
+    char buffer[ERROR_BUF_SIZE];
+    int size = vsnprintf(buffer, ERROR_BUF_SIZE, format, arg);
+    if (size > 0) {
+        if (!stdio_uart_inited) {
+            serial_init(&stdio_uart, STDIO_UART_TX, STDIO_UART_RX);
+        }
+#if MBED_CONF_PLATFORM_STDIO_CONVERT_NEWLINES
+        char stdio_out_prev = '\0';
+        for (int i = 0; i < size; i++) {
+            if (buffer[i] == '\n' && stdio_out_prev != '\r') {
+                serial_putc(&stdio_uart, '\r');
+            }
+            serial_putc(&stdio_uart, buffer[i]);
+            stdio_out_prev = buffer[i];
+        }
+#else
+        for (int i = 0; i < size; i++) {
+            serial_putc(&stdio_uart, buffer[i]);
+        }
+#endif
     }
     core_util_critical_section_exit();
 #endif
