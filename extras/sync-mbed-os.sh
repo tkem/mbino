@@ -11,7 +11,6 @@ rm src/drivers/InterruptManager.h
 rm src/drivers/mbed_lib.json
 rm src/hal/mbed_critical_section_api.c
 rm src/hal/mbed_itm_api.c
-rm src/hal/mbed_ticker_api.c
 rm src/platform/CallChain.cpp
 rm src/platform/CallChain.h
 rm src/platform/critical.h

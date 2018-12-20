@@ -19,6 +19,8 @@
 #include "drivers/TableCRC.h"
 #include "hal/crc_api.h"
 #include "platform/mbed_assert.h"
+#include "platform/SingletonPtr.h"
+#include "platform/PlatformMutex.h"
 
 /* This is invalid warning from the compiler for below section of code
 if ((width < 8) && (NULL == _crc_table)) {
@@ -45,6 +47,7 @@ namespace mbed {
  *  ROM polynomial tables for supported polynomials (:: crc_polynomial_t) will be used for
  *  software CRC computation, if ROM tables are not available then CRC is computed runtime
  *  bit by bit for all data input.
+ *  @note Synchronization level: Thread safe
  *
  *  @tparam  polynomial CRC polynomial value in hex
  *  @tparam  width CRC polynomial width
@@ -79,12 +82,10 @@ namespace mbed {
  *      uint32_t crc = 0;
  *
  *      printf("\nPolynomial = 0x%lx  Width = %d \n", ct.get_polynomial(), ct.get_width());
- *
  *      ct.compute_partial_start(&crc);
  *      ct.compute_partial((void *)&test, 4, &crc);
  *      ct.compute_partial((void *)&test[4], 5, &crc);
  *      ct.compute_partial_stop(&crc);
- *
  *      printf("The CRC of data \"123456789\" is : 0x%lx\n", crc);
  *      return 0;
  *  }
@@ -92,12 +93,21 @@ namespace mbed {
  * @ingroup drivers
  */
 
+extern SingletonPtr<PlatformMutex> mbed_crc_mutex;
+
 template <uint32_t polynomial = POLY_32BIT_ANSI, uint8_t width = 32>
 class MbedCRC {
-public:
-    enum CrcMode { HARDWARE = 0, TABLE, BITWISE };
 
 public:
+    enum CrcMode
+    {
+#ifdef DEVICE_CRC
+        HARDWARE = 0,
+#endif
+        TABLE = 1,
+        BITWISE
+    };
+
     typedef uint64_t crc_data_size_t;
 
     /** Lifetime of CRC object
@@ -106,18 +116,18 @@ public:
      *  @param  final_xor  Final Xor value
      *  @param  reflect_data
      *  @param  reflect_remainder
-    *  @note   Default constructor without any arguments is valid only for supported CRC polynomials. :: crc_polynomial_t
+     *  @note   Default constructor without any arguments is valid only for supported CRC polynomials. :: crc_polynomial_t
      *          MbedCRC <POLY_7BIT_SD, 7> ct; --- Valid POLY_7BIT_SD
      *          MbedCRC <0x1021, 16> ct; --- Valid POLY_16BIT_CCITT
      *          MbedCRC <POLY_16BIT_CCITT, 32> ct; --- Invalid, compilation error
-     *          MbedCRC <POLY_16BIT_CCITT, 32> ct (i,f,rd,rr) Consturctor can be used for not supported polynomials
+     *          MbedCRC <POLY_16BIT_CCITT, 32> ct (i,f,rd,rr) Constructor can be used for not supported polynomials
      *          MbedCRC<POLY_16BIT_CCITT, 16> sd(0, 0, false, false); Constructor can also be used for supported
      *             polynomials with different intial/final/reflect values
      *
      */
     MbedCRC(uint32_t initial_xor, uint32_t final_xor, bool reflect_data, bool reflect_remainder) :
         _initial_value(initial_xor), _final_xor(final_xor), _reflect_data(reflect_data),
-        _reflect_remainder(reflect_remainder), _crc_table(NULL)
+        _reflect_remainder(reflect_remainder)
     {
         mbed_crc_ctor();
     }
@@ -128,6 +138,8 @@ public:
     }
 
     /** Compute CRC for the data input
+     *  Compute CRC performs the initialization, computation and collection of
+     *  final CRC.
      *
      *  @param  buffer  Data bytes
      *  @param  size  Size of data
@@ -137,55 +149,76 @@ public:
     int32_t compute(void *buffer, crc_data_size_t size, uint32_t *crc)
     {
         MBED_ASSERT(crc != NULL);
-        int32_t status;
-        if (0 != (status = compute_partial_start(crc))) {
-            *crc = 0;
+        int32_t status = 0;
+
+        status = compute_partial_start(crc);
+        if (0 != status) {
+            unlock();
             return status;
         }
-        if (0 != (status = compute_partial(buffer, size, crc))) {
-            *crc = 0;
+
+        status = compute_partial(buffer, size, crc);
+        if (0 != status) {
+            unlock();
             return status;
         }
-        if (0 != (status = compute_partial_stop(crc))) {
-            *crc = 0;
-            return status;
+
+        status = compute_partial_stop(crc);
+        if (0 != status) {
+           *crc = 0;
         }
-        return 0;
+
+        return status;
+
     }
 
     /** Compute partial CRC for the data input.
      *
      *  CRC data if not available fully, CRC can be computed in parts with available data.
-     *  Previous CRC output should be passed as argument to the current compute_partial call.
-     *  @pre: Call \ref compute_partial_start to start the partial CRC calculation.
-     *  @post: Call \ref compute_partial_stop to get the final CRC value.
+     *
+     *  In case of hardware, intermediate values and states are saved by hardware. Mutex
+     *  locking is used to serialize access to hardware CRC.
+     *
+     *  In case of software CRC, previous CRC output should be passed as argument to the
+     *  current compute_partial call. Please note the intermediate CRC value is maintained by
+     *  application and not the driver.
+     *
+     *  @pre: Call `compute_partial_start` to start the partial CRC calculation.
+     *  @post: Call `compute_partial_stop` to get the final CRC value.
      *
      *  @param  buffer  Data bytes
      *  @param  size  Size of data
      *  @param  crc  CRC value is intermediate CRC value filled by API.
      *  @return  0  on success or a negative error code on failure
-     *  @note: CRC as output in compute_partial is not final CRC value, call @ref compute_partial_stop
+     *  @note: CRC as output in compute_partial is not final CRC value, call `compute_partial_stop`
      *         to get final correct CRC value.
      */
     int32_t compute_partial(void *buffer, crc_data_size_t size, uint32_t *crc)
     {
+        int32_t status = 0;
+
         switch (_mode) {
-            case HARDWARE:
 #ifdef DEVICE_CRC
+            case HARDWARE:
                 hal_crc_compute_partial((uint8_t *)buffer, size);
-#endif // DEVICE_CRC
                 *crc = 0;
-                return 0;
+                break;
+#endif
             case TABLE:
-                return table_compute_partial(buffer, size, crc);
+                status = table_compute_partial(buffer, size, crc);
+                break;
             case BITWISE:
-                return bitwise_compute_partial(buffer, size, crc);
+                status = bitwise_compute_partial(buffer, size, crc);
+                break;
+            default:
+                status = -1;
+                break;
         }
 
-        return -1;
+        return status;
     }
 
-    /** Compute partial start, indicate start of partial computation
+    /** Compute partial start, indicate start of partial computation.
      *
      *  This API should be called before performing any partial computation
      *  with compute_partial API.
@@ -193,7 +226,7 @@ public:
      *  @param  crc  Initial CRC value set by the API
      *  @return  0  on success or a negative in case of failure
      *  @note: CRC is an out parameter and must be reused with compute_partial
-     *         and compute_partial_stop without any modifications in application.
+     *         and `compute_partial_stop` without any modifications in application.
      */
     int32_t compute_partial_start(uint32_t *crc)
     {
@@ -201,6 +234,7 @@ public:
 
 #ifdef DEVICE_CRC
         if (_mode == HARDWARE) {
+            lock();
             crc_mbed_config_t config;
             config.polynomial  = polynomial;
             config.width       = width;
@@ -211,7 +245,7 @@ public:
 
             hal_crc_compute_partial_start(&config);
         }
-#endif // DEVICE_CRC
+#endif
 
         *crc = _initial_value;
         return 0;
@@ -224,29 +258,34 @@ public:
      *  This API is used to perform final computation to get correct CRC value.
      *
      *  @param crc  CRC result
+     *  @return  0  on success or a negative in case of failure.
      */
     int32_t compute_partial_stop(uint32_t *crc)
     {
         MBED_ASSERT(crc != NULL);
 
-        if (_mode == HARDWARE) {
 #ifdef DEVICE_CRC
+        if (_mode == HARDWARE) {
             *crc = hal_crc_get_result();
+            unlock();
             return 0;
-#else
-            return -1;
-#endif
         }
-
+#endif
         uint32_t p_crc = *crc;
         if ((width < 8) && (NULL == _crc_table)) {
             p_crc = (uint32_t)(p_crc << (8 - width));
         }
-        *crc = (reflect_remainder(p_crc) ^ _final_xor) & get_crc_mask();
+        // Optimized algorithm for 32BitANSI does not need additional reflect_remainder
+        if ((TABLE == _mode) && (POLY_32BIT_REV_ANSI == polynomial)) {
+            *crc = (p_crc ^ _final_xor) & get_crc_mask();
+        } else {
+            *crc = (reflect_remainder(p_crc) ^ _final_xor) & get_crc_mask();
+        }
+        unlock();
         return 0;
     }
 
-    /** Get the current CRC polynomial
+    /** Get the current CRC polynomial.
      *
      * @return  Polynomial value
      */
@@ -272,7 +311,29 @@ private:
     uint32_t *_crc_table;
     CrcMode _mode;
 
-    /** Get the current CRC data size
+    /** Acquire exclusive access to CRC hardware/software.
+     */
+     void lock()
+    {
+#ifdef DEVICE_CRC
+        if (_mode == HARDWARE) {
+            mbed_crc_mutex->lock();
+        }
+#endif
+    }
+
+    /** Release exclusive access to CRC hardware/software.
+     */
+    virtual void unlock()
+    {
+#ifdef DEVICE_CRC
+        if (_mode == HARDWARE) {
+            mbed_crc_mutex->unlock();
+        }
+#endif
+    }
+
+    /** Get the current CRC data size.
      *
      * @return  CRC data size in bytes
      */
@@ -281,7 +342,7 @@ private:
         return (width <= 8 ? 1 : (width <= 16 ? 2 : 4));
     }
 
-    /** Get the top bit of current CRC
+    /** Get the top bit of current CRC.
      *
      * @return  Top bit is set high for respective data width of current CRC
      *          Top bit for CRC width less then 8 bits will be set as 8th bit.
@@ -291,7 +352,7 @@ private:
         return (width < 8 ? (1u << 7) : (uint32_t)(1ul << (width - 1)));
     }
 
-    /** Get the CRC data mask
+    /** Get the CRC data mask.
      *
      * @return  CRC data mask is generated based on current CRC width
      */
@@ -300,7 +361,7 @@ private:
         return (width < 8 ? ((1u << 8) - 1) : (uint32_t)((uint64_t)(1ull << width) - 1));
     }
 
-    /** Final value of CRC is reflected
+    /** Final value of CRC is reflected.
      *
      * @param  data final crc value, which should be reflected
      * @return  Reflected CRC value
@@ -323,7 +384,7 @@ private:
         }
     }
 
-    /** Data bytes are reflected
+    /** Data bytes are reflected.
      *
      * @param  data value to be reflected
      * @return  Reflected data value
@@ -345,7 +406,7 @@ private:
         }
     }
 
-    /** Bitwise CRC computation
+    /** Bitwise CRC computation.
      *
      * @param  buffer  data buffer
      * @param  size  size of the data
@@ -355,7 +416,6 @@ private:
     int32_t bitwise_compute_partial(const void *buffer, crc_data_size_t size, uint32_t *crc) const
     {
         MBED_ASSERT(crc != NULL);
-        MBED_ASSERT(buffer != NULL);
 
         const uint8_t *data = static_cast<const uint8_t *>(buffer);
         uint32_t p_crc = *crc;
@@ -390,7 +450,7 @@ private:
         return 0;
     }
 
-    /** CRC computation using ROM tables
+    /** CRC computation using ROM tables.
     *
     * @param  buffer  data buffer
     * @param  size  size of the data
@@ -400,7 +460,6 @@ private:
     int32_t table_compute_partial(const void *buffer, crc_data_size_t size, uint32_t *crc) const
     {
         MBED_ASSERT(crc != NULL);
-        MBED_ASSERT(buffer != NULL);
 
         const uint8_t *data = static_cast<const uint8_t *>(buffer);
         uint32_t p_crc = *crc;
@@ -420,25 +479,36 @@ private:
             }
         } else {
             uint32_t *crc_table = (uint32_t *)_crc_table;
-            for (crc_data_size_t byte = 0; byte < size; byte++) {
-                data_byte = reflect_bytes(data[byte]) ^ (p_crc >> (width - 8));
-                p_crc = crc_table[data_byte] ^ (p_crc << 8);
+            if (POLY_32BIT_REV_ANSI == polynomial) {
+                for (crc_data_size_t i = 0; i < size; i++) {
+                    p_crc = (p_crc >> 4) ^ crc_table[(p_crc ^ (data[i] >> 0)) & 0xf];
+                    p_crc = (p_crc >> 4) ^ crc_table[(p_crc ^ (data[i] >> 4)) & 0xf];
+                }
+            }
+            else {
+                for (crc_data_size_t byte = 0; byte < size; byte++) {
+                    data_byte = reflect_bytes(data[byte]) ^ (p_crc >> (width - 8));
+                    p_crc = crc_table[data_byte] ^ (p_crc << 8);
+                }
             }
         }
         *crc = p_crc & get_crc_mask();
         return 0;
     }
 
-    /** Constructor init called from all specialized cases of constructor
+    /** Constructor init called from all specialized cases of constructor.
      *  Note: All construtor common code should be in this function.
      */
     void mbed_crc_ctor(void)
     {
         MBED_STATIC_ASSERT(width <= 32, "Max 32-bit CRC supported");
 
-        _mode = (_crc_table != NULL) ? TABLE : BITWISE;
-
 #ifdef DEVICE_CRC
+        if (POLY_32BIT_REV_ANSI == polynomial) {
+            _crc_table = (uint32_t *)Table_CRC_32bit_Rev_ANSI;
+            _mode = TABLE;
+            return;
+        }
         crc_mbed_config_t config;
         config.polynomial  = polynomial;
         config.width       = width;
@@ -449,8 +519,34 @@ private:
 
         if (hal_crc_is_supported(&config)) {
             _mode = HARDWARE;
+            return;
         }
 #endif
+
+        switch (polynomial) {
+            case POLY_32BIT_ANSI:
+                _crc_table = (uint32_t *)Table_CRC_32bit_ANSI;
+                break;
+            case POLY_32BIT_REV_ANSI:
+                _crc_table = (uint32_t *)Table_CRC_32bit_Rev_ANSI;
+                break;
+            case POLY_8BIT_CCITT:
+                _crc_table = (uint32_t *)Table_CRC_8bit_CCITT;
+                break;
+            case POLY_7BIT_SD:
+                _crc_table = (uint32_t *)Table_CRC_7Bit_SD;
+                break;
+            case POLY_16BIT_CCITT:
+                _crc_table = (uint32_t *)Table_CRC_16bit_CCITT;
+                break;
+            case POLY_16BIT_IBM:
+                _crc_table = (uint32_t *)Table_CRC_16bit_IBM;
+                break;
+            default:
+                _crc_table = NULL;
+                break;
+        }
+        _mode = (_crc_table != NULL) ? TABLE : BITWISE;
     }
 };
 

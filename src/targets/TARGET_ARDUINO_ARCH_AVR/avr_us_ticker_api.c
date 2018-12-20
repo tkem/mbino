@@ -55,6 +55,11 @@ void us_ticker_init(void)
     // output) and call the COMPA function below...
 }
 
+void us_ticker_free(void)
+{
+    // TODO
+}
+
 uint32_t us_ticker_read(void)
 {
     return micros();

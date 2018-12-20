@@ -72,13 +72,22 @@ void Timer::stop()
     core_util_critical_section_exit();
 }
 
-#ifdef ARDUINO_ARCH_AVR
-long Timer::read_us()
-#else
 int Timer::read_us()
-#endif
 {
+#ifdef ARDUINO_ARCH_AVR
+    // performance improvement avoiding 64-bit arithmetic
+    int ret;
+    core_util_critical_section_enter();
+    if (_running) {
+        ret = ticker_read(_ticker_data) - _start + _time;
+    } else {
+        ret = _time;
+    }
+    core_util_critical_section_exit();
+    return ret;
+#else
     return read_high_resolution_us();
+#endif
 }
 
 float Timer::read()
@@ -86,13 +95,22 @@ float Timer::read()
     return (float)read_high_resolution_us() / 1000000.0f;
 }
 
-#ifdef ARDUINO_ARCH_AVR
-long Timer::read_ms()
-#else
 int Timer::read_ms()
-#endif
 {
+#ifdef ARDUINO_ARCH_AVR
+    // performance improvement avoiding 64-bit arithmetic
+    int ret;
+    core_util_critical_section_enter();
+    if (_running) {
+        ret = timestamp_t(ticker_read(_ticker_data) - _start + _time) / 1000;
+    } else {
+        ret = timestamp_t(_time) / 1000;
+    }
+    core_util_critical_section_exit();
+    return ret;
+#else
     return read_high_resolution_us() / 1000;
+#endif
 }
 
 us_timestamp_t Timer::read_high_resolution_us()

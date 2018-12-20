@@ -30,7 +30,7 @@ namespace mbed {
  *
  * Example:
  * @code
- * // Count the time to toggle a LED
+ * // Count the time to toggle an LED
  *
  * #include "mbed.h"
  *
@@ -65,7 +65,7 @@ public:
 
     /** Reset the timer to 0.
      *
-     * If it was already counting, it will continue
+     * If it was already running, it will continue
      */
     void reset();
 
@@ -75,42 +75,37 @@ public:
      */
     float read();
 
-    /** Get the time passed in milli-seconds
+    /** Get the time passed in milliseconds
      *
-     *  @returns    Time passed in milli seconds
+     *  @returns    Time passed in milliseconds
      */
-#ifdef ARDUINO_ARCH_AVR
-    long read_ms();
-#else
     int read_ms();
-#endif
 
-    /** Get the time passed in micro-seconds
+    /** Get the time passed in microseconds
      *
-     *  @returns    Time passed in micro seconds
+     *  @returns    Time passed in microseconds
      */
-#ifdef ARDUINO_ARCH_AVR
-    long read_us();
-#else
     int read_us();
-#endif
 
     /** An operator shorthand for read()
      */
     operator float();
 
-    /** Get in a high resolution type the time passed in micro-seconds.
+    /** Get in a high resolution type the time passed in microseconds.
+     *  Returns a 64 bit integer.
      */
     us_timestamp_t read_high_resolution_us();
 
+#if !defined(DOXYGEN_ONLY)
 protected:
     us_timestamp_t slicetime();
     int _running;            // whether the timer is running
     us_timestamp_t _start;   // the start time of the latest slice
     us_timestamp_t _time;    // any accumulated time from previous slices
     const ticker_data_t *_ticker_data;
-    bool _lock_deepsleep;    // flag which indicates if deep-sleep should be disabled
+    bool _lock_deepsleep;    // flag that indicates if deep sleep should be disabled
 };
+#endif
 
 } // namespace mbed
 

@@ -18,14 +18,6 @@
 
 typedef int FILEHANDLE;
 
-#ifdef ARDUINO
-#include <stdio.h>
-#include <string.h>
-#else
-#include <cstdio>
-#include <cstring>
-#endif
-
 #include "platform/platform.h"
 #include "platform/SingletonPtr.h"
 #include "platform/PlatformMutex.h"
@@ -60,9 +52,11 @@ public:
 
     static FileBase *get(int n);
 
-    /* disallow copy constructor and assignment operators */
+    void set_as_default();
+
 private:
     static FileBase *_head;
+    static FileBase *_default;
     static SingletonPtr<PlatformMutex> _mutex;
 
     FileBase   *_next;

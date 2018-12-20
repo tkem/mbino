@@ -163,6 +163,10 @@ void sleep_manager_lock_deep_sleep_internal(void)
     if (deep_sleep_lock == USHRT_MAX) {
         core_util_critical_section_exit();
         MBED_ERROR1(MBED_MAKE_ERROR(MBED_MODULE_HAL, MBED_ERROR_CODE_OVERFLOW), "DeepSleepLock overflow (> USHRT_MAX)", deep_sleep_lock);
+        // When running sleep_manager tests, the mbed_error() is overridden
+        // and no longer calls mbed_halt_system(). Return to prevent
+        // execution of the following code.
+        return;
     }
     core_util_atomic_incr_u16(&deep_sleep_lock, 1);
     core_util_critical_section_exit();
@@ -174,6 +178,10 @@ void sleep_manager_unlock_deep_sleep_internal(void)
     if (deep_sleep_lock == 0) {
         core_util_critical_section_exit();
         MBED_ERROR1(MBED_MAKE_ERROR(MBED_MODULE_HAL, MBED_ERROR_CODE_UNDERFLOW), "DeepSleepLock underflow (< 0)", deep_sleep_lock);
+        // When running sleep_manager tests, the mbed_error() is overridden
+        // and no longer calls mbed_halt_system(). Return to prevent
+        // execution of the following code.
+        return;
     }
     core_util_atomic_decr_u16(&deep_sleep_lock, 1);
     core_util_critical_section_exit();
@@ -182,6 +190,19 @@ void sleep_manager_unlock_deep_sleep_internal(void)
 bool sleep_manager_can_deep_sleep(void)
 {
     return deep_sleep_lock == 0 ? true : false;
+}
+
+bool sleep_manager_can_deep_sleep_test_check()
+{
+    const uint32_t check_time_us = 2000;
+    const ticker_data_t *const ticker = get_us_ticker_data();
+    uint32_t start = ticker_read(ticker);
+    while ((ticker_read(ticker) - start) < check_time_us) {
+        if (sleep_manager_can_deep_sleep()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void sleep_manager_sleep_auto(void)

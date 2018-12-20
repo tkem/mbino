@@ -55,7 +55,7 @@ public:
      *  @param _type    Type of Data: Use enum CANType for valid parameter values
      *  @param _format  Data Format: Use enum CANFormat for valid parameter values
      */
-    CANMessage(int _id, const char *_data, char _len = 8, CANType _type = CANData, CANFormat _format = CANStandard)
+    CANMessage(unsigned _id, const char *_data, char _len = 8, CANType _type = CANData, CANFormat _format = CANStandard)
     {
         len    = _len & 0xF;
         type   = _type;
@@ -69,7 +69,7 @@ public:
      *  @param _id      Message ID
      *  @param _format  Data Format: Use enum CANType for valid parameter values
      */
-    CANMessage(int _id, CANFormat _format = CANStandard)
+    CANMessage(unsigned _id, CANFormat _format = CANStandard)
     {
         len    = 0;
         type   = CANRemote;
@@ -85,7 +85,7 @@ public:
 class CAN : private NonCopyable<CAN> {
 
 public:
-    /** Creates an CAN interface connected to specific pins.
+    /** Creates a CAN interface connected to specific pins.
      *
      *  @param rd read from transmitter
      *  @param td transmit to transmitter
@@ -94,11 +94,14 @@ public:
      * @code
      * #include "mbed.h"
      *
+     *
      * Ticker ticker;
      * DigitalOut led1(LED1);
      * DigitalOut led2(LED2);
-     * CAN can1(p9, p10);
-     * CAN can2(p30, p29);
+     * //The constructor takes in RX, and TX pin respectively.
+     * //These pins, for this example, are defined in mbed_app.json
+     * CAN can1(MBED_CONF_APP_CAN1_RD, MBED_CONF_APP_CAN1_TD);
+     * CAN can2(MBED_CONF_APP_CAN2_RD, MBED_CONF_APP_CAN2_TD);
      *
      * char counter = 0;
      *
@@ -121,14 +124,15 @@ public:
      *         wait(0.2);
      *     }
      * }
+     * 
      * @endcode
      */
     CAN(PinName rd, PinName td);
 
     /** Initialize CAN interface and set the frequency
       *
-      * @param rd the rd pin
-      * @param td the td pin
+      * @param rd the read pin
+      * @param td the transmit pin
       * @param hz the bus frequency in hertz
       */
 #ifdef ARDUINO_ARCH_AVR
@@ -205,7 +209,7 @@ public:
      */
     int mode(Mode mode);
 
-    /** Filter out incomming messages
+    /** Filter out incoming messages
      *
      *  @param id the id to filter on
      *  @param mask the mask applied to the id
@@ -296,12 +300,14 @@ public:
 
     static void _irq_handler(uint32_t id, CanIrqType type);
 
+#if !defined(DOXYGEN_ONLY)
 protected:
     virtual void lock();
     virtual void unlock();
     can_t               _can;
     Callback<void()>    _irq[IrqCnt];
     PlatformMutex       _mutex;
+#endif
 };
 
 } // namespace mbed

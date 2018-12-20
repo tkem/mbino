@@ -92,6 +92,7 @@ public:
 
     int printf(const char *format, ...);
 
+#if !(DOXYGEN_ONLY)
 protected:
 
     /* Acquire exclusive access to this serial port
@@ -101,6 +102,7 @@ protected:
     /* Release exclusive access to this serial port
      */
     virtual void unlock(void);
+#endif
 };
 
 } // namespace mbed

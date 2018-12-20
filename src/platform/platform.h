@@ -40,6 +40,7 @@ int vsscanf(const char *s, const char *fmt, va_list ap);
 namespace std {
     using ::strncmp;
     using ::strlen;
+    using ::memcmp;
 }
 #endif
 

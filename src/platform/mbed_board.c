@@ -28,7 +28,7 @@ extern serial_t stdio_uart;
 
 WEAK void mbed_die(void)
 {
-#if !defined (NRF51_H) && !defined(TARGET_EFM32)
+#if !defined (NRF51_H) && !defined(TARGET_EFM32) && !defined(USBCON)
     core_util_critical_section_enter();
 #endif
     gpio_t led_err;

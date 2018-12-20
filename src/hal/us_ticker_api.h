@@ -170,6 +170,25 @@ void us_ticker_init(void);
  * except us_ticker_init(), calling any function other than init is undefined.
  *
  * @note This function stops the ticker from counting.
+ *
+ * Pseudo Code:
+ * @code
+ * uint32_t us_ticker_free()
+ * {
+ *     // Disable timer
+ *     TIMER_CTRL &= ~TIMER_CTRL_ENABLE_Msk;
+ *
+ *     // Disable the compare interrupt
+ *     TIMER_CTRL &= ~TIMER_CTRL_COMPARE_ENABLE_Msk;
+ *
+ *     // Disable timer interrupt
+ *     NVIC_DisableIRQ(TIMER_IRQn);
+ *
+ *     // Disable clock gate so processor cannot read TIMER registers
+ *     POWER_CTRL &= ~POWER_CTRL_TIMER_Msk;
+ * }
+ * @endcode
+ *
  */
 void us_ticker_free(void);
 

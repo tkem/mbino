@@ -24,7 +24,7 @@
 #ifndef MBED_VERSION_H
 #define MBED_VERSION_H
 
-#define MBED_LIBRARY_VERSION 163
+#define MBED_LIBRARY_VERSION 164
 
 /** MBED_MAJOR_VERSION
   * Mbed 2 major version
@@ -39,7 +39,7 @@
 /** MBED_PATCH_VERSION
   * Mbed 2 patch version
   */
-#define MBED_PATCH_VERSION 163
+#define MBED_PATCH_VERSION 164
 
 #define MBED_ENCODE_VERSION(major, minor, patch) ((major)*10000 + (minor)*100 + (patch))
 

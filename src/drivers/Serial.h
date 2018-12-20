@@ -63,10 +63,10 @@ public:
      *  @param tx Transmit pin
      *  @param rx Receive pin
      *  @param name The name of the stream associated with this serial port (optional)
-     *  @param baud The baud rate of the serial port (optional, defaults to MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE)
+     *  @param baud The baud rate of the serial port (optional, defaults to MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE or 9600)
      *
      *  @note
-     *    Either tx or rx may be specified as NC if unused
+     *    Either tx or rx may be specified as NC (Not Connected) if unused
      */
 #ifdef ARDUINO_ARCH_AVR
     Serial(PinName tx, PinName rx, const char *name=NULL, long baud = MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE);
@@ -82,7 +82,7 @@ public:
      *  @param baud The baud rate of the serial port
      *
      *  @note
-     *    Either tx or rx may be specified as NC if unused
+     *    Either tx or rx may be specified as NC (Not Connected) if unused
      */
 #ifdef ARDUINO_ARCH_AVR
     Serial(PinName tx, PinName rx, long baud);
@@ -107,6 +107,7 @@ public:
         return SerialBase::writeable();
     }
 
+#if !(DOXYGEN_ONLY)
 protected:
     virtual int _getc();
     virtual int _putc(int c);
@@ -114,6 +115,7 @@ protected:
     virtual void unlock();
 
     PlatformMutex _mutex;
+#endif
 };
 
 } // namespace mbed
