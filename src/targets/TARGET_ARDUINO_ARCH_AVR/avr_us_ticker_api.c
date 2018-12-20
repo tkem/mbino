@@ -21,6 +21,53 @@
 
 #include "hal/us_ticker_api.h"
 
+#ifdef MBINO_US_TICKER_STATISTICS
+
+#include <stdio.h>
+
+typedef struct {
+    unsigned min;
+    unsigned max;
+} stats_time_t;
+
+static struct {
+    unsigned num_fired;
+    stats_time_t delay;
+    stats_time_t  duration;
+    stats_time_t total;
+} stats = {
+    0, { UINT_MAX, 0 }, { UINT_MAX, 0 }, { UINT_MAX, 0 }
+};
+
+static void update_time(stats_time_t *p, unsigned d)
+{
+    if (p->min > d) {
+        p->min = d;
+    }
+    if (p->max < d) {
+        p->max = d;
+    }
+}
+
+static void print_time(const char *msg, stats_time_t *p)
+{
+    printf_P(PSTR("%S: %u/%u us\n"), msg, p->min, p->max);
+}
+
+void us_ticker_print_statistics(void)
+{
+    printf_P(PSTR("Ticker interrupt fired: %u\n"), stats.num_fired);
+    print_time(PSTR("Ticker IRQ handler delay"), &stats.delay);
+    print_time(PSTR("Ticker IRQ handler duration"), &stats.duration);
+    print_time(PSTR("Ticker IRQ duration"), &stats.total);
+}
+
+#else
+
+void us_ticker_print_statistics(void) {}
+
+#endif
+
 static uint32_t next_interrupt = (uint32_t)INT32_MAX;
 
 static bool fired_interrupt = false;
@@ -89,10 +136,15 @@ void us_ticker_set_interrupt(timestamp_t timestamp)
 
 void us_ticker_fire_interrupt(void)
 {
+    // TODO: software interrupt?
     uint8_t sreg = SREG;
     cli();
     enable_interrupt();
     fired_interrupt = true;
+#ifdef MBINO_US_TICKER_STATISTICS
+    next_interrupt = micros();
+    ++stats.num_fired;
+#endif
     SREG = sreg;
 }
 
@@ -105,13 +157,35 @@ const ticker_info_t* us_ticker_get_info(void)
     return &ticker_info;
 }
 
+#ifdef MBINO_US_TICKER_STATISTICS
+
 SIGNAL(TIMER0_COMPA_vect)
 {
-    // TODO: profile!
-    while (fired_interrupt || (int32_t)(micros() - next_interrupt) >= 0) {
-        fired_interrupt = false;
-        us_ticker_irq_handler();
+    uint32_t t1 = micros();
+    if (fired_interrupt || (int32_t)(t1 - next_interrupt) >= 0) {
+        do {
+            uint32_t t2 = micros();
+            update_time(&stats.delay, t2 - next_interrupt);
+            fired_interrupt = false;
+            us_ticker_irq_handler();
+            update_time(&stats.duration, micros() - t2);
+        } while (fired_interrupt);
+    }
+    update_time(&stats.total, micros() - t1);
+}
+
+#else
+
+SIGNAL(TIMER0_COMPA_vect)
+{
+    if (fired_interrupt || (int32_t)(micros() - next_interrupt) >= 0) {
+        do {
+            fired_interrupt = false;
+            us_ticker_irq_handler();
+        } while (fired_interrupt);
     }
 }
+
+#endif
 
 #endif
