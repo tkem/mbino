@@ -70,7 +70,6 @@ static void gpio_dir_out(gpio_t *obj)
 
 uint32_t gpio_set(PinName pin)
 {
-    // TODO: disable analog in?
     // disable PWM for this pin
     uint8_t timer = digitalPinToTimer(pin);
     if (timer != NOT_ON_TIMER) {

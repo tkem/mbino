@@ -136,7 +136,6 @@ private:
     static bool connect() {
         uint8_t sreg = SREG;
         sei();
-        // TODO: config?
         for (int n = 300; n; --n) {
             // this must be called with interrupts enabled
             if (SERIAL_PORT_USBVIRTUAL) {

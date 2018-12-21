@@ -120,20 +120,6 @@ static const PinName D69 = 69;
 #warning There are more than 70 digital pins on your board. Some pin names may not be defined.
 #endif
 
-// some older ATtiny versions of pins_arduino.h don't provide A0..An
-#ifndef NUM_ANALOG_INPUTS
-#if defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
-#define PIN_A0               (6)
-#define PIN_A1               (7)
-#define PIN_A2               (8)
-#define PIN_A3               (9)
-static const PinName A0 = PIN_A0;
-static const PinName A1 = PIN_A1;
-static const PinName A2 = PIN_A2;
-static const PinName A3 = PIN_A3;
-#endif
-#endif
-
 #ifdef LED_BUILTIN
 static const PinName LED1 = LED_BUILTIN;
 #ifdef LED_BUILTIN_RX
@@ -183,13 +169,13 @@ static const PinName UART0_RX = 0;
 #define UART_TX UART0_TX
 #define UART_RX UART0_RX
 #endif
+// commonly used alternative names
 #define SERIAL_TX UART_TX
 #define SERIAL_RX UART_RX
-// TODO: override by MBED_CONF_TARGET_STDIO_UART_TX/RX?
 #define STDIO_UART_TX UART_TX
 #define STDIO_UART_RX UART_RX
-#if !defined(SERIAL_PORT_USBVIRTUAL)
-// make an educated guess...
+// on Leonardo et al. there are no "USB serial pins"
+#ifndef SERIAL_PORT_USBVIRTUAL
 #define USBTX UART_TX
 #define USBRX UART_RX
 #endif

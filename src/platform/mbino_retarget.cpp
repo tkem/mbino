@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-// TODO: POSIX APIs? new/delete? exit()?
+// TODO: POSIX APIs?
 
 #ifdef __WITH_AVRLIBC__
 
@@ -44,13 +44,13 @@ extern "C" int mbed_stdio_get(FILE* fp)
     }
 }
 
-extern "C" int mbed_stdio_put(char c, FILE *fp)
+extern "C" int mbed_stdio_put(char c, FILE* fp)
 {
     mbed::FileHandle* fh = static_cast<mbed::FileHandle*>(fdev_get_udata(fp));
     return fh->write(&c, 1) == 1 ? 0 : -1;
 }
 
-FILE* mbed::fdopen(mbed::FileHandle *fh, const char *mode)
+FILE* mbed::fdopen(mbed::FileHandle* fh, const char* mode)
 {
     bool rd = mode[0] == 'r' || mode[1] == '+';
     bool wr = mode[0] == 'w' || mode[1] == '+';
@@ -123,15 +123,15 @@ namespace mbed {
 
 #ifdef __WITH_AVRLIBC__
 // not implemented in AVR libc
-void setbuf(FILE *stream, char *buf)
+void setbuf(FILE* /*stream*/, char* /*buf*/)
 {
 }
 
-int vsscanf(const char *s, const char *fmt, va_list ap)
+int vsscanf(const char* s, const char* fmt, va_list ap)
 {
     FILE f;
     f.flags = __SRD | __SSTR;
-    f.buf = (char *)s;
+    f.buf = const_cast<char*>(s);
     return vfscanf(&f, fmt, ap);
 }
 #endif
@@ -162,7 +162,7 @@ int atexit(void (*func)())
 // AVR effectively limits CLOCKS_PER_SEC to 15 bits in <time.h> since
 // pointers are treated as signed when converted to integers,
 // e.g. (clock_t)(char *)62500U == 0xfffff424
-char *_CLOCKS_PER_SEC_ = (char*)31250;
+char* _CLOCKS_PER_SEC_ = reinterpret_cast<char*>(31250);
 #endif
 
 clock_t clock()

@@ -104,7 +104,8 @@ void us_ticker_init(void)
 
 void us_ticker_free(void)
 {
-    // TODO
+    // TODO: disable Timer0?
+    us_ticker_disable_interrupt();
 }
 
 uint32_t us_ticker_read(void)
