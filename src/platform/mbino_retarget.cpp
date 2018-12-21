@@ -111,6 +111,10 @@ namespace mbed {
         // currently not needed(?)
     }
 
+    // mbed_target_override_console() cannot be declared weak and
+    // overridden in a single library, so this needs to be defined in
+    // target
+
     MBED_WEAK FileHandle* mbed_override_console(int /*fd*/)
     {
         return NULL;

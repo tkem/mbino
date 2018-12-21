@@ -159,15 +159,11 @@ mbed::FileHandle* get_console<decltype(SERIAL_PORT_USBVIRTUAL)>()
 
 mbed::FileHandle* mbed::mbed_target_override_console(int fd)
 {
-    if (mbed::FileHandle* fh = mbed::mbed_override_console(fd)) {
-        return fh;
-    } else {
 #ifdef SERIAL_PORT_MONITOR
-        return get_console<decltype(SERIAL_PORT_MONITOR)>();
+    return get_console<decltype(SERIAL_PORT_MONITOR)>();
 #else
-        return NULL;
+    return NULL;
 #endif
-    }
 }
 
 #endif

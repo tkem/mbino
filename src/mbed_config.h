@@ -64,6 +64,10 @@
 #define MBED_CONF_PLATFORM_STDIO_FLUSH_AT_EXIT                          1
 #endif
 
+#ifndef MBINO_CONF_PLATFORM_STDIO
+#define MBINO_CONF_PLATFORM_STDIO                                       1
+#endif
+
 // TODO: MBED_CONF_TARGET_STDIO_UART_TX
 // TODO: MBED_CONF_TARGET_STDIO_UART_RX
 
