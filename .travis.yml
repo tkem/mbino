@@ -8,25 +8,26 @@ install:
 - pip install -U platformio
 
 env:
-- PLATFORMIO_CI_SRC=examples/ADXL345_I2C_HelloWorld DEVICE="i2c"
-- PLATFORMIO_CI_SRC=examples/ADXL345_SPI_HelloWorld DEVICE="spi"
+- PLATFORMIO_CI_SRC=examples/ADXL345_I2C_HelloWorld
+- PLATFORMIO_CI_SRC=examples/ADXL345_SPI_HelloWorld
 - PLATFORMIO_CI_SRC=examples/AnalogIn_HelloWorld
-- PLATFORMIO_CI_SRC=examples/Arduino_HelloWorld
+- PLATFORMIO_CI_SRC=examples/ArduinoSketch_HelloWorld
 - PLATFORMIO_CI_SRC=examples/HelloWorld
-- PLATFORMIO_CI_SRC=examples/I2CSlave_HelloWorld DEVICE="i2c"
-- PLATFORMIO_CI_SRC=examples/I2C_HelloWorld DEVICE="i2c"
-- PLATFORMIO_CI_SRC=examples/I2C_Scanner DEVICE="i2c"
+- PLATFORMIO_CI_SRC=examples/I2CSlave_HelloWorld
+- PLATFORMIO_CI_SRC=examples/I2C_HelloWorld
+- PLATFORMIO_CI_SRC=examples/I2C_Scanner
 - PLATFORMIO_CI_SRC=examples/InterruptIn_HelloWorld
-- PLATFORMIO_CI_SRC=examples/MultiFunctionShield DEVICE="standard"
+- PLATFORMIO_CI_SRC=examples/MultiFunctionShield
 - PLATFORMIO_CI_SRC=examples/PwmOut_HelloWorld
-- PLATFORMIO_CI_SRC=examples/RawSerial_HelloWorld DEVICE="serial"
-- PLATFORMIO_CI_SRC=examples/SPISlave_HelloWorld DEVICE="spi"
-- PLATFORMIO_CI_SRC=examples/SPI_HelloWorld DEVICE="spi"
-- PLATFORMIO_CI_SRC=examples/Serial_HelloWorld DEVICE="serial"
+- PLATFORMIO_CI_SRC=examples/RawSerial_HelloWorld
+- PLATFORMIO_CI_SRC=examples/SPISlave_HelloWorld
+- PLATFORMIO_CI_SRC=examples/SPI_HelloWorld
+- PLATFORMIO_CI_SRC=examples/Serial_HelloWorld
 - PLATFORMIO_CI_SRC=examples/Ticker_HelloWorld
 - PLATFORMIO_CI_SRC=examples/Timeout_HelloWorld
 - PLATFORMIO_CI_SRC=examples/Timer_HelloWorld
 - PLATFORMIO_CI_SRC=examples/mbed-os-example-blinky
+- PLATFORMIO_CI_SRC=examples/mbed-os-example-blinky PLATFORMIO_BUILD_FLAGS="-DMBINO_CONF_PLATFORM_STDIO=0"
 
 script:
-- platformio ci --lib="." --project-conf=extras/platformio-"${DEVICE:-all}".ini
+- platformio ci --lib="." --project-conf=extras/platformio.ini

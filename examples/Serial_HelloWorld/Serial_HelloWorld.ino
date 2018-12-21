@@ -15,11 +15,7 @@
  */
 #include "mbed.h"
 
-#ifdef SERIAL_PORT_USBVIRTUAL
 mbed::Serial pc(SERIAL_TX, SERIAL_RX); // tx, rx
-#else
-mbed::Serial pc(USBTX, USBRX); // tx, rx
-#endif
 
 int main() {
     pc.printf("Hello World!\n\r");

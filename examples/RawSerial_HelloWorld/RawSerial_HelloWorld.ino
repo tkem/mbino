@@ -15,11 +15,7 @@
  */
 #include "mbed.h"
 
-#ifdef SERIAL_PORT_USBVIRTUAL
 RawSerial pc(SERIAL_TX, SERIAL_RX); // tx, rx
-#else
-RawSerial pc(USBTX, USBRX); // tx, rx
-#endif
 
 int main() {
     pc.printf("Hello World!\n\r");

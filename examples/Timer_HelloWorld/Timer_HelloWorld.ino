@@ -21,13 +21,5 @@ int main() {
     t.start();
     printf("Hello World!\n");
     t.stop();
-#ifdef __WITH_AVRLIBC__
-    // AVR libc in Arduino does not support floating point conversions
-    float d = t.read();
-    unsigned s = (unsigned)d;
-    unsigned long us = ((unsigned long)(d * 1000000.0f)) % 1000000UL;
-    printf("The time taken was %u.%06lu seconds\n", s, us);
-#else
-    printf("The time taken was %f seconds\n", t.read());
-#endif
+    printf("The time taken was %d milliseconds\n", t.read_ms());
 }
