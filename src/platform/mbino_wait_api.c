@@ -32,8 +32,7 @@ void wait(float s) {
 
 void wait_ms(int ms)
 {
-    // delay() requires interrupts to be enabled (at least on AVR), so
-    // we'd rather lose some precision here
+    // delay() requires interrupts to be enabled (at least on AVR)
     while (ms--) {
         delayMicroseconds(1000);
     }
@@ -41,5 +40,20 @@ void wait_ms(int ms)
 
 void wait_us(int us)
 {
-    delayMicroseconds(us);
+    // "Currently, the largest value that will produce an accurate
+    // delay is 16383".
+    // https://www.arduino.cc/reference/en/language/functions/time/delaymicroseconds/
+    switch ((unsigned)us >> 14) {
+    case 3:
+        delayMicroseconds(0x3fff);
+        // fallthrough
+    case 2:
+        delayMicroseconds(0x3fff);
+        // fallthrough
+    case 1:
+        delayMicroseconds(0x3fff);
+        // fallthrough
+    case 0:
+        delayMicroseconds(us & 0x3fff);
+    }
 }
