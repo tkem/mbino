@@ -106,9 +106,9 @@ So, why would you want to use this?
 
 ## License
 
-Copyright (c) 2017 Thomas Kemmer
+Copyright (c) 2017, 2018 Thomas Kemmer
 
-mbed Microcontroller Library Copyright (c) 2006-2013 ARM Limited
+mbed Microcontroller Library Copyright (c) 2006-2018 ARM Limited
 
 Licensed under the [Apache License, Version
 2.0](http://www.apache.org/licenses/LICENSE-2.0).

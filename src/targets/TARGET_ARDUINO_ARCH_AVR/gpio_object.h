@@ -1,5 +1,5 @@
 /* mbino - mbed APIs for the Arduino platform
- * Copyright (c) 2017 Thomas Kemmer
+ * Copyright (c) 2017, 2018 Thomas Kemmer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
  * may not use this file except in compliance with the License.  You
